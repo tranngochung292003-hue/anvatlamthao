@@ -17,7 +17,6 @@
 html{-webkit-text-size-adjust:100%;overflow-x:hidden;overscroll-behavior-y:none;scroll-behavior:smooth;scroll-padding-top:calc(var(--h) + 76px)}
 body{font:400 15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--cream);color:var(--ink);overflow-x:clip;touch-action:manipulation;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;padding-bottom:calc(36px + env(safe-area-inset-bottom,0px))}
 body.has-cart{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
-body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 input,textarea{-webkit-user-select:text;user-select:text;font-size:16px}
 img{-webkit-user-drag:none;max-width:100%}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0;touch-action:manipulation}
@@ -131,7 +130,7 @@ body.has-cart .fab{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
 .bar{position:fixed;left:0;right:0;bottom:0;z-index:36;padding:10px 14px calc(12px + env(safe-area-inset-bottom,0px));transform:translateY(130%);transition:transform .45s cubic-bezier(.2,1.2,.3,1);pointer-events:none}
 body.has-cart .bar{transform:none}
 .bar button{pointer-events:auto;display:flex;width:100%;max-width:692px;margin:auto;align-items:center;justify-content:space-between;background:linear-gradient(90deg,var(--red),var(--org));color:#fff;border-radius:18px;padding:15px 20px;font-weight:800;font-size:1.02rem;box-shadow:0 12px 26px #e0301f55;position:relative;overflow:hidden}
-.mask{position:fixed;inset:0;z-index:60;background:#2a0d0acc;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px);touch-action:none}
+.mask{position:fixed;inset:0;z-index:60;background:#2a0d0acc;display:none;align-items:flex-end;justify-content:center;overscroll-behavior:contain}
 .mask.show{display:flex;animation:fade .3s}
 @keyframes fade{from{opacity:0}}
 .sheet{background:var(--cream);width:100%;max-width:560px;max-height:92dvh;max-height:92vh;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;border-radius:28px 28px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom,0px));animation:up .45s cubic-bezier(.2,1.1,.3,1);outline:0}
@@ -177,6 +176,9 @@ body.has-cart .bar{transform:none}
 #slide.in{transform:translate(-50%,0)}
 .fly{position:fixed;z-index:95;font-size:1.7rem;pointer-events:none}
 .cf{position:fixed;top:30vh;width:9px;height:14px;border-radius:2px;z-index:95;pointer-events:none}
+html.lock,html.lock body{overflow:hidden}
+html.lock .bl,html.lock .contact:before,html.lock .fl,html.lock .lgw:before,html.lock .lgw img,html.lock .mq div,html.lock .fab a,html.lock .fab a:before,html.lock .why span,html.lock .art em,html.lock .ic:after,html.lock .cta:after,html.lock .bar button:after,html.lock .br small{animation-play-state:paused}
+.rt{display:block;color:#b88700;font-weight:700;font-size:.74rem;margin-top:1px}
 @media(min-width:760px){.grid{gap:16px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
 </style>
@@ -305,15 +307,17 @@ const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;"
 const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(_){return d}};
 const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}};
 const calm=matchMedia("(prefers-reduced-motion:reduce)").matches;
-const isOpen=()=>{const h=new Date().getHours();return h>=CFG.open&&h<CFG.close};
+const isOpen=()=>{const h=new Date().getHours();return !CFG.paused&&h>=CFG.open&&h<CFG.close};
 document.querySelectorAll("[data-logo]").forEach(i=>i.src=LOGO);$("fav").href=LOGO;
 let cur="all",kw="",cart=ld("alt_cart",{}),pos=null,tm,busy=false;
 function cleanCart(){Object.keys(cart).forEach(k=>{if(!P.some(p=>p.id==k)||!(cart[k]>0))delete cart[k];else cart[k]=Math.min(99,cart[k]|0)})}
+{const mc=ld("alt_menu",null);if(Array.isArray(mc)&&mc.length)P=mc}
 cleanCart();
 
-let lockN=0,ly=0;
-function lock(){if(lockN++===0){ly=scrollY;document.body.style.top=-ly+"px";document.body.classList.add("lock")}}
-function unlock(){if(--lockN===0){document.body.classList.remove("lock");document.body.style.top="";scrollTo({top:ly,behavior:"instant"})}}
+let lockN=0;
+function lock(){if(lockN++===0)document.documentElement.classList.add("lock")}
+function unlock(){if(lockN>0&&--lockN===0)document.documentElement.classList.remove("lock")}
+addEventListener("pageshow",()=>{if(!document.querySelector(".mask.show")){lockN=0;document.documentElement.classList.remove("lock")}});
 function open_(id){const m=$(id);if(m.classList.contains("show"))return;m.classList.add("show");lock();setTimeout(()=>m.querySelector(".sheet").focus({preventScroll:true}),60)}
 function close_(id){const m=$(id);if(!m.classList.contains("show"))return;m.classList.remove("show");unlock()}
 lock();
@@ -328,8 +332,10 @@ function confetti(n=60){if(calm)return;const C=["#ffc20e","#e0301f","#ff8a00","#
 function tween(el,to){const from=+el.dataset.v||0;el.dataset.v=to;const t0=performance.now();(function f(t){const k=calm?1:Math.min(1,(t-t0)/450);el.textContent=fmt(Math.round(from+(to-from)*k));if(k<1)requestAnimationFrame(f)})(t0)}
 
 /* ===== HIỆU ỨNG TRANG ===== */
-$("area").textContent=`Khu vực phục vụ: ${CFG.area} · Phí giao ${fmt(CFG.fee)}, miễn phí từ ${fmt(CFG.free)} · Nhận đơn ${CFG.open}h–${CFG.close}h`;
-$("oh").textContent=`${CFG.open}h đến ${CFG.close}h`;$("closed").classList.toggle("show",!isOpen());
+function info(){$("area").textContent=`Khu vực phục vụ: ${CFG.area} · Phí giao ${fmt(CFG.fee)}, miễn phí từ ${fmt(CFG.free)} · Nhận đơn ${CFG.open}h–${CFG.close}h`;
+  $("closed").textContent=CFG.paused?(CFG.notice||"Quán tạm nghỉ, vui lòng quay lại sau."):`Hiện đã đóng cửa. Chúng tôi nhận đơn từ ${CFG.open}h đến ${CFG.close}h hằng ngày.`;
+  $("closed").classList.toggle("show",!isOpen())}
+info();
 $("mq").innerHTML=("🔥 Đặt Nhanh - Giao Nhanh &nbsp;•&nbsp; 🛵 Giao tận nơi &nbsp;•&nbsp; 🧋 Trà sữa trân châu &nbsp;•&nbsp; 🍟 Khoai tây chiên giòn rụm &nbsp;•&nbsp; 🎉 Combo tiết kiệm &nbsp;•&nbsp; ").repeat(4);
 const W=["trà sữa trân châu","khoai tây chiên","gà rán giòn","bánh tráng trộn","combo tiết kiệm"];let wi=0;
 if(!calm)setInterval(()=>{if(document.hidden)return;const r=$("rot");r.classList.add("out");setTimeout(()=>{wi=(wi+1)%W.length;r.textContent=W[wi];r.classList.remove("out")},400)},2400);
@@ -343,10 +349,11 @@ function ind(){const b=document.querySelector("#tabs button.on"),i=document.quer
 $("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;cur=b.dataset.c;document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x===b));ind();b.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});menu()};
 $("q").oninput=e=>{kw=norm(e.target.value.trim());menu()};
 const ctl=id=>{const n=cart[id]||0;return n?`<div class="step"><button data-a="-" data-id="${id}" aria-label="Giảm">−</button><button data-a="+" data-id="${id}" aria-label="Thêm 1">${n}</button><button data-a="+" data-id="${id}" aria-label="Tăng">+</button></div>`:`<button class="add" data-a="+" data-id="${id}">+ Thêm</button>`};
-const th=x=>`<span>${esc(x.e||"🍽️")}</span>${x.img?`<img src="${esc(x.img)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:""}`;
+const imgU=u=>{const m=String(u).match(/(?:\/d\/|[?&]id=)([\w-]+)/);return m&&/googleusercontent|drive\.google/.test(u)?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w800`:u};
+const th=x=>`<span>${esc(x.e||"🍽️")}</span>${x.img?`<img src="${esc(imgU(x.img))}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:""}`;
 function menu(){
   const L=P.filter(x=>(cur=="all"||x.c==cur)&&(!kw||norm(x.n+" "+(x.d||"")).includes(kw)));
-  $("grid").innerHTML=L.length?L.map((x,i)=>`<article class="card rv" style="transition-delay:${(i%2)*90}ms"><div class="art c-${esc(x.c)}">${x.t?`<em>${esc(x.t)}</em>`:""}${th(x)}</div><div class="info"><h3>${esc(x.n)}</h3><p>${esc(x.d||"")}</p><div class="price">${fmt(x.p)}${x.o?`<s>${fmt(x.o)}</s>`:""}</div><div class="ctl" data-id="${x.id}">${ctl(x.id)}</div></div></article>`).join(""):'<p class="empty">Chưa tìm thấy món phù hợp. Thử từ khóa khác nhé.</p>';
+  $("grid").innerHTML=L.length?L.map((x,i)=>`<article class="card rv" style="transition-delay:${(i%2)*90}ms"><div class="art c-${esc(x.c)}">${x.t?`<em>${esc(x.t)}</em>`:""}${th(x)}</div><div class="info"><h3>${esc(x.n)}</h3>${x.r?`<small class="rt">★ ${x.r} (${x.rc})</small>`:""}<p>${esc(x.d||"")}</p><div class="price">${fmt(x.p)}${x.o?`<s>${fmt(x.o)}</s>`:""}</div><div class="ctl" data-id="${x.id}">${ctl(x.id)}</div></div></article>`).join(""):'<p class="empty">Chưa tìm thấy món phù hợp. Thử từ khóa khác nhé.</p>';
   reveal()}
 
 /* ===== GIỎ HÀNG ===== */
@@ -401,8 +408,9 @@ $("f").onsubmit=async e=>{e.preventDefault();if(busy)return;
   const d={action:"order",code,time:new Date().toLocaleString("vi-VN"),items:P.filter(x=>cart[x.id]).map(x=>x.n+" x"+cart[x.id]).join(", "),subtotal:T_.s,fee:T_.fee,total:T_.t,pay,
     name:$("nm").value.trim(),phone:$("ph").value.trim(),address:$("ad").value.trim(),note:$("nt").value.trim(),map:`https://maps.google.com/?q=${pos.lat},${pos.lng}`,website:$("hp").value};
   busy=true;$("send").disabled=true;$("send").textContent="Đang gửi đơn...";
-  try{if(APPS_SCRIPT_URL&&!d.website)await fetch(APPS_SCRIPT_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(d)});else if(!APPS_SCRIPT_URL)console.warn("Chưa cấu hình APPS_SCRIPT_URL")}
-  catch(_){busy=false;$("send").textContent="Đặt hàng";ready();toast("Gửi đơn chưa được, vui lòng thử lại hoặc gọi hotline.");return}
+  let ok=false,er="";
+  for(let i=0;i<2&&!ok;i++){try{const j=await(await fetch(APPS_SCRIPT_URL,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)})).json();if(j.ok)ok=true;else{er=j.error;break}}catch(_){}}
+  if(!ok){busy=false;$("send").textContent="Đặt hàng";ready();toast(er=="paused"?"Quán đang tạm nghỉ, vui lòng quay lại sau.":er=="menu_changed"?"Thực đơn vừa thay đổi, hãy tải lại trang rồi đặt lại nhé.":"Chưa gửi được đơn, vui lòng thử lại hoặc gọi hotline.",6000);return}
   busy=false;const h=ld("alt_orders",[]);h.unshift({code,time:d.time,items:d.items,total:d.total,pay,phone:d.phone});sv("alt_orders",h.slice(0,20));
   cart={};sv("alt_cart",cart);pos=null;e.target.reset();$("loc").className="loc";$("loc").textContent=LOC0;
   $("send").textContent="Đặt hàng";close_("co");menu();sync();confetti(110);
@@ -411,7 +419,11 @@ addEventListener("offline",()=>toast("Bạn đang offline, hãy kiểm tra kết
 
 /* ===== KHỞI TẠO + MENU TỪ GOOGLE SHEET ===== */
 menu();sync();reveal();requestAnimationFrame(ind);addEventListener("resize",ind);addEventListener("orientationchange",()=>setTimeout(ind,200));
-if(APPS_SCRIPT_URL)fetch(APPS_SCRIPT_URL+"?a=menu").then(r=>r.json()).then(j=>{if(j.products&&j.products.length){P=j.products;cleanCart();sv("alt_cart",cart);menu();sync()}}).catch(()=>{});
+if(APPS_SCRIPT_URL)fetch(APPS_SCRIPT_URL+"?a=menu").then(r=>r.json()).then(j=>{
+  if(j.cfg){Object.assign(CFG,{fee:+j.cfg.fee,free:+j.cfg.free,open:+j.cfg.open,close:+j.cfg.close,paused:!!j.cfg.paused,notice:j.cfg.notice||""});info()}
+  if(j.products&&j.products.length){P=j.products;sv("alt_menu",P)}
+  cleanCart();sv("alt_cart",cart);menu();sync();if($("co").classList.contains("show"))lines()}).catch(()=>{});
+setInterval(()=>{if($("md").classList.contains("show")&&!document.querySelector("#sendRv")&&!document.hidden)$("myOrders").onclick()},20000);
 </script>
 </body>
 </html>
