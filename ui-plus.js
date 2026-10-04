@@ -76,7 +76,7 @@ function welcome(){const day=new Date().toDateString();let seen;try{seen=localSt
  if(seen===day)return;try{localStorage.setItem("alt_wl",day)}catch(_){}
  let v=null;try{v=VC&&VC[0]}catch(_){}
  const m=document.createElement("div");m.className="mask";m.id="wl";
- m.innerHTML=`<div class="sheet"><img class="lg" src="logo.webp" alt=""><h2>Chào mừng bạn! 👋</h2><p>Ăn Vặt Lâm Thao – Đặt Nhanh, Giao Nhanh. Hôm nay bạn muốn ăn gì nào?</p>${v?`<div class="vc">🎟️ Voucher hôm nay<br><b>${esc(v.code)}</b><br><small>${esc(v.desc)}</small></div>`:""}${v?`<button class="big" id="wlv" data-vc="${esc(v.code)}">Dùng mã ${esc(v.code)}</button>`:""}<button class="big${v?" gh":""}" id="wlm">Xem thực đơn</button><button class="big gh" data-close="wl" style="height:42px">Để sau</button></div>`;
+ m.innerHTML=`<div class="sheet"><span class="lgw"><img class="lg" src="logo.webp" alt=""></span><h2>Chào mừng bạn! 👋</h2><p>Ăn Vặt Lâm Thao – Đặt Nhanh, Giao Nhanh. Hôm nay bạn muốn ăn gì nào?</p>${v?`<div class="vc">🎟️ Voucher hôm nay<br><b>${esc(v.code)}</b><br><small>${esc(v.desc)}</small></div>`:""}${v?`<button class="big" id="wlv" data-vc="${esc(v.code)}">Dùng mã ${esc(v.code)}</button>`:""}<button class="big${v?" gh":""}" id="wlm">Xem thực đơn</button><button class="big gh" data-close="wl" style="height:42px">Để sau</button></div>`;
  document.body.appendChild(m);open_("wl");
  $("wlm").onclick=()=>{close_("wl");document.getElementById("menu").scrollIntoView()};
  if($("wlv"))$("wlv").addEventListener("click",()=>close_("wl"))}
@@ -101,4 +101,41 @@ const fab=document.createElement("div");fab.className="fab";
 fab.innerHTML=`<a class="z" href="https://zalo.me/${SHOP.tel}" target="_blank" rel="noopener" aria-label="Zalo">💬</a><button class="t" aria-label="Lên đầu trang">⬆</button>`;
 document.body.appendChild(fab);const tb=fab.querySelector(".t");
 tb.onclick=()=>scrollTo({top:0});addEventListener("scroll",()=>tb.classList.toggle("on",scrollY>500),{passive:true});
+
+/* ===== V2: vòng tròn xoay quanh logo + hiệu ứng tiêu đề/card ===== */
+const st2=document.createElement("style");st2.textContent=`
+.lgw{position:relative;display:inline-flex;flex:none;border-radius:50%;padding:4px}
+.lgw::before,.lgw::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;animation:spin 3s linear infinite}
+.lgw::before{background:conic-gradient(var(--sun),transparent 35%,var(--org) 60%,transparent 85%,var(--sun));-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px))}
+.lgw::after{background:radial-gradient(circle at 50% 0,#fff 0 3px,var(--sun) 3.5px 5px,transparent 6px);animation-duration:2.2s;animation-direction:reverse}
+.top .lgw{padding:3px}.hero .lgw{padding:7px}.hero .lgw img{width:80px}#wl .lgw{padding:9px;margin-bottom:4px}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .6s,transform .6s}.rv.in{opacity:1;transform:none}
+.sec h2{position:relative;display:inline-block}.sec h2::after{content:"";display:block;height:4px;width:0;border-radius:4px;background:linear-gradient(90deg,var(--red),var(--sun));margin-top:2px;transition:width .8s .3s}.sec.in h2::after{width:100%}
+.vs h3,.contact h2{display:inline-block;animation:lf 3.5s ease-in-out infinite}
+.tag{background:linear-gradient(90deg,var(--sun) 30%,#fff 50%,var(--sun) 70%) 0 0/200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shine 2.6s linear infinite}
+@keyframes shine{to{background-position:-200% 0}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+@keyframes wig{0%,88%,100%{transform:rotate(0)}91%{transform:rotate(-8deg)}94%{transform:rotate(8deg)}97%{transform:rotate(-5deg)}}
+@keyframes ring{from{box-shadow:0 0 0 0 #0068ff88}to{box-shadow:0 0 0 14px #0068ff00}}
+.art img,.art span{transition:transform .5s}.card:hover .art img,.card:hover .art span{transform:scale(1.1)}
+.art em{animation:pulse 1.8s infinite}
+.card:nth-child(2n){animation-delay:.08s}.card:nth-child(3n){animation-delay:.16s}
+.card h3{transition:color .2s}.card:hover h3{color:var(--red)}
+.price{display:inline-block;transform-origin:left;animation:pulse 3s infinite}
+.tabs button{transition:transform .2s,background .2s,color .2s}.tabs button:hover{transform:translateY(-2px)}.tabs button.on{animation:pulse .4s}
+.vcard{animation:up .5s both,lf 4s ease-in-out infinite;transition:border-color .2s}.vcard:hover{border-color:var(--red)}
+.cb a{animation:wig 5s infinite;display:block}.cb a:nth-child(2){animation-delay:.4s}.cb a:nth-child(3){animation-delay:.8s}
+.fab .z{animation:ring 1.8s infinite}
+.od,.ln,.pol details{animation:up .4s both}
+.mask.show .sheet{animation:up .35s both}
+.hero h1{animation:up .7s .15s both}.hero .cta{animation:up .7s .3s both,glow 2.4s 1s infinite}
+.sl .s{transition:filter .2s}.sl .s:hover{filter:brightness(1.08)}
+.cartbtn{animation:pulse 3s 2s infinite}
+`;document.head.appendChild(st2);
+const wrapLogo=i=>{if(i.parentNode.classList.contains("lgw"))return;const w=document.createElement("span");w.className="lgw";i.replaceWith(w);w.appendChild(i)};
+document.querySelectorAll(".top>.wrap>img,.hero>img").forEach(wrapLogo);
+const wl0=$("wl");if(wl0)wl0.querySelectorAll(".lg").forEach(wrapLogo);
+/* hiện dần khi cuộn tới */
+if("IntersectionObserver"in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{threshold:.12});
+ document.querySelectorAll(".hero,.sl,.vs,.sec,.contact,.ft2,.ft").forEach(x=>{x.classList.add("rv");io.observe(x)})}
 })();
