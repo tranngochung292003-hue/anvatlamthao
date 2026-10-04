@@ -94,7 +94,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;paddin
 .art:before{content:"";position:absolute;width:62%;aspect-ratio:1;border-radius:50%;background:#ffffff88}
 .art span{position:relative;font-size:clamp(2.8rem,14vw,4rem);transition:transform .4s cubic-bezier(.3,1.6,.5,1)}
 .art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.c-nhanh{background:linear-gradient(145deg,#ffe3a3,#ffb84d)}.c-vat{background:linear-gradient(145deg,#ffd6c9,#ff9c80)}.c-uong{background:linear-gradient(145deg,#d9f0e4,#8fd3b0)}.c-combo{background:linear-gradient(145deg,#fff0a8,#ffc20e)}
+.art,.th{background:linear-gradient(145deg,#ffe3a3,#ffb84d)}.c-nhanh{background:linear-gradient(145deg,#ffe3a3,#ffb84d)}.c-vat{background:linear-gradient(145deg,#ffd6c9,#ff9c80)}.c-uong{background:linear-gradient(145deg,#d9f0e4,#8fd3b0)}.c-combo{background:linear-gradient(145deg,#fff0a8,#ffc20e)}
 .art em{position:absolute;top:8px;left:8px;z-index:1;background:var(--red);color:#fff;font:700 .66rem system-ui;font-style:normal;padding:2px 9px;border-radius:99px;animation:wob 2.6s infinite}
 @keyframes wob{10%,30%{transform:rotate(-6deg)}20%,40%{transform:rotate(6deg)}50%{transform:none}}
 .info{padding:10px 11px 11px;display:flex;flex-direction:column;flex:1}
@@ -221,6 +221,8 @@ html.lock .bl,html.lock .contact:before,html.lock .fl,html.lock .lgw:before,html
 .pol details p{color:var(--mute);font-size:.9rem;margin:0 0 10px;line-height:1.5}
 @media(min-width:760px){.grid{gap:16px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+.ck2{display:flex;gap:10px;align-items:flex-start;font-size:.85rem;color:var(--mute);margin-bottom:12px}
+.ck2 input{width:20px;height:20px;flex:none;accent-color:var(--red);margin-top:1px}
 </style>
 </head>
 <body>
@@ -324,7 +326,8 @@ html.lock .bl,html.lock .contact:before,html.lock .fl,html.lock .lgw:before,html
       <div class="pay"><label><input type="radio" name="pm" value="Tiền mặt" checked>Tiền mặt</label><label><input type="radio" name="pm" value="Chuyển khoản">Chuyển khoản</label></div>
       <button type="button" class="loc" id="loc">📍 Chia sẻ vị trí giao hàng (bắt buộc)</button>
       <p class="hint" id="lh">Cần cho phép vị trí để shipper tìm đúng nơi giao. Thông tin chỉ dùng để giao hàng.</p>
-      <button class="big" id="send" disabled>Đặt hàng</button>
+    <label class="ck2"><input type="checkbox" id="agree"><span>Tôi đồng ý cho quán xử lý họ tên, số điện thoại, địa chỉ và vị trí để giao hàng theo <a href="#" data-pol="privacy" style="color:var(--red)">Chính sách bảo mật</a>.</span></label>
+<button class="big" id="send" disabled>Đặt hàng</button>
     </form>
   </div>
 </div>
@@ -366,7 +369,10 @@ let P=[ // menu mẫu; khi admin thêm món, web dùng menu trên Google Sheet
  {id:13,n:"Combo ăn vặt",d:"Cá viên + nem rán + trà đào",p:59000,o:67000,c:"combo",e:"🍱",t:"Tiết kiệm"},
  {id:14,n:"Combo cặp đôi",d:"2 burger + khoai + 2 nước",p:89000,o:105000,c:"combo",e:"💕",t:"Tiết kiệm"}
 ];
-const T=[["all","Tất cả"],["nhanh","Đồ ăn nhanh"],["vat","Đồ ăn vặt"],["uong","Đồ uống"],["combo","Combo"]];
+const LBL={nhanh:"Đồ ăn nhanh",vat:"Đồ ăn vặt",uong:"Đồ uống",combo:"Combo"};let T=[];
+function buildTabs(){const cs=[...new Set(P.map(x=>x.c).filter(Boolean))];if(cur!="all"&&!cs.includes(cur))cur="all";
+  T=[["all","Tất cả"],...cs.map(c=>[c,LBL[c]||c])];
+  $("tabs").innerHTML='<div class="in"><span class="ind"></span>'+T.map(t=>`<button data-c="${esc(t[0])}" class="${t[0]==cur?"on":""}">${esc(t[1])}</button>`).join("")+"</div>";ind()}
 
 /* ===== TIỆN ÍCH ===== */
 const $=id=>document.getElementById(id),fmt=v=>Number(v||0).toLocaleString("vi-VN")+"đ";
@@ -560,7 +566,7 @@ document.addEventListener("click",async e=>{
     toast(ok?"Cảm ơn bạn đã đánh giá! ⭐":"Không gửi được, hoặc bạn đã đánh giá đơn này rồi.");close_("md")}});
 
 /* ===== VỊ TRÍ + GỬI ĐƠN ===== */
-function ready(){$("send").disabled=busy||tooFar()||!(pos&&isOpen()&&$("f").checkValidity()&&(!$("sch").value||$("stm").value))}
+function ready(){$("send").disabled=busy||tooFar()||!(pos&&isOpen()&&$("agree").checked&&$("f").checkValidity()&&(!$("sch").value||$("stm").value))}
 $("f").addEventListener("input",ready);
 const LOC0="📍 Chia sẻ vị trí giao hàng (bắt buộc)";
 $("loc").onclick=()=>{
@@ -595,7 +601,7 @@ if(APPS_SCRIPT_URL)fetch(APPS_SCRIPT_URL+"?a=menu").then(r=>r.json()).then(j=>{
   if(j.cfg){Object.assign(CFG,{fee:+j.cfg.fee,free:+j.cfg.free,open:+j.cfg.open,close:+j.cfg.close,paused:!!j.cfg.paused,notice:j.cfg.notice||"",shopLat:+j.cfg.shopLat||0,shopLng:+j.cfg.shopLng||0,freeKm:+j.cfg.freeKm||0,perKm:+j.cfg.perKm||0,maxKm:+j.cfg.maxKm||0});info()}
   if(Array.isArray(j.vouchers)){VC=j.vouchers;sv("alt_vc",VC);drawVc()}
   if(j.products&&j.products.length){P=j.products;sv("alt_menu",P)}
-  cleanCart();sv("alt_cart",cart);menu();sync();if($("co").classList.contains("show"))lines()}).catch(()=>{});
+  cleanCart();sv("alt_cart",cart);buildTabs();menu();sync();if($("co").classList.contains("show"))lines()}).catch(()=>{toast("Không tải được thực đơn mới, đang dùng bản đã lưu.",3500)});
 if("serviceWorker"in navigator&&location.protocol=="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
 setInterval(()=>{if($("md").classList.contains("show")&&!document.querySelector("#sendRv")&&!document.hidden)showOrders()},20000);
 </script>
