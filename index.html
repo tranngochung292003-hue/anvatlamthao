@@ -178,6 +178,7 @@ body.has-cart .bar{transform:none}
 .od{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px}
 .od small{display:block;color:var(--mute)}.od b{color:var(--red)}
 .od .st{display:inline-block;margin-top:4px;padding:2px 10px;border-radius:99px;background:var(--sun);color:var(--ink);font-weight:700;font-size:.8rem}
+.pg2{display:flex;gap:4px;margin:6px 0}.pg2 i{flex:1;height:6px;border-radius:3px;background:var(--line)}.pg2 i.on{background:#2e8b4a}
 .stars{margin:4px 0 6px}
 .stars button{font-size:1.7rem;line-height:1;color:#ccc;padding:0 3px}.stars button.on{color:var(--sun)}
 #slide{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-200%);z-index:90;background:var(--sun);color:var(--ink);font-weight:800;padding:12px 22px;border-radius:99px;box-shadow:0 12px 28px #0006;border:2px solid var(--ink);transition:transform .8s cubic-bezier(.2,1.4,.4,1);width:max-content;max-width:92vw;text-align:center}
@@ -337,15 +338,14 @@ html.lock .bl,html.lock .contact:before,html.lock .fl,html.lock .lgw:before,html
 <details id="pol-about"><summary>Về cửa hàng</summary><p><b>Ăn Vặt Lâm Thao</b> chuyên đồ ăn nhanh, ăn vặt, đồ uống và combo, chế biến khi có đơn và giao tận nơi. Hotline/Zalo: 0978 472 704. Khu vực phục vụ và giờ nhận đơn được hiển thị ở chân trang.</p></details>
 <details id="pol-ship"><summary>Chính sách giao hàng</summary><p>Giao tận nơi trong khu vực phục vụ. Phí giao, mức miễn phí giao và phụ phí theo khoảng cách (nếu có) được hiển thị rõ trong giỏ hàng trước khi đặt.</p><p>Quý khách vui lòng cung cấp đúng địa chỉ, chia sẻ vị trí và giữ điện thoại để shipper liên hệ. Thời gian giao dự kiến sẽ được quán báo khi xác nhận đơn và có thể lâu hơn vào giờ cao điểm hoặc thời tiết xấu. Đơn hẹn giờ được giao theo khung giờ khách chọn.</p></details>
 <details id="pol-pay"><summary>Phương thức thanh toán</summary><p><b>Tiền mặt</b> khi nhận hàng. <b>Chuyển khoản</b> qua mã VietQR: MB Bank · TRAN NGOC HUNG · 0978472704, nội dung ghi đúng mã đơn. Với chuyển khoản, quán xác nhận sau khi nhận được tiền.</p></details>
-<details id="pol-cancel"><summary>Hủy đơn &amp; đổi trả</summary><p>Quý khách gọi hotline sớm để hủy đơn trước khi quán bắt đầu chế biến. Với đơn đã chế biến, quán có thể không nhận hủy.</p><p>Nếu món giao sai, thiếu hoặc có vấn đề về chất lượng, vui lòng liên hệ trong ngày kèm hình ảnh để được đổi món hoặc hoàn tiền. Tiền chuyển khoản sẽ được hoàn về đúng tài khoản đã thanh toán.</p></details>
-<details id="pol-promo"><summary>Voucher &amp; điểm thưởng</summary><p>Mỗi đơn dùng tối đa một mã giảm giá, không cộng dồn với mã khác. Mã có thể có điều kiện đơn tối thiểu, mức giảm tối đa, hạn sử dụng và số lượt dùng giới hạn.</p><p>Khách có tài khoản được tích 1 điểm cho mỗi 1.000đ của đơn đã giao thành công. Quán có quyền điều chỉnh hoặc kết thúc chương trình khuyến mãi và sẽ thông báo trên website.</p></details>
+<details id="pol-cancel"><summary>Hủy đơn &amp; đổi trả</summary><p>Quý khách có thể tự hủy đơn trong mục "Đơn của tôi" khi quán chưa xác nhận, hoặc gọi hotline sớm. Với đơn đã chế biến, quán có thể không nhận hủy.</p><p>Nếu món giao sai, thiếu hoặc có vấn đề về chất lượng, vui lòng liên hệ trong ngày kèm hình ảnh để được đổi món hoặc hoàn tiền. Tiền chuyển khoản sẽ được hoàn về đúng tài khoản đã thanh toán.</p></details>
+<details id="pol-promo"><summary>Voucher &amp; điểm thưởng</summary><p>Mỗi đơn dùng tối đa một mã giảm giá, không cộng dồn với mã khác. Mã có thể có điều kiện đơn tối thiểu, mức giảm tối đa, hạn sử dụng, số lượt dùng giới hạn và giới hạn số lần dùng trên mỗi số điện thoại.</p><p>Khách có tài khoản được tích 1 điểm cho mỗi 1.000đ của đơn đã giao thành công. Quán có quyền điều chỉnh hoặc kết thúc chương trình khuyến mãi và sẽ thông báo trên website.</p></details>
 <details id="pol-privacy"><summary>Chính sách bảo mật</summary><p>Chúng tôi thu thập họ tên, số điện thoại, địa chỉ, vị trí giao hàng và lịch sử đơn chỉ để xử lý đơn, giao hàng và chăm sóc khách. Mật khẩu tài khoản được mã hóa, thông tin không được bán hoặc chia sẻ cho bên thứ ba ngoài phục vụ giao nhận. Quý khách có thể yêu cầu xóa tài khoản và dữ liệu bằng cách liên hệ hotline.</p></details>
 <details id="pol-terms"><summary>Điều khoản sử dụng</summary><p>Việc đặt hàng đồng nghĩa quý khách đồng ý với các chính sách trên. Quán có quyền từ chối hoặc hủy đơn khi thông tin không chính xác, địa chỉ ngoài phạm vi giao hoặc không liên lạc được. Giá và thực đơn có thể thay đổi; hình ảnh chỉ mang tính minh họa.</p></details>
 </div></div>
 
 <script>
 /* ===== CẤU HÌNH ===== */
-/* LOGO: đặt file logo.webp cạnh index.html, HOẶC thay dòng dưới bằng dòng const LOGO="data:image/webp;base64,..." cũ của bạn */
 const LOGO="logo.webp";
 const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbyFkloT5OSrStEVY7vk2M1PTfxVerxJG-BzPUBThPqHse2LZOllHMigtpmaqN4ofXYQRA/exec";
 const BANK={id:"MB",acc:"0978472704",name:"TRAN NGOC HUNG",label:"MB Bank"};
@@ -375,7 +375,9 @@ const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;"
 const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(_){return d}};
 const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}};
 const calm=matchMedia("(prefers-reduced-motion:reduce)").matches;
-const isOpen=()=>{const h=new Date().getHours();return !CFG.paused&&h>=CFG.open&&h<CFG.close};
+/* giờ mở cửa tính theo múi giờ Việt Nam, không phụ thuộc đồng hồ máy khách */
+const vnHour=()=>{try{return +new Intl.DateTimeFormat("en-GB",{hour:"numeric",hour12:false,timeZone:"Asia/Ho_Chi_Minh"}).format(new Date())%24}catch(_){return new Date().getHours()}};
+const isOpen=()=>{const h=vnHour();return !CFG.paused&&h>=CFG.open&&h<CFG.close};
 const post=async o=>(await fetch(APPS_SCRIPT_URL,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(o)})).json();
 const PHONE_RE=/^(0|\+84)[35789][0-9]{8}$/;
 document.querySelectorAll("[data-logo]").forEach(i=>i.src=LOGO);$("fav").href=LOGO;
@@ -480,15 +482,21 @@ addEventListener("keydown",e=>{if(e.key=="Escape")["co","md","ac","qr","pol","op
 $("start").onclick=()=>{close_("welcome");confetti(50);setTimeout(()=>toast("🎉 Chào mừng bạn đến với Ăn Vặt Lâm Thao!",4500),300)};
 document.addEventListener("click",e=>{const p=e.target.closest("[data-pol]");if(!p)return;document.querySelectorAll("#pol details").forEach(d=>d.open=d.id=="pol-"+p.dataset.pol);open_("pol");setTimeout(()=>{const d=$("pol-"+p.dataset.pol);if(d)d.scrollIntoView({block:"start"})},150)});
 
-/* mã giảm giá + hẹn giờ */
-async function applyCode(c){c=String(c||"").trim().toUpperCase();if(!c)return;$("cdb").disabled=true;
-  try{const t=await(await fetch(APPS_SCRIPT_URL+"?a=code&c="+encodeURIComponent(c)+"&s="+totals().s)).text();let j;try{j=JSON.parse(t)}catch(_){throw new Error("parse")}
-    if(j.ok&&j.code){cpn={code:j.code,type:j.type,value:j.value,min:j.min,cap:j.cap};toast("Đã áp dụng mã "+j.code+" ✔")}
-    else if(j.msg){cpn=null;toast(j.msg)}
-    else toast("Máy chủ chưa hỗ trợ kiểm tra mã. Hãy triển khai lại Code.gs bản mới nhất."+(j.error?" ("+j.error+")":""),6500);
-    lines();sync()}
-  catch(err){toast(err.message=="parse"?"Máy chủ trả về lỗi. Hãy chạy hàm authorize trong Apps Script rồi triển khai Phiên bản mới.":"Không kết nối được máy chủ, thử lại nhé.",6500)}
-  $("cdb").disabled=false}
+/* mã giảm giá: có timeout, tự thử lại, báo lỗi đúng nguyên nhân */
+async function applyCode(c){c=String(c||"").trim().toUpperCase();
+  if(!c)return toast("Nhập mã giảm giá trước nhé");
+  if(!totals().q)return toast("Hãy chọn món trước khi dùng mã");
+  $("cdb").disabled=true;$("cdb").textContent="...";
+  const url=APPS_SCRIPT_URL+"?a=code&c="+encodeURIComponent(c)+"&s="+totals().s+"&p="+encodeURIComponent($("ph").value.trim());
+  let j=null,err="";
+  for(let i=0;i<2&&!j;i++){const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),12000);
+    try{j=JSON.parse(await(await fetch(url,{signal:ctl.signal})).text())}
+    catch(e){j=null;err=e.name=="AbortError"?"timeout":e instanceof SyntaxError?"parse":"net"}
+    clearTimeout(t)}
+  if(j&&j.ok&&j.code){cpn={code:j.code,type:j.type,value:j.value,min:j.min,cap:j.cap};toast("Đã áp dụng mã "+j.code+" ✔")}
+  else if(j&&j.msg){cpn=null;toast(j.msg)}
+  else toast(err=="timeout"?"Máy chủ phản hồi chậm, thử lại nhé.":err=="net"?"Máy chủ chưa sẵn sàng. Kiểm tra lại bản triển khai Apps Script.":"Máy chủ trả về lỗi, kiểm tra Code.gs.",6000);
+  $("cdb").disabled=false;$("cdb").textContent="Áp dụng";lines();sync()}
 $("cdb").onclick=()=>applyCode($("cdi").value);
 let VC=ld("alt_vc",[]),vi=0,pendCode="";
 function showVf(){if(!VC.length)return;const v=VC[vi%VC.length],t=$("vft");t.classList.add("o");setTimeout(()=>{t.textContent=`Mã ${v.code}: ${v.s}`;t.classList.remove("o")},280)}
@@ -524,10 +532,11 @@ $("acB").onsubmit=async e=>{e.preventDefault();const reg=accMode=="reg",ph=$("rp
   catch(_){w.textContent="Không kết nối được máy chủ."}btn.disabled=false};
 acLabel();
 
-/* ===== ĐƠN CỦA TÔI + ĐÁNH GIÁ + ĐẶT LẠI ===== */
+/* ===== ĐƠN CỦA TÔI + ĐÁNH GIÁ + ĐẶT LẠI + HỦY ĐƠN ===== */
+const prog=s=>{const L=["Mới","Đã xác nhận","Đang giao","Đã giao"],i=L.indexOf(s=="Đã gửi"?"Mới":s);return i<0?"":`<div class="pg2">${L.map((x,k)=>`<i class="${k<=i?"on":""}"></i>`).join("")}</div>`};
 async function showOrders(){open_("md");let st={};OL=ld("alt_orders",[]);
   const draw=()=>{$("mb").innerHTML=OL.length?OL.map((o,i)=>{const s=o.status||st[o.code]||"Đã gửi",ph=o.phone||(ses&&ses.phone)||"";
-    return `<div class="od"><b>Mã đơn ${esc(o.code)}</b><small>${esc(o.time)} · ${esc(o.pay)}${o.paid?" · ✅ Đã thanh toán":""}</small><div>${esc(o.items).replace(/ \| /g,"<br>")}</div><b>${fmt(+o.total||0)}</b><small>Trạng thái: <span class="st">${esc(s)}</span></small><div class="oa">${s=="Đã giao"&&ph?`<button class="mini" data-rv="${i}">⭐ Đánh giá</button>`:""}${o.lines&&o.lines.length?`<button class="mini" data-re="${i}">🔁 Đặt lại</button>`:""}${o.pay=="Chuyển khoản"&&!o.paid&&s!="Đã hủy"&&s!="Đã giao"?`<button class="mini" data-qr="${i}">💳 Mã QR</button>`:""}</div></div>`}).join(""):'<p style="text-align:center;color:var(--mute);padding:24px 0">Bạn chưa có đơn nào.</p>'};
+    return `<div class="od"><b>Mã đơn ${esc(o.code)}</b><small>${esc(o.time)} · ${esc(o.pay)}${o.paid?" · ✅ Đã thanh toán":""}</small><div>${esc(o.items).replace(/ \| /g,"<br>")}</div><b>${fmt(+o.total||0)}</b><small>Trạng thái: <span class="st">${esc(s)}</span></small>${prog(s)}<div class="oa">${s=="Đã giao"&&ph?`<button class="mini" data-rv="${i}">⭐ Đánh giá</button>`:""}${o.lines&&o.lines.length?`<button class="mini" data-re="${i}">🔁 Đặt lại</button>`:""}${o.pay=="Chuyển khoản"&&!o.paid&&s!="Đã hủy"&&s!="Đã giao"?`<button class="mini" data-qr="${i}">💳 Mã QR</button>`:""}${(s=="Mới"||s=="Đã gửi")&&ph?`<button class="mini" data-cx="${i}" style="background:#fff;border:1px solid var(--line)">Hủy đơn</button>`:""}</div></div>`}).join(""):'<p style="text-align:center;color:var(--mute);padding:24px 0">Bạn chưa có đơn nào.</p>'};
   draw();
   try{if(ses){const j=await me();if(j&&j.ok){OL=j.orders;draw()}}else if(OL.length){st=await(await fetch(APPS_SCRIPT_URL+"?a=status&codes="+encodeURIComponent(OL.map(o=>o.code).join(",")))).json();draw()}}catch(_){}}
 $("myOrders").onclick=showOrders;
@@ -536,6 +545,10 @@ function showQR(code,total){const u=`https://img.vietqr.io/image/${BANK.id}-${BA
   $("qrB").innerHTML=`<img class="qri" src="${u}" alt="Mã QR chuyển khoản"><p style="text-align:center"><b>${BANK.label}</b> · ${BANK.acc}<br>${BANK.name}<br>Số tiền: <b style="color:var(--red)">${fmt(total)}</b><br>Nội dung: <b>${esc(code)}</b></p><button class="big" id="cpy" style="height:46px;margin:8px 0">Sao chép số tài khoản</button><p class="hint">Quét mã bằng app ngân hàng và giữ nguyên nội dung chuyển khoản. Quán sẽ xác nhận khi nhận được tiền.</p>`;open_("qr")}
 $("qrB").onclick=e=>{if(e.target.closest("#cpy")){(navigator.clipboard?navigator.clipboard.writeText(BANK.acc):Promise.reject()).then(()=>toast("Đã sao chép số tài khoản ✔",2000)).catch(()=>toast("Số tài khoản: "+BANK.acc,4000))}};
 document.addEventListener("click",async e=>{
+  const cx=e.target.closest("[data-cx]");
+  if(cx){const o=OL[+cx.dataset.cx];if(!o||!confirm("Hủy đơn "+o.code+"?"))return;cx.disabled=true;
+    try{const j=await post({action:"cancelOrder",code:o.code,phone:o.phone||(ses&&ses.phone)});toast(j.ok?"Đã hủy đơn "+o.code:"Quán đã nhận đơn, vui lòng gọi hotline để hủy.",5000)}catch(_){toast("Không kết nối được máy chủ.")}
+    showOrders();return}
   const re=e.target.closest("[data-re]");if(re){const o=OL[+re.dataset.re];let n=0;(o.lines||[]).forEach(l=>{const i=kp(l.k);if(i&&!i.p.so){cart[l.k]=Math.min(99,(cart[l.k]||0)+l.q);n++}});sv("alt_cart",cart);menu();sync();close_("md");toast(n?"Đã thêm "+n+" món vào giỏ 🛒":"Các món này hiện không còn bán.");return}
   const qr=e.target.closest("[data-qr]");if(qr){const o=OL[+qr.dataset.qr];close_("md");showQR(o.code,+o.total);return}
   const r=e.target.closest("[data-rv]");
