@@ -9,7 +9,15 @@
 <meta property="og:description" content="Đồ ăn nhanh, ăn vặt, đồ uống và combo giao tận nơi.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#3a150e">
+<meta property="og:url" content="https://anvatlamthao.xyz/">
+<meta property="og:image" content="https://anvatlamthao.xyz/logo.webp">
+<meta property="og:locale" content="vi_VN">
+<link rel="canonical" href="https://anvatlamthao.xyz/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FastFoodRestaurant","name":"Ăn Vặt Lâm Thao","url":"https://anvatlamthao.xyz/","telephone":"+84978472704","servesCuisine":"Ăn vặt, đồ ăn nhanh, đồ uống","areaServed":"Lâm Thao","paymentAccepted":"Tiền mặt, Chuyển khoản","priceRange":"₫"}</script>
 <link rel="icon" id="fav">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <style>
 :root{--ink:#3a150e;--sun:#ffc20e;--org:#ff8a00;--red:#e0301f;--cream:#fff8ea;--line:#f0e2c8;--mute:#7b6258;--h:56px}
 *{box-sizing:border-box;margin:0}
@@ -178,7 +186,16 @@ body.has-cart .bar{transform:none}
 .cf{position:fixed;top:30vh;width:9px;height:14px;border-radius:2px;z-index:95;pointer-events:none}
 html.lock,html.lock body{overflow:hidden}
 html.lock .bl,html.lock .contact:before,html.lock .fl,html.lock .lgw:before,html.lock .lgw img,html.lock .mq div,html.lock .fab a,html.lock .fab a:before,html.lock .why span,html.lock .art em,html.lock .ic:after,html.lock .cta:after,html.lock .bar button:after,html.lock .br small{animation-play-state:paused}
+.sheet{-webkit-user-select:text;user-select:text}
 .rt{display:block;color:#b88700;font-weight:700;font-size:.74rem;margin-top:1px}
+.card.so{opacity:.65}.add:disabled{background:#ddd;color:#888;cursor:not-allowed}
+.cprow{display:flex;gap:8px}.cprow .inp{flex:1;margin-bottom:10px;text-transform:uppercase}.ap{flex:none;height:46px;padding:0 16px;border-radius:14px;background:var(--ink);color:#fff;font-weight:700}
+.og{margin-bottom:12px}.og b{display:block;margin-bottom:6px}.og label{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:6px;font-weight:600;cursor:pointer}
+.og label:has(input:checked){border-color:var(--org);background:#fff3dc}.og input{accent-color:var(--red);width:20px;height:20px}.og small{color:var(--mute);font-weight:400}
+.tabs2{display:flex;gap:6px;margin-bottom:12px}.tabs2 button{flex:1;height:42px;border-radius:12px;background:#fff;border:2px solid var(--line);font-weight:700}.tabs2 button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.oa{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.mini{height:38px;padding:0 14px;border-radius:99px;background:var(--sun);font-weight:700;font-size:.88rem}
+.qri{display:block;width:100%;max-width:300px;margin:0 auto 10px;border-radius:14px;background:#fff}
+.pol h3{margin:12px 0 2px;font-size:1rem}.pol p{color:var(--mute);font-size:.92rem}
 @media(min-width:760px){.grid{gap:16px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
 </style>
@@ -191,6 +208,7 @@ html.lock .bl,html.lock .contact:before,html.lock .fl,html.lock .lgw:before,html
 <header class="top" id="top"><div class="wrap">
   <img data-logo alt="Logo Ăn Vặt Lâm Thao">
   <div class="br"><b>Ăn Vặt Lâm Thao</b><small>Đặt Nhanh - Giao Nhanh</small></div>
+  <button class="ob" id="acBtn" aria-label="Tài khoản">👤<span class="ot">&nbsp;<span id="acN">Đăng nhập</span></span></button>
   <button class="ob" id="myOrders" aria-label="Đơn của tôi">📦<span class="ot">&nbsp;Đơn của tôi</span></button>
   <button class="cartbtn" id="cartBtn" aria-label="Mở giỏ hàng"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 11h10.2L20 8H6.2"/><circle cx="9" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/></svg><i id="cnt">0</i></button>
 </div></header>
@@ -232,7 +250,7 @@ html.lock .bl,html.lock .contact:before,html.lock .fl,html.lock .lgw:before,html
   </div>
   <p class="note" id="area"></p>
  </section>
- <footer><img data-logo alt="">© 2026 Ăn Vặt Lâm Thao · Đặt Nhanh - Giao Nhanh<br>anvatlamthao.xyz</footer>
+ <footer><img data-logo alt="">© 2026 Ăn Vặt Lâm Thao · Đặt Nhanh - Giao Nhanh<br>anvatlamthao.xyz<br><button id="polBtn" style="text-decoration:underline;color:var(--mute);margin-top:6px">Chính sách &amp; thông tin cửa hàng</button></footer>
 </main>
 
 <div class="fab">
@@ -258,6 +276,7 @@ html.lock .bl,html.lock .contact:before,html.lock .fl,html.lock .lgw:before,html
     <div class="lines" id="lines"></div>
     <div class="sum"><span>Tạm tính</span><span id="sub"></span></div>
     <div class="sum"><span>Phí giao hàng</span><span id="fee"></span></div>
+    <div class="sum" id="dl" style="display:none;color:var(--red)"><span>Giảm giá</span><span id="dv"></span></div>
     <div class="sum tt"><span>Tổng cộng</span><b id="tot"></b></div>
     <p class="warn" id="fw"></p>
     <form id="f" novalidate autocomplete="on">
@@ -266,6 +285,9 @@ html.lock .bl,html.lock .contact:before,html.lock .fl,html.lock .lgw:before,html
       <input class="inp" id="ph" type="tel" required pattern="(0|\+84)[35789][0-9]{8}" maxlength="12" inputmode="tel" autocomplete="tel" placeholder="Số điện thoại" aria-label="Số điện thoại">
       <input class="inp" id="ad" required minlength="5" maxlength="150" autocomplete="street-address" placeholder="Địa chỉ nhận hàng" aria-label="Địa chỉ nhận hàng">
       <input class="inp" id="nt" maxlength="200" placeholder="Ghi chú (không bắt buộc)" aria-label="Ghi chú">
+      <div class="cprow"><input class="inp" id="cdi" maxlength="20" placeholder="Mã giảm giá (nếu có)" autocapitalize="characters"><button type="button" class="ap" id="cdb">Áp dụng</button></div>
+      <select class="inp" id="sch" aria-label="Thời gian giao"><option value="">Giao ngay khi xong</option><option value="t">Hẹn giờ giao</option></select>
+      <input class="inp" id="stm" type="time" style="display:none" aria-label="Giờ giao">
       <div class="pay"><label><input type="radio" name="pm" value="Tiền mặt" checked>Tiền mặt</label><label><input type="radio" name="pm" value="Chuyển khoản">Chuyển khoản</label></div>
       <button type="button" class="loc" id="loc">📍 Chia sẻ vị trí giao hàng (bắt buộc)</button>
       <p class="hint" id="lh">Cần cho phép vị trí để shipper tìm đúng nơi giao. Thông tin chỉ dùng để giao hàng.</p>
@@ -276,14 +298,26 @@ html.lock .bl,html.lock .contact:before,html.lock .fl,html.lock .lgw:before,html
 
 <div class="mask" id="md" role="dialog" aria-modal="true"><div class="sheet" tabindex="-1"><h2><span>Đơn của tôi</span><button class="x" id="closeMd" aria-label="Đóng">✕</button></h2><div id="mb"></div></div></div>
 
+<div class="mask" id="op" role="dialog" aria-modal="true"><div class="sheet" tabindex="-1"><h2><span id="opT"></span><button class="x" id="closeOp" aria-label="Đóng">✕</button></h2><div id="opB"></div><button class="big" id="opAdd" style="margin-top:6px"></button></div></div>
+<div class="mask" id="ac" role="dialog" aria-modal="true"><div class="sheet" tabindex="-1"><h2><span>Tài khoản</span><button class="x" id="closeAc" aria-label="Đóng">✕</button></h2><div id="acB"></div></div></div>
+<div class="mask" id="qr" role="dialog" aria-modal="true"><div class="sheet" tabindex="-1"><h2><span>Chuyển khoản</span><button class="x" id="closeQr" aria-label="Đóng">✕</button></h2><div id="qrB"></div></div></div>
+<div class="mask" id="pol" role="dialog" aria-modal="true"><div class="sheet pol" tabindex="-1"><h2><span>Chính sách &amp; thông tin</span><button class="x" id="closePol" aria-label="Đóng">✕</button></h2>
+<h3>Thông tin cửa hàng</h3><p>Ăn Vặt Lâm Thao · Hotline/Zalo: 0978 472 704 · Khu vực phục vụ: Lâm Thao. Nhận đơn theo giờ hiển thị trên trang.</p>
+<h3>Giao hàng</h3><p>Giao tận nơi trong khu vực phục vụ. Phí giao và mức miễn phí giao hiển thị ở giỏ hàng. Đơn hẹn giờ được giao theo giờ khách chọn. Thời gian giao có thể thay đổi khi đông đơn hoặc thời tiết xấu.</p>
+<h3>Thanh toán</h3><p>Tiền mặt khi nhận hàng, hoặc chuyển khoản qua mã QR (MB Bank). Với chuyển khoản, quán xác nhận sau khi nhận được tiền.</p>
+<h3>Hủy đơn &amp; đổi trả</h3><p>Quý khách gọi hotline sớm để hủy đơn trước khi quán bắt đầu chế biến. Nếu món giao sai hoặc có vấn đề về chất lượng, vui lòng liên hệ ngay trong ngày để được hỗ trợ đổi hoặc hoàn tiền.</p>
+<h3>Bảo mật thông tin</h3><p>Chúng tôi chỉ dùng họ tên, số điện thoại, địa chỉ và vị trí để giao hàng và chăm sóc khách. Mật khẩu tài khoản được mã hóa, không chia sẻ cho bên thứ ba.</p>
+</div></div>
+
 <script>
 /* ===== CẤU HÌNH ===== */
 /* LOGO: đặt file logo.webp cạnh index.html, HOẶC thay dòng dưới bằng dòng const LOGO="data:image/webp;base64,..." cũ của bạn */
 const LOGO="logo.webp";
 const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbyFkloT5OSrStEVY7vk2M1PTfxVerxJG-BzPUBThPqHse2LZOllHMigtpmaqN4ofXYQRA/exec";
-const CFG={fee:10000,free:100000,open:0,close:24,area:"Lâm Thao"};
-let P=[ // menu mẫu; khi admin thêm món, web sẽ dùng menu trên Google Sheet
- {id:1,n:"Khoai tây chiên",d:"Giòn rụm, lắc phô mai",p:25000,c:"nhanh",e:"🍟",t:"Bán chạy"},
+const BANK={id:"MB",acc:"0978472704",name:"TRAN NGOC HUNG",label:"MB Bank"};
+const CFG={fee:10000,free:100000,open:0,close:24,area:"Lâm Thao",paused:false,notice:"",shopLat:0,shopLng:0,freeKm:3,perKm:0,maxKm:0};
+let P=[ // menu mẫu; khi admin thêm món, web dùng menu trên Google Sheet
+ {id:1,n:"Khoai tây chiên",d:"Giòn rụm, lắc phô mai",p:25000,c:"nhanh",e:"🍟",t:"Bán chạy",op:"Vị:Phô mai|BBQ|Rong biển"},
  {id:2,n:"Gà rán giòn",d:"3 miếng gà rán, sốt cay",p:45000,c:"nhanh",e:"🍗"},
  {id:3,n:"Burger bò phô mai",d:"Bò nướng, phô mai tan chảy",p:35000,c:"nhanh",e:"🍔"},
  {id:4,n:"Xúc xích nướng",d:"Nướng than thơm lừng",p:15000,c:"nhanh",e:"🌭"},
@@ -291,8 +325,8 @@ let P=[ // menu mẫu; khi admin thêm món, web sẽ dùng menu trên Google Sh
  {id:6,n:"Cá viên chiên",d:"Chiên vàng, chấm tương ớt",p:20000,c:"vat",e:"🍢"},
  {id:7,n:"Nem chua rán",d:"Nóng giòn, ăn là ghiền",p:25000,c:"vat",e:"🍘"},
  {id:8,n:"Bắp xào",d:"Bắp, bơ, tép khô",p:18000,c:"vat",e:"🌽"},
- {id:9,n:"Trà sữa trân châu",d:"Đậm vị, trân châu dai",p:25000,c:"uong",e:"🧋",t:"Bán chạy"},
- {id:10,n:"Trà đào cam sả",d:"Mát lạnh, thơm sả",p:22000,c:"uong",e:"🍑"},
+ {id:9,n:"Trà sữa trân châu",d:"Đậm vị, trân châu dai",p:25000,c:"uong",e:"🧋",t:"Bán chạy",op:"Size:M|L+5000;Đường:100%|70%|50%;Đá:Nhiều|Ít|Không"},
+ {id:10,n:"Trà đào cam sả",d:"Mát lạnh, thơm sả",p:22000,c:"uong",e:"🍑",op:"Size:M|L+5000;Đường:100%|70%|50%"},
  {id:11,n:"Nước cam ép",d:"Cam tươi vắt tại chỗ",p:20000,c:"uong",e:"🍊"},
  {id:12,n:"Combo bạn bè",d:"Gà rán + khoai + 2 trà sữa",p:99000,o:120000,c:"combo",e:"🎉",t:"Tiết kiệm"},
  {id:13,n:"Combo ăn vặt",d:"Cá viên + nem rán + trà đào",p:59000,o:67000,c:"combo",e:"🍱",t:"Tiết kiệm"},
@@ -308,12 +342,23 @@ const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(_){retu
 const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}};
 const calm=matchMedia("(prefers-reduced-motion:reduce)").matches;
 const isOpen=()=>{const h=new Date().getHours();return !CFG.paused&&h>=CFG.open&&h<CFG.close};
+const post=async o=>(await fetch(APPS_SCRIPT_URL,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(o)})).json();
+const PHONE_RE=/^(0|\+84)[35789][0-9]{8}$/;
 document.querySelectorAll("[data-logo]").forEach(i=>i.src=LOGO);$("fav").href=LOGO;
-let cur="all",kw="",cart=ld("alt_cart",{}),pos=null,tm,busy=false;
-function cleanCart(){Object.keys(cart).forEach(k=>{if(!P.some(p=>p.id==k)||!(cart[k]>0))delete cart[k];else cart[k]=Math.min(99,cart[k]|0)})}
+let cur="all",kw="",cart=ld("alt_cart",{}),pos=null,tm,busy=false,cpn=null,ses=ld("alt_ses",null),accMode="login",OL=[];
+
+/* tùy chọn món: "Size:M|L+5000;Đường:100%|70%" */
+const parseOp=s=>String(s||"").split(";").map(g=>{const i=g.indexOf(":");if(i<1)return null;return{g:g.slice(0,i).trim(),c:g.slice(i+1).split("|").map(c=>{c=c.trim();const m=c.match(/^(.*?)\+(\d+)$/);return m?{n:m[1].trim(),p:+m[2]}:{n:c,p:0}}).filter(c=>c.n)}}).filter(g=>g&&g.c.length);
+/* khóa giỏ: "id" hoặc "id~Nhóm:Lựa chọn,Nhóm:Lựa chọn" */
+function kp(k){const a=String(k).split("~"),id=a.shift(),p=P.find(x=>x.id==id);if(!p)return null;const sel=a.join("~"),lab=[];let price=p.p;
+  parseOp(p.op).forEach(g=>{const t=sel.split(",").find(x=>x.indexOf(g.g+":")==0),nm=t?t.slice(g.g.length+1):g.c[0].n,c=g.c.find(c=>c.n==nm)||g.c[0];price+=c.p;lab.push(c.n)});
+  return{p,price,lab,name:p.n+(lab.length?` (${lab.join(", ")})`:"")}}
+const cnt=id=>Object.keys(cart).reduce((a,k)=>a+(k==id||k.indexOf(id+"~")==0?cart[k]:0),0);
+function cleanCart(){Object.keys(cart).forEach(k=>{const i=kp(k);if(!i||i.p.so||!(cart[k]>0))delete cart[k];else cart[k]=Math.min(99,cart[k]|0)})}
 {const mc=ld("alt_menu",null);if(Array.isArray(mc)&&mc.length)P=mc}
 cleanCart();
 
+/* khóa cuộn nền nhẹ, không gây đơ */
 let lockN=0;
 function lock(){if(lockN++===0)document.documentElement.classList.add("lock")}
 function unlock(){if(lockN>0&&--lockN===0)document.documentElement.classList.remove("lock")}
@@ -324,7 +369,6 @@ lock();
 ["gesturestart","gesturechange","gestureend"].forEach(t=>document.addEventListener(t,e=>e.preventDefault()));
 document.addEventListener("contextmenu",e=>{if(e.target.tagName=="IMG")e.preventDefault()});
 document.addEventListener("dragstart",e=>e.preventDefault());
-
 function toast(t,ms=4000){const s=$("slide");s.textContent=t;clearTimeout(tm);requestAnimationFrame(()=>s.classList.add("in"));tm=setTimeout(()=>s.classList.remove("in"),ms)}
 function confetti(n=60){if(calm)return;const C=["#ffc20e","#e0301f","#ff8a00","#fff","#3a150e"];
   for(let i=0;i<n;i++){const d=document.createElement("i");d.className="cf";d.style.background=C[i%5];d.style.left=(15+Math.random()*70)+"vw";document.body.appendChild(d);
@@ -332,7 +376,7 @@ function confetti(n=60){if(calm)return;const C=["#ffc20e","#e0301f","#ff8a00","#
 function tween(el,to){const from=+el.dataset.v||0;el.dataset.v=to;const t0=performance.now();(function f(t){const k=calm?1:Math.min(1,(t-t0)/450);el.textContent=fmt(Math.round(from+(to-from)*k));if(k<1)requestAnimationFrame(f)})(t0)}
 
 /* ===== HIỆU ỨNG TRANG ===== */
-function info(){$("area").textContent=`Khu vực phục vụ: ${CFG.area} · Phí giao ${fmt(CFG.fee)}, miễn phí từ ${fmt(CFG.free)} · Nhận đơn ${CFG.open}h–${CFG.close}h`;
+function info(){$("area").textContent=`Khu vực phục vụ: ${CFG.area} · Phí giao ${fmt(CFG.fee)}${CFG.perKm?` (+${fmt(CFG.perKm)}/km sau ${CFG.freeKm}km)`:""}, miễn phí từ ${fmt(CFG.free)} · Nhận đơn ${CFG.open}h–${CFG.close}h`;
   $("closed").textContent=CFG.paused?(CFG.notice||"Quán tạm nghỉ, vui lòng quay lại sau."):`Hiện đã đóng cửa. Chúng tôi nhận đơn từ ${CFG.open}h đến ${CFG.close}h hằng ngày.`;
   $("closed").classList.toggle("show",!isOpen())}
 info();
@@ -348,82 +392,149 @@ $("tabs").innerHTML='<div class="in"><span class="ind"></span>'+T.map(t=>`<butto
 function ind(){const b=document.querySelector("#tabs button.on"),i=document.querySelector(".ind");if(b){i.style.width=b.offsetWidth+"px";i.style.transform=`translateX(${b.offsetLeft}px)`}}
 $("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;cur=b.dataset.c;document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x===b));ind();b.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});menu()};
 $("q").oninput=e=>{kw=norm(e.target.value.trim());menu()};
-const ctl=id=>{const n=cart[id]||0;return n?`<div class="step"><button data-a="-" data-id="${id}" aria-label="Giảm">−</button><button data-a="+" data-id="${id}" aria-label="Thêm 1">${n}</button><button data-a="+" data-id="${id}" aria-label="Tăng">+</button></div>`:`<button class="add" data-a="+" data-id="${id}">+ Thêm</button>`};
+const step=(k,n)=>{const q=esc(k);return `<div class="step"><button data-a="-" data-id="${q}" aria-label="Giảm">−</button><button data-a="+" data-id="${q}" aria-label="Thêm 1">${n}</button><button data-a="+" data-id="${q}" aria-label="Tăng">+</button></div>`};
+const ctl=x=>{if(x.so)return'<button class="add" disabled>Hết món</button>';
+  if(parseOp(x.op).length){const n=cnt(x.id);return `<button class="add" data-opt="${esc(x.id)}">${n?`Chọn thêm · ${n} trong giỏ`:"+ Chọn"}</button>`}
+  const k=String(x.id),n=cart[k]||0;return n?step(k,n):`<button class="add" data-a="+" data-id="${esc(k)}">+ Thêm</button>`};
 const imgU=u=>{const m=String(u).match(/(?:\/d\/|[?&]id=)([\w-]+)/);return m&&/googleusercontent|drive\.google/.test(u)?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w800`:u};
 const th=x=>`<span>${esc(x.e||"🍽️")}</span>${x.img?`<img src="${esc(imgU(x.img))}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:""}`;
 function menu(){
   const L=P.filter(x=>(cur=="all"||x.c==cur)&&(!kw||norm(x.n+" "+(x.d||"")).includes(kw)));
-  $("grid").innerHTML=L.length?L.map((x,i)=>`<article class="card rv" style="transition-delay:${(i%2)*90}ms"><div class="art c-${esc(x.c)}">${x.t?`<em>${esc(x.t)}</em>`:""}${th(x)}</div><div class="info"><h3>${esc(x.n)}</h3>${x.r?`<small class="rt">★ ${x.r} (${x.rc})</small>`:""}<p>${esc(x.d||"")}</p><div class="price">${fmt(x.p)}${x.o?`<s>${fmt(x.o)}</s>`:""}</div><div class="ctl" data-id="${x.id}">${ctl(x.id)}</div></div></article>`).join(""):'<p class="empty">Chưa tìm thấy món phù hợp. Thử từ khóa khác nhé.</p>';
+  $("grid").innerHTML=L.length?L.map((x,i)=>`<article class="card rv${x.so?" so":""}" style="transition-delay:${(i%2)*90}ms"><div class="art c-${esc(x.c)}">${x.so?"<em>Hết món</em>":x.t?`<em>${esc(x.t)}</em>`:""}${th(x)}</div><div class="info"><h3>${esc(x.n)}</h3>${x.r?`<small class="rt">★ ${x.r} (${x.rc})</small>`:""}<p>${esc(x.d||"")}</p><div class="price">${fmt(x.p)}${x.o?`<s>${fmt(x.o)}</s>`:""}</div><div class="ctl" data-id="${esc(x.id)}">${ctl(x)}</div></div></article>`).join(""):'<p class="empty">Chưa tìm thấy món phù hợp. Thử từ khóa khác nhé.</p>';
   reveal()}
+function refreshCtl(k){const id=String(k).split("~")[0],x=P.find(p=>p.id==id);if(x)document.querySelectorAll(`.ctl[data-id="${id}"]`).forEach(c=>c.innerHTML=ctl(x))}
+
+/* chọn tùy chọn món */
+let opP=null;
+const opSel=()=>parseOp(opP.op).map((g,i)=>{const r=document.querySelector(`#opB input[name=g${i}]:checked`);return{g:g.g,c:g.c[r?+r.value:0]}});
+function optSum(){$("opAdd").textContent="Thêm vào giỏ · "+fmt(opP.p+opSel().reduce((a,s)=>a+s.c.p,0))}
+function openOpt(id){const x=P.find(p=>p.id==id);if(!x)return;opP=x;$("opT").textContent=x.n;
+  $("opB").innerHTML=parseOp(x.op).map((g,i)=>`<div class="og"><b>${esc(g.g)}</b>${g.c.map((c,j)=>`<label><input type="radio" name="g${i}" value="${j}" ${j?"":"checked"}><span>${esc(c.n)}${c.p?` <small>+${fmt(c.p)}</small>`:""}</span></label>`).join("")}</div>`).join("");optSum();open_("op")}
+$("opB").onchange=optSum;
+$("opAdd").onclick=()=>{const k=opP.id+"~"+opSel().map(s=>s.g+":"+s.c.n).join(",");cart[k]=Math.min(99,(cart[k]||0)+1);sv("alt_cart",cart);refreshCtl(k);sync();close_("op");toast("Đã thêm "+opP.n+" vào giỏ 🛒",1800)};
+$("closeOp").onclick=()=>close_("op");
 
 /* ===== GIỎ HÀNG ===== */
-function totals(){let q=0,s=0;P.forEach(x=>{const n=cart[x.id]||0;q+=n;s+=n*x.p});const fee=q?(s>=CFG.free?0:CFG.fee):0;return{q,s,fee,t:s+fee}}
+const cpnOff=s=>{if(!cpn||s<(cpn.min||0))return 0;let o=cpn.type=="percent"?Math.round(s*cpn.value/100):cpn.value;if(cpn.cap)o=Math.min(o,cpn.cap);return Math.min(s,o)};
+let km=0;
+const hav=(a,b,c,d)=>{const t=x=>x*Math.PI/180,l=t(c-a),g=t(d-b),h=Math.sin(l/2)**2+Math.cos(t(a))*Math.cos(t(c))*Math.sin(g/2)**2;return 2*6371*Math.asin(Math.sqrt(h))};
+const setKm=()=>{km=pos&&CFG.shopLat&&CFG.shopLng?hav(CFG.shopLat,CFG.shopLng,pos.lat,pos.lng):0};
+const tooFar=()=>CFG.maxKm>0&&km>CFG.maxKm;
+const shipFee=s=>{let f=s>=CFG.free?0:CFG.fee;if(CFG.perKm>0&&km>CFG.freeKm)f+=Math.ceil(km-CFG.freeKm)*CFG.perKm;return f};
+function totals(){let q=0,s=0;Object.keys(cart).forEach(k=>{const i=kp(k);if(!i)return;q+=cart[k];s+=cart[k]*i.price});
+  const off=cpnOff(s),fee=q?shipFee(s):0;return{q,s,off,fee,t:Math.max(0,s-off)+fee}}
 function sync(){const{q,t}=totals();$("cnt").textContent=q;document.body.classList.toggle("has-cart",q>0);$("barTxt").textContent=`Giỏ hàng · ${q} món`;tween($("barTot"),t)}
-function lines(){const{q,s,fee,t}=totals();if(!q){close_("co");return}
-  $("lines").innerHTML=P.filter(x=>cart[x.id]).map(x=>`<div class="ln"><div class="th c-${esc(x.c)}">${th(x)}</div><span>${esc(x.n)}<small>${fmt(x.p)}</small></span><div class="step"><button data-a="-" data-id="${x.id}" aria-label="Giảm">−</button><button data-a="+" data-id="${x.id}">${cart[x.id]}</button><button data-a="+" data-id="${x.id}" aria-label="Tăng">+</button></div></div>`).join("");
+function lines(){const{q,s,off,fee,t}=totals();if(!q){close_("co");return}
+  $("lines").innerHTML=Object.keys(cart).map(k=>{const i=kp(k);if(!i)return"";return `<div class="ln"><div class="th c-${esc(i.p.c)}">${th(i.p)}</div><span>${esc(i.name)}<small>${fmt(i.price)}</small></span>${step(k,cart[k])}</div>`}).join("");
   $("sub").textContent=fmt(s);$("fee").textContent=fee?fmt(fee):"Miễn phí";$("tot").textContent=fmt(t);
-  $("fw").textContent=fee?`Mua thêm ${fmt(CFG.free-s)} để được miễn phí giao hàng.`:"Bạn được miễn phí giao hàng 🎉";ready()}
-function fly(btn,id){if(calm||btn.closest("#co")||document.querySelectorAll(".fly").length>5)return;const x=P.find(p=>p.id==id);if(!x)return;const r=btn.getBoundingClientRect(),c=$("cartBtn").getBoundingClientRect(),s=document.createElement("span");
-  s.className="fly";s.textContent=x.e||"🍽️";s.style.left=(r.left+r.width/2-14)+"px";s.style.top=(r.top+4)+"px";document.body.appendChild(s);
+  $("dl").style.display=off?"flex":"none";$("dv").textContent="-"+fmt(off);
+  $("fw").textContent=tooFar()?`Rất tiếc, địa chỉ của bạn cách quán ${km.toFixed(1)}km, ngoài phạm vi giao (${CFG.maxKm}km).`:s<CFG.free?`Mua thêm ${fmt(CFG.free-s)} để được miễn phí giao hàng.`:"Đơn của bạn được miễn phí giao hàng 🎉"+(CFG.perKm>0&&km>CFG.freeKm?` (phụ phí xa ${km.toFixed(1)}km)`:"");ready()}
+function fly(btn,k){if(calm||btn.closest("#co")||document.querySelectorAll(".fly").length>5)return;const i=kp(k);if(!i)return;const r=btn.getBoundingClientRect(),c=$("cartBtn").getBoundingClientRect(),s=document.createElement("span");
+  s.className="fly";s.textContent=i.p.e||"🍽️";s.style.left=(r.left+r.width/2-14)+"px";s.style.top=(r.top+4)+"px";document.body.appendChild(s);
   s.animate([{transform:"translate(0,0) scale(1.2)",opacity:1},{transform:`translate(${c.left+10-r.left-r.width/2}px,${c.top-r.top}px) scale(.3)`,opacity:.5}],{duration:700,easing:"cubic-bezier(.5,-.4,.7,.5)"}).onfinish=()=>{s.remove();const b=$("cartBtn");b.classList.remove("bump");void b.offsetWidth;b.classList.add("bump")}}
-document.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;
-  const id=b.dataset.id,add=b.dataset.a=="+",n=Math.min(99,(cart[id]||0)+(add?1:-1));if(add)fly(b,id);
-  if(n<=0)delete cart[id];else cart[id]=n;sv("alt_cart",cart);
-  document.querySelectorAll(`.ctl[data-id="${id}"]`).forEach(c=>c.innerHTML=ctl(id));sync();if($("co").classList.contains("show"))lines()});
-function openCo(){if(!totals().q){toast("Giỏ hàng đang trống, hãy chọn món trước nhé!");$("menu").scrollIntoView();return}lines();open_("co")}
-$("cartBtn").onclick=openCo;$("barBtn").onclick=openCo;$("closeCo").onclick=()=>close_("co");$("closeMd").onclick=()=>close_("md");
-["co","md"].forEach(id=>$(id).onclick=e=>{if(e.target.id==id)close_(id)});
-addEventListener("keydown",e=>{if(e.key=="Escape"){close_("co");close_("md");close_("welcome")}});
+document.addEventListener("click",e=>{
+  const o=e.target.closest("[data-opt]");if(o){openOpt(o.dataset.opt);return}
+  const b=e.target.closest("[data-a]");if(!b)return;
+  const k=b.dataset.id,add=b.dataset.a=="+",n=Math.min(99,(cart[k]||0)+(add?1:-1));if(add)fly(b,k);
+  if(n<=0)delete cart[k];else cart[k]=n;sv("alt_cart",cart);refreshCtl(k);sync();if($("co").classList.contains("show"))lines()});
+function openCo(){if(!totals().q){toast("Giỏ hàng đang trống, hãy chọn món trước nhé!");$("menu").scrollIntoView();return}fillForm();lines();open_("co")}
+$("cartBtn").onclick=openCo;$("barBtn").onclick=openCo;
+["Co","Md","Ac","Qr","Pol"].forEach(n=>{const x=$("close"+n);if(x)x.onclick=()=>close_({Co:"co",Md:"md",Ac:"ac",Qr:"qr",Pol:"pol"}[n])});
+["co","md","ac","qr","pol","op"].forEach(id=>$(id).onclick=e=>{if(e.target.id==id)close_(id)});
+addEventListener("keydown",e=>{if(e.key=="Escape")["co","md","ac","qr","pol","op","welcome"].forEach(close_)});
 $("start").onclick=()=>{close_("welcome");confetti(50);setTimeout(()=>toast("🎉 Chào mừng bạn đến với Ăn Vặt Lâm Thao!",4500),300)};
+$("polBtn").onclick=()=>open_("pol");
 
-/* ===== ĐƠN CỦA TÔI + ĐÁNH GIÁ ===== */
-$("myOrders").onclick=async()=>{const L=ld("alt_orders",[]);open_("md");
-  const draw=(st={})=>{$("mb").innerHTML=L.length?L.map(o=>{const s=st[o.code]||"Đã gửi";return `<div class="od"><b>Mã đơn ${esc(o.code)}</b><small>${esc(o.time)} · ${esc(o.pay)}</small><div>${esc(o.items)}</div><b>${fmt(+o.total||0)}</b><small>Trạng thái: <span class="st">${esc(s)}</span></small>${s=="Đã giao"&&o.phone?`<button class="big" style="height:42px;margin-top:8px" data-rv="${esc(o.code)}">⭐ Đánh giá món</button>`:""}</div>`}).join(""):'<p style="text-align:center;color:var(--mute);padding:24px 0">Bạn chưa có đơn nào.</p>'};
+/* mã giảm giá + hẹn giờ */
+$("cdb").onclick=async()=>{const c=$("cdi").value.trim().toUpperCase();if(!c)return;$("cdb").disabled=true;
+  try{const j=await(await fetch(APPS_SCRIPT_URL+"?a=code&c="+encodeURIComponent(c)+"&s="+totals().s)).json();
+    if(j.ok){cpn={code:j.code,type:j.type,value:j.value,min:j.min,cap:j.cap};toast("Đã áp dụng mã "+j.code+" ✔")}else{cpn=null;toast(j.msg||"Mã không hợp lệ")}lines();sync()}catch(_){toast("Không kiểm tra được mã, thử lại nhé.")}
+  $("cdb").disabled=false};
+$("sch").onchange=()=>{$("stm").style.display=$("sch").value?"block":"none";ready()};
+
+/* ===== TÀI KHOẢN KHÁCH ===== */
+function sesSave(s){ses=s;sv("alt_ses",s);acLabel()}
+function acLabel(){$("acN").textContent=ses?ses.name.split(" ").pop():"Đăng nhập"}
+const me=()=>ses?post({action:"me",phone:ses.phone,token:ses.token}):Promise.resolve(null);
+function fillForm(){if(!ses)return;if(!$("nm").value)$("nm").value=ses.name||"";if(!$("ph").value)$("ph").value=ses.phone||"";if(!$("ad").value)$("ad").value=ses.address||"";ready()}
+function drawAcc(){
+  if(ses){$("acB").innerHTML=`<div class="od"><b>${esc(ses.name)}</b><small>${esc(ses.phone)}</small><small id="ptx">Đang tải điểm thưởng...</small></div><button class="big" id="toOrd" style="height:46px;margin-bottom:8px">📦 Đơn của tôi</button><button class="big" id="lgo" style="height:46px;background:#fff;color:var(--ink);border:2px solid var(--line)">Đăng xuất</button>`;
+    me().then(j=>{if($("ptx"))$("ptx").textContent=j&&j.ok?`⭐ ${j.points} điểm · Hạng ${j.tier} (1.000đ = 1 điểm)`:"Không tải được điểm thưởng"}).catch(()=>{})}
+  else{const r=accMode=="reg";$("acB").innerHTML=`<div class="tabs2"><button data-m="login" class="${r?"":"on"}">Đăng nhập</button><button data-m="reg" class="${r?"on":""}">Đăng ký</button></div><form id="af" novalidate>${r?'<input class="inp" id="rn" maxlength="60" autocomplete="name" placeholder="Họ và tên">':""}<input class="inp" id="rp" type="tel" maxlength="12" inputmode="tel" autocomplete="tel" placeholder="Số điện thoại"><input class="inp" id="rw" type="password" maxlength="40" autocomplete="${r?"new-password":"current-password"}" placeholder="Mật khẩu (tối thiểu 6 ký tự)">${r?'<input class="inp" id="ra" maxlength="150" autocomplete="street-address" placeholder="Địa chỉ nhận hàng (không bắt buộc)">':""}<p class="warn" id="aw"></p><button class="big">${r?"Tạo tài khoản":"Đăng nhập"}</button></form><p class="hint" style="margin-top:10px">Có tài khoản để lưu thông tin, xem lịch sử đơn và tích điểm. Bạn vẫn có thể đặt hàng không cần đăng nhập.</p>`}}
+$("acBtn").onclick=()=>{drawAcc();open_("ac")};
+$("acB").onclick=e=>{const m=e.target.closest("[data-m]");if(m){accMode=m.dataset.m;drawAcc();return}
+  if(e.target.closest("#toOrd")){close_("ac");showOrders();return}
+  if(e.target.closest("#lgo")){sesSave(null);toast("Đã đăng xuất");drawAcc()}};
+$("acB").onsubmit=async e=>{e.preventDefault();const reg=accMode=="reg",ph=$("rp").value.trim(),pw=$("rw").value,w=$("aw");w.textContent="";
+  if(!PHONE_RE.test(ph)){w.textContent="Số điện thoại chưa đúng.";return}
+  if(pw.length<6){w.textContent="Mật khẩu tối thiểu 6 ký tự.";return}
+  if(reg&&$("rn").value.trim().length<2){w.textContent="Vui lòng nhập họ tên.";return}
+  const btn=e.target.querySelector("button.big");btn.disabled=true;
+  try{const j=await post(reg?{action:"register",phone:ph,pass:pw,name:$("rn").value.trim(),address:$("ra").value.trim()}:{action:"login",phone:ph,pass:pw});
+    if(j.ok){sesSave({phone:j.phone,name:j.name,address:j.address||"",token:j.token});toast("Xin chào "+j.name+" 👋");drawAcc()}
+    else w.textContent=j.error=="exists"?"Số điện thoại đã có tài khoản, hãy đăng nhập.":j.error=="bad"?"Sai số điện thoại hoặc mật khẩu.":j.error=="locked"?"Nhập sai quá nhiều lần, hãy thử lại sau 15 phút.":"Có lỗi, vui lòng thử lại."}
+  catch(_){w.textContent="Không kết nối được máy chủ."}btn.disabled=false};
+acLabel();
+
+/* ===== ĐƠN CỦA TÔI + ĐÁNH GIÁ + ĐẶT LẠI ===== */
+async function showOrders(){open_("md");let st={};OL=ld("alt_orders",[]);
+  const draw=()=>{$("mb").innerHTML=OL.length?OL.map((o,i)=>{const s=o.status||st[o.code]||"Đã gửi",ph=o.phone||(ses&&ses.phone)||"";
+    return `<div class="od"><b>Mã đơn ${esc(o.code)}</b><small>${esc(o.time)} · ${esc(o.pay)}${o.paid?" · ✅ Đã thanh toán":""}</small><div>${esc(o.items).replace(/ \| /g,"<br>")}</div><b>${fmt(+o.total||0)}</b><small>Trạng thái: <span class="st">${esc(s)}</span></small><div class="oa">${s=="Đã giao"&&ph?`<button class="mini" data-rv="${i}">⭐ Đánh giá</button>`:""}${o.lines&&o.lines.length?`<button class="mini" data-re="${i}">🔁 Đặt lại</button>`:""}${o.pay=="Chuyển khoản"&&!o.paid&&s!="Đã hủy"&&s!="Đã giao"?`<button class="mini" data-qr="${i}">💳 Mã QR</button>`:""}</div></div>`}).join(""):'<p style="text-align:center;color:var(--mute);padding:24px 0">Bạn chưa có đơn nào.</p>'};
   draw();
-  if(APPS_SCRIPT_URL&&L.length)try{draw(await(await fetch(APPS_SCRIPT_URL+"?a=status&codes="+encodeURIComponent(L.map(o=>o.code).join(",")))).json())}catch(_){}};
+  try{if(ses){const j=await me();if(j&&j.ok){OL=j.orders;draw()}}else if(OL.length){st=await(await fetch(APPS_SCRIPT_URL+"?a=status&codes="+encodeURIComponent(OL.map(o=>o.code).join(",")))).json();draw()}}catch(_){}}
+$("myOrders").onclick=showOrders;
 const paint=()=>document.querySelectorAll(".stars").forEach(s=>s.querySelectorAll("button").forEach(b=>b.classList.toggle("on",+b.dataset.s<=+s.dataset.v)));
+function showQR(code,total){const u=`https://img.vietqr.io/image/${BANK.id}-${BANK.acc}-compact2.png?amount=${total}&addInfo=${encodeURIComponent(code)}&accountName=${encodeURIComponent(BANK.name)}`;
+  $("qrB").innerHTML=`<img class="qri" src="${u}" alt="Mã QR chuyển khoản"><p style="text-align:center"><b>${BANK.label}</b> · ${BANK.acc}<br>${BANK.name}<br>Số tiền: <b style="color:var(--red)">${fmt(total)}</b><br>Nội dung: <b>${esc(code)}</b></p><button class="big" id="cpy" style="height:46px;margin:8px 0">Sao chép số tài khoản</button><p class="hint">Quét mã bằng app ngân hàng và giữ nguyên nội dung chuyển khoản. Quán sẽ xác nhận khi nhận được tiền.</p>`;open_("qr")}
+$("qrB").onclick=e=>{if(e.target.closest("#cpy")){(navigator.clipboard?navigator.clipboard.writeText(BANK.acc):Promise.reject()).then(()=>toast("Đã sao chép số tài khoản ✔",2000)).catch(()=>toast("Số tài khoản: "+BANK.acc,4000))}};
 document.addEventListener("click",async e=>{
+  const re=e.target.closest("[data-re]");if(re){const o=OL[+re.dataset.re];let n=0;(o.lines||[]).forEach(l=>{const i=kp(l.k);if(i&&!i.p.so){cart[l.k]=Math.min(99,(cart[l.k]||0)+l.q);n++}});sv("alt_cart",cart);menu();sync();close_("md");toast(n?"Đã thêm "+n+" món vào giỏ 🛒":"Các món này hiện không còn bán.");return}
+  const qr=e.target.closest("[data-qr]");if(qr){const o=OL[+qr.dataset.qr];close_("md");showQR(o.code,+o.total);return}
   const r=e.target.closest("[data-rv]");
-  if(r){const o=ld("alt_orders",[]).find(x=>x.code==r.dataset.rv);if(!o)return;
-    $("mb").innerHTML=`<p style="margin-bottom:8px"><b>Đánh giá đơn ${esc(o.code)}</b></p>`+o.items.split(", ").map(s=>s.replace(/ x\d+$/,"")).map(n=>`<div class="od" data-n="${esc(n)}"><b>${esc(n)}</b><div class="stars" data-v="5">${[1,2,3,4,5].map(k=>`<button type="button" data-s="${k}" aria-label="${k} sao">★</button>`).join("")}</div><input class="inp" maxlength="200" placeholder="Nhận xét (không bắt buộc)" style="margin:0"></div>`).join("")+`<button class="big" id="sendRv" data-code="${esc(o.code)}" data-ph="${esc(o.phone||"")}">Gửi đánh giá</button>`;paint();return}
+  if(r){const o=OL[+r.dataset.rv],names=[...new Set(String(o.items).split(" | ").map(s=>s.replace(/ x\d+$/,"").replace(/ \(.*\)$/,"")))];
+    $("mb").innerHTML=`<p style="margin-bottom:8px"><b>Đánh giá đơn ${esc(o.code)}</b></p>`+names.map(n=>`<div class="od" data-n="${esc(n)}"><b>${esc(n)}</b><div class="stars" data-v="5">${[1,2,3,4,5].map(k=>`<button type="button" data-s="${k}" aria-label="${k} sao">★</button>`).join("")}</div><input class="inp" maxlength="200" placeholder="Nhận xét (không bắt buộc)" style="margin:0"></div>`).join("")+`<button class="big" id="sendRv" data-code="${esc(o.code)}" data-ph="${esc(o.phone||(ses&&ses.phone)||"")}">Gửi đánh giá</button>`;paint();return}
   const s=e.target.closest("[data-s]");if(s){s.parentNode.dataset.v=s.dataset.s;paint();return}
   const g=e.target.closest("#sendRv");if(g){g.disabled=true;g.textContent="Đang gửi...";let ok=0;
-    for(const b of document.querySelectorAll("#mb .od")){try{const j=await(await fetch(APPS_SCRIPT_URL,{method:"POST",body:JSON.stringify({action:"review",code:g.dataset.code,phone:g.dataset.ph,item:b.dataset.n,stars:b.querySelector(".stars").dataset.v,text:b.querySelector("input").value})})).json();if(j.ok)ok++}catch(_){}}
+    for(const b of document.querySelectorAll("#mb .od")){try{const j=await post({action:"review",code:g.dataset.code,phone:g.dataset.ph,item:b.dataset.n,stars:b.querySelector(".stars").dataset.v,text:b.querySelector("input").value});if(j.ok)ok++}catch(_){}}
     toast(ok?"Cảm ơn bạn đã đánh giá! ⭐":"Không gửi được, hoặc bạn đã đánh giá đơn này rồi.");close_("md")}});
 
 /* ===== VỊ TRÍ + GỬI ĐƠN ===== */
-function ready(){$("send").disabled=busy||!(pos&&isOpen()&&$("f").checkValidity())}
+function ready(){$("send").disabled=busy||tooFar()||!(pos&&isOpen()&&$("f").checkValidity()&&(!$("sch").value||$("stm").value))}
 $("f").addEventListener("input",ready);
 const LOC0="📍 Chia sẻ vị trí giao hàng (bắt buộc)";
 $("loc").onclick=()=>{
   if(!navigator.geolocation||!isSecureContext){$("lh").textContent="Trình duyệt hoặc đường dẫn hiện tại không hỗ trợ định vị (cần HTTPS).";return}
   $("loc").disabled=true;$("loc").textContent="Đang lấy vị trí...";
-  navigator.geolocation.getCurrentPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude};$("loc").disabled=false;$("loc").className="loc ok";$("loc").textContent="✅ Đã chia sẻ vị trí";$("lh").textContent="Cảm ơn bạn! Điền đủ thông tin là đặt hàng được.";ready()},
-  er=>{pos=null;$("loc").disabled=false;$("loc").textContent=LOC0;$("lh").textContent=er.code==1?"Bạn đã từ chối quyền vị trí. Hãy cho phép vị trí trong cài đặt trình duyệt rồi bấm lại.":"Chưa lấy được vị trí. Hãy bật GPS và thử lại.";ready()},{enableHighAccuracy:true,timeout:15000,maximumAge:30000})};
+  navigator.geolocation.getCurrentPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude};$("loc").disabled=false;$("loc").className="loc ok";$("loc").textContent="✅ Đã chia sẻ vị trí";$("lh").textContent="Cảm ơn bạn! Điền đủ thông tin là đặt hàng được.";setKm();lines();sync();if(tooFar())$("lh").textContent="Địa chỉ của bạn ngoài phạm vi giao hàng của quán.";ready()},
+  er=>{pos=null;setKm();$("loc").disabled=false;$("loc").textContent=LOC0;$("lh").textContent=er.code==1?"Bạn đã từ chối quyền vị trí. Hãy cho phép vị trí trong cài đặt trình duyệt rồi bấm lại.":"Chưa lấy được vị trí. Hãy bật GPS và thử lại.";ready()},{enableHighAccuracy:true,timeout:15000,maximumAge:30000})};
 $("f").onsubmit=async e=>{e.preventDefault();if(busy)return;
   if(!isOpen()){toast("Hiện đã đóng cửa, vui lòng quay lại sau.");return}
   if(!navigator.onLine){toast("Bạn đang offline, hãy kiểm tra kết nối mạng.");return}
   if(!pos||!e.target.checkValidity()){e.target.reportValidity();return}
   const T_=totals(),code="LT"+Date.now().toString(36).toUpperCase().slice(-6),pay=document.querySelector("[name=pm]:checked").value;
-  const d={action:"order",code,time:new Date().toLocaleString("vi-VN"),items:P.filter(x=>cart[x.id]).map(x=>x.n+" x"+cart[x.id]).join(", "),subtotal:T_.s,fee:T_.fee,total:T_.t,pay,
-    name:$("nm").value.trim(),phone:$("ph").value.trim(),address:$("ad").value.trim(),note:$("nt").value.trim(),map:`https://maps.google.com/?q=${pos.lat},${pos.lng}`,website:$("hp").value};
+  const L=Object.keys(cart).filter(k=>kp(k)).map(k=>({k,q:cart[k]})),items=L.map(l=>kp(l.k).name+" x"+l.q).join(" | ");
+  const when=$("sch").value&&$("stm").value?`[Hẹn giờ ${$("stm").value}] `:"";
+  const d={action:"order",code,time:new Date().toLocaleString("vi-VN"),items,lines:L,coupon:cpn&&cpnOff(T_.s)?cpn.code:"",subtotal:T_.s,fee:T_.fee,total:T_.t,pay,
+    name:$("nm").value.trim(),phone:$("ph").value.trim(),address:$("ad").value.trim(),note:when+$("nt").value.trim(),map:`https://maps.google.com/?q=${pos.lat},${pos.lng}`,website:$("hp").value,lat:pos.lat,lng:pos.lng,token:ses?ses.token:""};
   busy=true;$("send").disabled=true;$("send").textContent="Đang gửi đơn...";
-  let ok=false,er="";
-  for(let i=0;i<2&&!ok;i++){try{const j=await(await fetch(APPS_SCRIPT_URL,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)})).json();if(j.ok)ok=true;else{er=j.error;break}}catch(_){}}
-  if(!ok){busy=false;$("send").textContent="Đặt hàng";ready();toast(er=="paused"?"Quán đang tạm nghỉ, vui lòng quay lại sau.":er=="menu_changed"?"Thực đơn vừa thay đổi, hãy tải lại trang rồi đặt lại nhé.":"Chưa gửi được đơn, vui lòng thử lại hoặc gọi hotline.",6000);return}
-  busy=false;const h=ld("alt_orders",[]);h.unshift({code,time:d.time,items:d.items,total:d.total,pay,phone:d.phone});sv("alt_orders",h.slice(0,20));
-  cart={};sv("alt_cart",cart);pos=null;e.target.reset();$("loc").className="loc";$("loc").textContent=LOC0;
+  let ok=false,er="",total=T_.t;
+  for(let i=0;i<2&&!ok;i++){try{const j=await post(d);if(j.ok){ok=true;if(j.total)total=j.total}else{er=j.error;break}}catch(_){}}
+  if(!ok){busy=false;$("send").textContent="Đặt hàng";ready();toast(er=="paused"?"Quán đang tạm nghỉ, vui lòng quay lại sau.":er=="too_far"?"Địa chỉ ngoài phạm vi giao hàng của quán.":er=="spam"?"Bạn đang có quá nhiều đơn chờ xử lý, vui lòng gọi hotline.":er=="menu_changed"?"Thực đơn vừa thay đổi, hãy tải lại trang rồi đặt lại nhé.":"Chưa gửi được đơn, vui lòng thử lại hoặc gọi hotline.",6000);return}
+  busy=false;const h=ld("alt_orders",[]);h.unshift({code,time:d.time,items,total,pay,phone:d.phone,lines:L});sv("alt_orders",h.slice(0,20));
+  cart={};cpn=null;sv("alt_cart",cart);pos=null;setKm();e.target.reset();$("stm").style.display="none";$("loc").className="loc";$("loc").textContent=LOC0;
   $("send").textContent="Đặt hàng";close_("co");menu();sync();confetti(110);
+  if(pay=="Chuyển khoản")setTimeout(()=>showQR(code,total),400);
   toast(`✅ Đặt hàng thành công! Mã đơn ${code}. Shop sẽ gọi xác nhận sớm.`,6500)};
 addEventListener("offline",()=>toast("Bạn đang offline, hãy kiểm tra kết nối mạng."));
 
 /* ===== KHỞI TẠO + MENU TỪ GOOGLE SHEET ===== */
 menu();sync();reveal();requestAnimationFrame(ind);addEventListener("resize",ind);addEventListener("orientationchange",()=>setTimeout(ind,200));
 if(APPS_SCRIPT_URL)fetch(APPS_SCRIPT_URL+"?a=menu").then(r=>r.json()).then(j=>{
-  if(j.cfg){Object.assign(CFG,{fee:+j.cfg.fee,free:+j.cfg.free,open:+j.cfg.open,close:+j.cfg.close,paused:!!j.cfg.paused,notice:j.cfg.notice||""});info()}
+  if(j.cfg){Object.assign(CFG,{fee:+j.cfg.fee,free:+j.cfg.free,open:+j.cfg.open,close:+j.cfg.close,paused:!!j.cfg.paused,notice:j.cfg.notice||"",shopLat:+j.cfg.shopLat||0,shopLng:+j.cfg.shopLng||0,freeKm:+j.cfg.freeKm||0,perKm:+j.cfg.perKm||0,maxKm:+j.cfg.maxKm||0});info()}
   if(j.products&&j.products.length){P=j.products;sv("alt_menu",P)}
   cleanCart();sv("alt_cart",cart);menu();sync();if($("co").classList.contains("show"))lines()}).catch(()=>{});
-setInterval(()=>{if($("md").classList.contains("show")&&!document.querySelector("#sendRv")&&!document.hidden)$("myOrders").onclick()},20000);
+if("serviceWorker"in navigator&&location.protocol=="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
+setInterval(()=>{if($("md").classList.contains("show")&&!document.querySelector("#sendRv")&&!document.hidden)showOrders()},20000);
 </script>
 </body>
 </html>
