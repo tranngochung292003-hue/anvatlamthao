@@ -83,10 +83,10 @@ function msg(t,ms=2500){const m=$("msg");m.textContent=t;m.style.display="block"
 function beep(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();[0,.25].forEach(t=>{const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.frequency.value=880;g.gain.value=.2;o.start(ac.currentTime+t);o.stop(ac.currentTime+t+.18)})}catch(_){}}
 async function post(o){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({...o,key:KEY})});return r.json()}
 async function load(silent){try{const j=await post({action:"admin"});
-  if(!j.ok){sessionStorage.removeItem("ak");$("login").classList.remove("hide");$("app").classList.add("hide");clearInterval(timer);if(!silent)msg(j.error=="auth"?"Sai mật khẩu":"Lỗi máy chủ: "+(j.error||"không rõ"));return}
+  if(!j.ok){sessionStorage.removeItem("ak");$("login").classList.remove("hide");$("app").classList.add("hide");clearInterval(timer);if(!silent)msg(j.error=="locked"?"Nhập sai quá nhiều, thử lại sau 15 phút":j.error=="auth"?"Sai mật khẩu":"Lỗi máy chủ: "+(j.error||"không rõ"));return}
   D=j;sessionStorage.setItem("ak",KEY);$("login").classList.add("hide");$("app").classList.remove("hide");
-  if(lastNew>=0&&j.stats.pending>lastNew){beep();msg("🛎️ Có đơn mới!",5000);document.title="(!) Đơn mới – Admin"}
-  lastNew=j.stats.pending;draw();clearInterval(timer);timer=setInterval(()=>load(true),30000)}catch(e){if(!silent)msg("Không kết nối được máy chủ")}}
+  if(lastNew!==-1&&j.stats.latest&&j.stats.latest!==lastNew){beep();msg("🛎️ Có đơn mới!",5000);document.title="(!) Đơn mới – Admin"}
+  lastNew=j.stats.latest||"";draw();clearInterval(timer);timer=setInterval(()=>load(true),30000)}catch(e){if(!silent)msg("Không kết nối được máy chủ")}}
 const dayKey=t=>String(t).trim().split(" ").pop();
 function report(){const ok=D.orders.filter(o=>o.status!="Đã hủy"),days={},top={};
  ok.forEach(o=>{const k=dayKey(o.time);days[k]=(days[k]||0)+Number(o.total||0);String(o.items).split(" | ").forEach(t=>{const m=t.match(/^(.*?)(?: \(.*\))? x(\d+)$/);if(m)top[m[1]]=(top[m[1]]||0)+ +m[2]})});
