@@ -17,7 +17,7 @@ input,select,textarea{width:100%;border:2px solid var(--line);border-radius:10px
 .c{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
 .c small,.l{color:var(--mute);font-size:.82rem}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1;min-width:110px}
 .b{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--sun);font-size:.8rem;font-weight:700}
-.b.Mới{background:var(--red);color:#fff}.b.Đã{background:#cfe9d6}.b.Đang{background:#ffd9a0}.b.paid{background:#cfe9d6}.b.so{background:#ddd}
+.b.Mới{background:var(--red);color:#fff}.b.Đã{background:#cfe9d6}.b.Đang{background:#ffd9a0}.b.hu{background:#e5c9c5}.b.paid{background:#cfe9d6}.b.so{background:#ddd}
 .pv{width:64px;height:64px;border-radius:10px;object-fit:cover;background:#eee;flex:none}
 .st{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.st div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}.st b{display:block;font-size:1.2rem}.st small{color:var(--mute)}
 .fl{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto}.fl button{background:#fff;border:1px solid var(--line);padding:6px 12px;white-space:nowrap}.fl button.on{background:var(--sun)}
@@ -52,6 +52,7 @@ label.ck{display:flex;align-items:center;gap:8px;margin-bottom:10px}label.ck inp
    <div class="c"><b>Thêm / sửa mã giảm giá</b><br><br>
     <div class="row"><input id="kc" placeholder="MÃ (VD: CHAO10)" maxlength="20"><select id="kt"><option value="percent">Giảm theo %</option><option value="amount">Giảm số tiền (đ)</option></select><input id="kv" type="number" inputmode="numeric" placeholder="Giá trị (10 hoặc 15000)"></div>
     <div class="row"><input id="km" type="number" inputmode="numeric" placeholder="Đơn tối thiểu (đ)"><input id="kp" type="number" inputmode="numeric" placeholder="Giảm tối đa (đ, cho %)"><input id="kx" type="number" inputmode="numeric" placeholder="Số lượt tối đa (0 = không giới hạn)"></div>
+    <input id="kpp" type="number" inputmode="numeric" placeholder="Mỗi SĐT dùng tối đa (mặc định 1, 0 = không giới hạn)">
     <div><span class="l">Hạn dùng (để trống = không giới hạn)</span><input id="kex" type="date"></div>
     <label class="ck"><input id="kpb" type="checkbox" checked>Hiện trên web cho khách thấy (voucher hôm nay)</label>
     <label class="ck"><input id="kon" type="checkbox" checked>Đang bật</label><button id="ksv">Lưu mã</button></div>
@@ -81,8 +82,8 @@ let KEY=sessionStorage.getItem("ak")||"",D={orders:[],products:[],reviews:[],cou
 function msg(t,ms=2500){const m=$("msg");m.textContent=t;m.style.display="block";clearTimeout(msg.t);msg.t=setTimeout(()=>m.style.display="none",ms)}
 function beep(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();[0,.25].forEach(t=>{const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.frequency.value=880;g.gain.value=.2;o.start(ac.currentTime+t);o.stop(ac.currentTime+t+.18)})}catch(_){}}
 async function post(o){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({...o,key:KEY})});return r.json()}
-async function load(silent){try{const j=await(await fetch(API+"?a=admin&key="+encodeURIComponent(KEY))).json();
-  if(!j.ok){sessionStorage.removeItem("ak");$("login").classList.remove("hide");$("app").classList.add("hide");clearInterval(timer);if(!silent)msg("Sai mật khẩu");return}
+async function load(silent){try{const j=await post({action:"admin"});
+  if(!j.ok){sessionStorage.removeItem("ak");$("login").classList.remove("hide");$("app").classList.add("hide");clearInterval(timer);if(!silent)msg(j.error=="auth"?"Sai mật khẩu":"Lỗi máy chủ: "+(j.error||"không rõ"));return}
   D=j;sessionStorage.setItem("ak",KEY);$("login").classList.add("hide");$("app").classList.remove("hide");
   if(lastNew>=0&&j.stats.pending>lastNew){beep();msg("🛎️ Có đơn mới!",5000);document.title="(!) Đơn mới – Admin"}
   lastNew=j.stats.pending;draw();clearInterval(timer);timer=setInterval(()=>load(true),30000)}catch(e){if(!silent)msg("Không kết nối được máy chủ")}}
@@ -99,12 +100,12 @@ function draw(){
  const F=[["all","Tất cả"],["Mới","Mới"],["doing","Đang xử lý"],["Đã giao","Đã giao"],["Đã hủy","Đã hủy"]];
  $("fl").innerHTML=F.map(f=>`<button data-f="${f[0]}" class="${flt==f[0]?"on":""}">${f[1]}</button>`).join("");
  const L=D.orders.filter(o=>flt=="all"||(flt=="doing"?o.status=="Đã xác nhận"||o.status=="Đang giao":o.status==flt));
- $("ol").innerHTML=L.map(o=>{const n=NX[o.status],tf=o.pay=="Chuyển khoản";return `<div class="c"><div class="row"><b>${esc(o.code)}</b><span class="b ${esc(o.status.split(" ")[0])}">${esc(o.status)}</span></div><small>${esc(o.time)} · ${esc(o.pay)} ${tf?(o.paid?'<span class="b paid">Đã nhận tiền</span>':'<span class="b">Chờ chuyển khoản</span>'):""}</small>
+ $("ol").innerHTML=L.map(o=>{const n=NX[o.status],tf=o.pay=="Chuyển khoản";return `<div class="c"><div class="row"><b>${esc(o.code)}</b><span class="b ${o.status=="Đã hủy"?"hu":esc(o.status.split(" ")[0])}">${esc(o.status)}</span></div><small>${esc(o.time)} · ${esc(o.pay)} ${tf?(o.paid?'<span class="b paid">Đã nhận tiền</span>':'<span class="b">Chờ chuyển khoản</span>'):""}</small>
  <p><b>${esc(o.name)}</b> · <a href="tel:${esc(o.phone)}">${esc(o.phone)}</a></p><p>${esc(o.address)}</p><p>${esc(o.items).replace(/ \| /g,"<br>")}</p>${o.note?`<p><i>📝 ${esc(o.note)}</i></p>`:""}
  <p><b>${fmt(o.total)}</b>${o.off?` <small>(đã giảm ${fmt(o.off)})</small>`:""} · <a href="${esc(o.map)}" target="_blank" rel="noopener">📍 Xem bản đồ</a></p>
  <div class="row">${n?`<button class="k" data-code="${esc(o.code)}" data-st="${n[1]}">${n[0]}</button>`:""}${tf&&!o.paid&&o.status!="Đã hủy"?`<button data-code="${esc(o.code)}" data-paid="1">💰 Đã nhận tiền</button>`:""}<button class="g" data-print="${esc(o.code)}">🖨️ In phiếu</button>${n?`<button class="r" data-code="${esc(o.code)}" data-st="Đã hủy">Hủy đơn</button>`:""}</div></div>`}).join("")||"<p>Không có đơn.</p>";
  $("pl").innerHTML=D.products.map(p=>`<div class="c row" style="flex-wrap:nowrap"><img class="pv" src="${esc(p.img||"")}" alt="" onerror="this.style.visibility='hidden'"><div style="flex:1"><b>${esc(p.e)} ${esc(p.n)}</b> ${p.on?"":'<span class="b">Ẩn</span>'} ${p.so?'<span class="b so">Hết món</span>':""}<br><small>${fmt(p.p)} · ${esc(p.c)}${p.op?" · có tùy chọn":""}</small></div><button class="g" data-e="${esc(p.id)}">Sửa</button><button class="r" data-x="${esc(p.id)}">Xóa</button></div>`).join("")||"<p>Chưa có sản phẩm. Web sẽ dùng menu mẫu cho đến khi bạn thêm món.</p>";
- $("cl").innerHTML=D.coupons.map(k=>`<div class="c row" style="flex-wrap:nowrap"><div style="flex:1"><b>${esc(k.code)}</b> ${k.on?"":'<span class="b so">Tắt</span>'} ${k.pub?'<span class="b paid">Hiện trên web</span>':""}<br><small>${k.exp?"HSD "+esc(k.exp)+" · ":""}${k.type=="percent"?"Giảm "+k.value+"%":"Giảm "+fmt(k.value)} · tối thiểu ${fmt(k.min)}${k.cap?" · tối đa "+fmt(k.cap):""} · dùng ${k.used||0}${+k.max?"/"+k.max:""}</small></div><button class="g" data-ke="${esc(k.code)}">Sửa</button><button class="r" data-kx="${esc(k.code)}">Xóa</button></div>`).join("")||"<p>Chưa có mã giảm giá.</p>";
+ $("cl").innerHTML=D.coupons.map(k=>`<div class="c row" style="flex-wrap:nowrap"><div style="flex:1"><b>${esc(k.code)}</b> ${k.on?"":'<span class="b so">Tắt</span>'} ${k.pub?'<span class="b paid">Hiện trên web</span>':""}<br><small>${k.exp?"HSD "+esc(k.exp)+" · ":""}${k.type=="percent"?"Giảm "+k.value+"%":"Giảm "+fmt(k.value)} · tối thiểu ${fmt(k.min)}${k.cap?" · tối đa "+fmt(k.cap):""} · dùng ${k.used||0}${+k.max?"/"+k.max:""} · ${+k.per?k.per+" lần/SĐT":"không giới hạn/SĐT"}</small></div><button class="g" data-ke="${esc(k.code)}">Sửa</button><button class="r" data-kx="${esc(k.code)}">Xóa</button></div>`).join("")||"<p>Chưa có mã giảm giá.</p>";
  $("g").innerHTML=report();drawU();
  if(D.role=="staff")document.querySelectorAll(".tabs button").forEach(b=>{if(b.dataset.t!="o")b.style.display="none"});
  $("r").innerHTML=D.reviews.map(r=>`<div class="c"><b>${esc(r.item)}</b> ${"★".repeat(r.stars)}<br>${esc(r.text)}<br><small>${esc(r.code)} · ${esc(r.time)}</small></div>`).join("")||"<p>Chưa có đánh giá.</p>";
@@ -135,10 +136,10 @@ $("pl").onclick=async e=>{const ed=e.target.dataset.e,x=e.target.dataset.x;
  if(ed){const p=D.products.find(q=>String(q.id)==ed);eid=p.id;img=p.img||"";$("n").value=p.n;$("d").value=p.d;$("pr").value=p.p;$("ol2").value=p.o||"";$("cat").value=p.c;$("em").value=p.e;$("tg").value=p.t||"";$("op").value=p.op||"";$("on").checked=p.on;$("so").checked=!!p.so;if(img)$("pv").src=img;else $("pv").removeAttribute("src");$("ft").textContent="Sửa sản phẩm";scrollTo({top:0,behavior:"smooth"})}
  if(x&&confirm("Xóa sản phẩm này?")){await post({action:"deleteProduct",id:x});load(true)}};
 $("ksv").onclick=async()=>{if(!$("kc").value.trim()||!+$("kv").value)return msg("Nhập mã và giá trị");
- const j=await post({action:"saveCoupon",coupon:{code:$("kc").value,type:$("kt").value,value:+$("kv").value,min:+$("km").value||0,cap:+$("kp").value||0,max:+$("kx").value||0,on:$("kon").checked,pub:$("kpb").checked,exp:$("kex").value}});
- msg(j.ok?"Đã lưu mã ✔":"Lỗi lưu");if(j.ok){["kc","kv","km","kp","kx","kex"].forEach(i=>$(i).value="");$("kpb").checked=true;load(true)}};
+ const j=await post({action:"saveCoupon",coupon:{code:$("kc").value,type:$("kt").value,value:+$("kv").value,min:+$("km").value||0,cap:+$("kp").value||0,max:+$("kx").value||0,per:$("kpp").value===""?1:+$("kpp").value,on:$("kon").checked,pub:$("kpb").checked,exp:$("kex").value}});
+ msg(j.ok?"Đã lưu mã ✔":"Lỗi lưu");if(j.ok){["kc","kv","km","kp","kx","kpp","kex"].forEach(i=>$(i).value="");$("kpb").checked=true;load(true)}};
 $("cl").onclick=async e=>{const ke=e.target.dataset.ke,kx=e.target.dataset.kx;
- if(ke){const k=D.coupons.find(q=>q.code==ke);$("kc").value=k.code;$("kt").value=k.type;$("kv").value=k.value;$("km").value=k.min||"";$("kp").value=k.cap||"";$("kx").value=k.max||"";$("kon").checked=k.on;$("kpb").checked=!!k.pub;$("kex").value=k.exp||"";scrollTo({top:0,behavior:"smooth"})}
+ if(ke){const k=D.coupons.find(q=>q.code==ke);$("kc").value=k.code;$("kt").value=k.type;$("kv").value=k.value;$("km").value=k.min||"";$("kp").value=k.cap||"";$("kx").value=k.max||"";$("kpp").value=k.per;$("kon").checked=k.on;$("kpb").checked=!!k.pub;$("kex").value=k.exp||"";scrollTo({top:0,behavior:"smooth"})}
  if(kx&&confirm("Xóa mã "+kx+"?")){await post({action:"deleteCoupon",code:kx});load(true)}};
 $("sc").onclick=async()=>{const j=await post({action:"saveCfg",cfg:{paused:$("cp").checked,notice:$("cn").value,fee:+$("cf").value,free:+$("cr").value,open:+$("co").value,close:+$("cc").value,shopLat:+$("sla").value,shopLng:+$("sln").value,freeKm:+$("fk").value,perKm:+$("pk").value,maxKm:+$("mk").value}});msg(j.ok?"Đã lưu cài đặt ✔":"Lỗi lưu");if(j.ok)D.cfg=j.cfg};
 function drawU(){const q=($("uq").value||"").toLowerCase();$("ul").innerHTML=(D.customersList||[]).filter(c=>!q||(c.name+" "+c.phone).toLowerCase().includes(q)).map(c=>`<div class="c"><b>${esc(c.name)}</b> · <a href="tel:${esc(c.phone)}">${esc(c.phone)}</a><br><small>${esc(c.address||"")} · đăng ký ${esc(c.date)}</small><br><small>🧾 ${c.orders} đơn · 💰 ${fmt(c.spent)} đã chi</small></div>`).join("")||"<p>Chưa có khách đăng ký.</p>"}
