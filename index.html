@@ -141,7 +141,7 @@ body.has-cart .bar{transform:none}
 .mask{position:fixed;inset:0;z-index:60;background:#2a0d0acc;display:none;align-items:flex-end;justify-content:center;overscroll-behavior:contain}
 .mask.show{display:flex;animation:fade .3s}
 @keyframes fade{from{opacity:0}}
-.sheet{background:var(--cream);width:100%;max-width:560px;max-height:92dvh;max-height:92vh;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;border-radius:28px 28px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom,0px));animation:up .45s cubic-bezier(.2,1.1,.3,1);outline:0}
+.sheet{background:var(--cream);width:100%;max-width:560px;max-height:92vh;max-height:92dvh;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;border-radius:28px 28px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom,0px));animation:up .45s cubic-bezier(.2,1.1,.3,1);outline:0}
 @keyframes up{from{transform:translateY(80px);opacity:0}}
 .sheet>h2{font-size:1.35rem;font-weight:800;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .x{width:38px;height:38px;border-radius:50%;background:#fff;border:1px solid var(--line);font-size:1.1rem}
@@ -547,7 +547,7 @@ $("qrB").onclick=e=>{if(e.target.closest("#cpy")){(navigator.clipboard?navigator
 document.addEventListener("click",async e=>{
   const cx=e.target.closest("[data-cx]");
   if(cx){const o=OL[+cx.dataset.cx];if(!o||!confirm("Hủy đơn "+o.code+"?"))return;cx.disabled=true;
-    try{const j=await post({action:"cancelOrder",code:o.code,phone:o.phone||(ses&&ses.phone)});toast(j.ok?"Đã hủy đơn "+o.code:"Quán đã nhận đơn, vui lòng gọi hotline để hủy.",5000)}catch(_){toast("Không kết nối được máy chủ.")}
+    try{const j=await post({action:"cancelOrder",code:o.code,phone:o.phone||(ses&&ses.phone),token:ses?ses.token:""});toast(j.ok?"Đã hủy đơn "+o.code:"Quán đã nhận đơn, vui lòng gọi hotline để hủy.",5000)}catch(_){toast("Không kết nối được máy chủ.")}
     showOrders();return}
   const re=e.target.closest("[data-re]");if(re){const o=OL[+re.dataset.re];let n=0;(o.lines||[]).forEach(l=>{const i=kp(l.k);if(i&&!i.p.so){cart[l.k]=Math.min(99,(cart[l.k]||0)+l.q);n++}});sv("alt_cart",cart);menu();sync();close_("md");toast(n?"Đã thêm "+n+" món vào giỏ 🛒":"Các món này hiện không còn bán.");return}
   const qr=e.target.closest("[data-qr]");if(qr){const o=OL[+qr.dataset.qr];close_("md");showQR(o.code,+o.total);return}
@@ -578,10 +578,10 @@ $("f").onsubmit=async e=>{e.preventDefault();if(busy)return;
   const d={action:"order",code,time:new Date().toLocaleString("vi-VN"),items,lines:L,coupon:cpn&&cpnOff(T_.s)?cpn.code:"",subtotal:T_.s,fee:T_.fee,total:T_.t,pay,
     name:$("nm").value.trim(),phone:$("ph").value.trim(),address:$("ad").value.trim(),note:when+$("nt").value.trim(),map:`https://maps.google.com/?q=${pos.lat},${pos.lng}`,website:$("hp").value,lat:pos.lat,lng:pos.lng,token:ses?ses.token:""};
   busy=true;$("send").disabled=true;$("send").textContent="Đang gửi đơn...";
-  let ok=false,er="",total=T_.t;
-  for(let i=0;i<2&&!ok;i++){try{const j=await post(d);if(j.ok){ok=true;if(j.total)total=j.total}else{er=j.error;break}}catch(_){}}
+  let ok=false,er="",total=T_.t,j_off=0;
+  for(let i=0;i<2&&!ok;i++){try{const j=await post(d);if(j.ok){ok=true;if(j.total)total=j.total;j_off=j.off||0}else{er=j.error;break}}catch(_){}}
   if(!ok){busy=false;$("send").textContent="Đặt hàng";ready();toast(er=="paused"?"Quán đang tạm nghỉ, vui lòng quay lại sau.":er=="too_far"?"Địa chỉ ngoài phạm vi giao hàng của quán.":er=="spam"?"Bạn đang có quá nhiều đơn chờ xử lý, vui lòng gọi hotline.":er=="menu_changed"?"Thực đơn vừa thay đổi, hãy tải lại trang rồi đặt lại nhé.":"Chưa gửi được đơn, vui lòng thử lại hoặc gọi hotline.",6000);return}
-  busy=false;const h=ld("alt_orders",[]);h.unshift({code,time:d.time,items,total,pay,phone:d.phone,lines:L});sv("alt_orders",h.slice(0,20));
+  busy=false;if(d.coupon&&!(j_off>0))toast("Mã giảm giá không còn áp dụng, tổng đã được tính lại.",6000);const h=ld("alt_orders",[]);h.unshift({code,time:d.time,items,total,pay,phone:d.phone,lines:L});sv("alt_orders",h.slice(0,20));
   cart={};cpn=null;sv("alt_cart",cart);pos=null;setKm();e.target.reset();$("stm").style.display="none";$("loc").className="loc";$("loc").textContent=LOC0;
   $("send").textContent="Đặt hàng";close_("co");menu();sync();confetti(110);
   if(pay=="Chuyển khoản")setTimeout(()=>showQR(code,total),400);
