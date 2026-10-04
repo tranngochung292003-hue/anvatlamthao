@@ -365,5 +365,6 @@ fetch(API+"?a=menu").then(r=>r.json()).then(j=>{
  cleanCart();sv("alt_cart",cart);buildTabs();menu();sync();if($("co").classList.contains("show"))lines()}).catch(()=>toast("Không tải được thực đơn mới, đang dùng bản đã lưu.",3500));
 if("serviceWorker"in navigator&&location.protocol=="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
+<script src="ui-plus.js"></script>
 </body>
 </html>
