@@ -195,7 +195,29 @@ html.lock .bl,html.lock .contact:before,html.lock .fl,html.lock .lgw:before,html
 .tabs2{display:flex;gap:6px;margin-bottom:12px}.tabs2 button{flex:1;height:42px;border-radius:12px;background:#fff;border:2px solid var(--line);font-weight:700}.tabs2 button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .oa{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.mini{height:38px;padding:0 14px;border-radius:99px;background:var(--sun);font-weight:700;font-size:.88rem}
 .qri{display:block;width:100%;max-width:300px;margin:0 auto 10px;border-radius:14px;background:#fff}
-.pol h3{margin:12px 0 2px;font-size:1rem}.pol p{color:var(--mute);font-size:.92rem}
+.vf[hidden],.vs[hidden]{display:none}
+.vf{display:inline-flex;align-items:center;gap:6px;margin:6px 0 2px;max-width:100%;position:relative;overflow:hidden;background:linear-gradient(90deg,var(--red),var(--org));color:#fff;font-weight:800;font-size:.84rem;padding:6px 14px;border-radius:99px;box-shadow:0 6px 14px #e0301f66;animation:vpulse 2s infinite}
+.vf:after{content:"";position:absolute;top:0;left:-60%;width:35%;height:100%;background:linear-gradient(90deg,transparent,#fff8,transparent);transform:skewX(-20deg);animation:sweep 3s infinite}
+#vft{transition:opacity .28s,transform .28s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#vft.o{opacity:0;transform:translateY(6px)}
+@keyframes vpulse{0%{box-shadow:0 0 0 0 #ffc20ecc,0 6px 14px #e0301f66}70%,100%{box-shadow:0 0 0 12px #ffc20e00,0 6px 14px #e0301f66}}
+.vs{margin-top:12px}.vs h3{font-size:1rem;margin-bottom:6px}
+.vl{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}.vl::-webkit-scrollbar{display:none}
+.vcard{flex:none;min-width:230px;max-width:270px;background:#fff;border:2px dashed var(--org);border-radius:16px;padding:10px 12px;display:flex;align-items:center;gap:10px}
+.vcard>div{flex:1;min-width:0}.vcode{display:block;color:var(--red);font-size:1.05rem;letter-spacing:.04em}.vcard small{display:block;color:var(--mute);font-size:.76rem;line-height:1.3}
+.vcard button{flex:none;background:var(--sun);font-weight:800;font-size:.8rem;height:34px;padding:0 12px;border-radius:99px}
+.ft{margin-top:26px;background:var(--ink);color:#ffffffcc;border-radius:28px;padding:26px 18px 14px;text-align:left;font-size:.88rem}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:20px 14px}
+@media(min-width:620px){.fgrid{grid-template-columns:1.2fr 1fr 1fr 1fr}}
+.fc:first-child{grid-column:1/-1}@media(min-width:620px){.fc:first-child{grid-column:auto}}
+.fc h4{color:var(--sun);font-size:.82rem;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.fc p,.fc a,.fc button{display:block;font-size:.88rem;color:#ffffffcc;text-decoration:none;text-align:left;padding:4px 0;line-height:1.35}
+.fc button:hover,.fc a:hover{color:var(--sun)}
+.fc>img{width:54px;margin:0 0 6px}.fc>b{display:block;color:#fff;font-size:1.05rem}
+.fbot{border-top:1px solid #ffffff22;margin-top:18px;padding-top:12px;font-size:.76rem;text-align:center;opacity:.75}
+.pol details{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;padding:0 14px}
+.pol summary{cursor:pointer;font-weight:700;padding:13px 0;list-style:none;display:flex;justify-content:space-between}
+.pol summary::-webkit-details-marker{display:none}.pol summary:after{content:"＋";color:var(--red)}.pol details[open] summary:after{content:"－"}
+.pol details p{color:var(--mute);font-size:.9rem;margin:0 0 10px;line-height:1.5}
 @media(min-width:760px){.grid{gap:16px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
 </style>
@@ -219,12 +241,14 @@ html.lock .bl,html.lock .contact:before,html.lock .fl,html.lock .lgw:before,html
   <div class="lgw"><img data-logo alt="Ăn Vặt Lâm Thao"></div>
   <div class="tx">
     <div class="tag">Đặt Nhanh - Giao Nhanh</div>
+    <button class="vf" id="vf" hidden aria-label="Voucher hôm nay">🎟️ <span id="vft"></span></button>
     <h1>Hôm nay bạn muốn ăn<span id="rot">trà sữa trân châu</span></h1>
     <a class="cta" href="#menu">Xem thực đơn</a>
   </div>
  </section>
  <div class="mq"><div id="mq"></div></div>
  <div class="closed" id="closed">Hiện đã đóng cửa. Chúng tôi nhận đơn từ <span id="oh"></span> hằng ngày.</div>
+ <section class="vs" id="vs" hidden><h3>🎟️ Voucher hôm nay</h3><div class="vl" id="vl"></div></section>
 
  <section class="sec" id="menu">
   <h2>Thực đơn hôm nay</h2><p class="sub">Chạm “Thêm” để cho món vào giỏ hàng.</p>
@@ -250,7 +274,15 @@ html.lock .bl,html.lock .contact:before,html.lock .fl,html.lock .lgw:before,html
   </div>
   <p class="note" id="area"></p>
  </section>
- <footer><img data-logo alt="">© 2026 Ăn Vặt Lâm Thao · Đặt Nhanh - Giao Nhanh<br>anvatlamthao.xyz<br><button id="polBtn" style="text-decoration:underline;color:var(--mute);margin-top:6px">Chính sách &amp; thông tin cửa hàng</button></footer>
+ <footer class="ft">
+  <div class="fgrid">
+   <div class="fc"><img data-logo alt=""><b>Ăn Vặt Lâm Thao</b><p>Đặt Nhanh - Giao Nhanh. Món ngon mỗi ngày, làm khi có đơn.</p></div>
+   <div class="fc"><h4>Liên hệ</h4><a href="tel:0978472704">📞 0978 472 704</a><a href="https://zalo.me/0978472704" target="_blank" rel="noopener">💬 Nhắn Zalo</a><a href="https://www.facebook.com/share/19SxQx1Z1Z/?mibextid=wwXIfr" target="_blank" rel="noopener">📘 Facebook</a><p>📍 <span id="fa"></span></p><p>🕒 <span id="fh"></span></p></div>
+   <div class="fc"><h4>Hỗ trợ khách hàng</h4><button data-pol="ship">Chính sách giao hàng</button><button data-pol="pay">Phương thức thanh toán</button><button data-pol="cancel">Hủy đơn &amp; đổi trả</button><button data-pol="promo">Voucher &amp; điểm thưởng</button></div>
+   <div class="fc"><h4>Thông tin</h4><button data-pol="about">Về cửa hàng</button><button data-pol="privacy">Chính sách bảo mật</button><button data-pol="terms">Điều khoản sử dụng</button><p>💵 Tiền mặt · 🏦 MB Bank (VietQR)</p></div>
+  </div>
+  <div class="fbot">© 2026 Ăn Vặt Lâm Thao · anvatlamthao.xyz · Cập nhật chính sách: 10/2026</div>
+</footer>
 </main>
 
 <div class="fab">
@@ -302,11 +334,13 @@ html.lock .bl,html.lock .contact:before,html.lock .fl,html.lock .lgw:before,html
 <div class="mask" id="ac" role="dialog" aria-modal="true"><div class="sheet" tabindex="-1"><h2><span>Tài khoản</span><button class="x" id="closeAc" aria-label="Đóng">✕</button></h2><div id="acB"></div></div></div>
 <div class="mask" id="qr" role="dialog" aria-modal="true"><div class="sheet" tabindex="-1"><h2><span>Chuyển khoản</span><button class="x" id="closeQr" aria-label="Đóng">✕</button></h2><div id="qrB"></div></div></div>
 <div class="mask" id="pol" role="dialog" aria-modal="true"><div class="sheet pol" tabindex="-1"><h2><span>Chính sách &amp; thông tin</span><button class="x" id="closePol" aria-label="Đóng">✕</button></h2>
-<h3>Thông tin cửa hàng</h3><p>Ăn Vặt Lâm Thao · Hotline/Zalo: 0978 472 704 · Khu vực phục vụ: Lâm Thao. Nhận đơn theo giờ hiển thị trên trang.</p>
-<h3>Giao hàng</h3><p>Giao tận nơi trong khu vực phục vụ. Phí giao và mức miễn phí giao hiển thị ở giỏ hàng. Đơn hẹn giờ được giao theo giờ khách chọn. Thời gian giao có thể thay đổi khi đông đơn hoặc thời tiết xấu.</p>
-<h3>Thanh toán</h3><p>Tiền mặt khi nhận hàng, hoặc chuyển khoản qua mã QR (MB Bank). Với chuyển khoản, quán xác nhận sau khi nhận được tiền.</p>
-<h3>Hủy đơn &amp; đổi trả</h3><p>Quý khách gọi hotline sớm để hủy đơn trước khi quán bắt đầu chế biến. Nếu món giao sai hoặc có vấn đề về chất lượng, vui lòng liên hệ ngay trong ngày để được hỗ trợ đổi hoặc hoàn tiền.</p>
-<h3>Bảo mật thông tin</h3><p>Chúng tôi chỉ dùng họ tên, số điện thoại, địa chỉ và vị trí để giao hàng và chăm sóc khách. Mật khẩu tài khoản được mã hóa, không chia sẻ cho bên thứ ba.</p>
+<details id="pol-about"><summary>Về cửa hàng</summary><p><b>Ăn Vặt Lâm Thao</b> chuyên đồ ăn nhanh, ăn vặt, đồ uống và combo, chế biến khi có đơn và giao tận nơi. Hotline/Zalo: 0978 472 704. Khu vực phục vụ và giờ nhận đơn được hiển thị ở chân trang.</p></details>
+<details id="pol-ship"><summary>Chính sách giao hàng</summary><p>Giao tận nơi trong khu vực phục vụ. Phí giao, mức miễn phí giao và phụ phí theo khoảng cách (nếu có) được hiển thị rõ trong giỏ hàng trước khi đặt.</p><p>Quý khách vui lòng cung cấp đúng địa chỉ, chia sẻ vị trí và giữ điện thoại để shipper liên hệ. Thời gian giao dự kiến sẽ được quán báo khi xác nhận đơn và có thể lâu hơn vào giờ cao điểm hoặc thời tiết xấu. Đơn hẹn giờ được giao theo khung giờ khách chọn.</p></details>
+<details id="pol-pay"><summary>Phương thức thanh toán</summary><p><b>Tiền mặt</b> khi nhận hàng. <b>Chuyển khoản</b> qua mã VietQR: MB Bank · TRAN NGOC HUNG · 0978472704, nội dung ghi đúng mã đơn. Với chuyển khoản, quán xác nhận sau khi nhận được tiền.</p></details>
+<details id="pol-cancel"><summary>Hủy đơn &amp; đổi trả</summary><p>Quý khách gọi hotline sớm để hủy đơn trước khi quán bắt đầu chế biến. Với đơn đã chế biến, quán có thể không nhận hủy.</p><p>Nếu món giao sai, thiếu hoặc có vấn đề về chất lượng, vui lòng liên hệ trong ngày kèm hình ảnh để được đổi món hoặc hoàn tiền. Tiền chuyển khoản sẽ được hoàn về đúng tài khoản đã thanh toán.</p></details>
+<details id="pol-promo"><summary>Voucher &amp; điểm thưởng</summary><p>Mỗi đơn dùng tối đa một mã giảm giá, không cộng dồn với mã khác. Mã có thể có điều kiện đơn tối thiểu, mức giảm tối đa, hạn sử dụng và số lượt dùng giới hạn.</p><p>Khách có tài khoản được tích 1 điểm cho mỗi 1.000đ của đơn đã giao thành công. Quán có quyền điều chỉnh hoặc kết thúc chương trình khuyến mãi và sẽ thông báo trên website.</p></details>
+<details id="pol-privacy"><summary>Chính sách bảo mật</summary><p>Chúng tôi thu thập họ tên, số điện thoại, địa chỉ, vị trí giao hàng và lịch sử đơn chỉ để xử lý đơn, giao hàng và chăm sóc khách. Mật khẩu tài khoản được mã hóa, thông tin không được bán hoặc chia sẻ cho bên thứ ba ngoài phục vụ giao nhận. Quý khách có thể yêu cầu xóa tài khoản và dữ liệu bằng cách liên hệ hotline.</p></details>
+<details id="pol-terms"><summary>Điều khoản sử dụng</summary><p>Việc đặt hàng đồng nghĩa quý khách đồng ý với các chính sách trên. Quán có quyền từ chối hoặc hủy đơn khi thông tin không chính xác, địa chỉ ngoài phạm vi giao hoặc không liên lạc được. Giá và thực đơn có thể thay đổi; hình ảnh chỉ mang tính minh họa.</p></details>
 </div></div>
 
 <script>
@@ -378,7 +412,8 @@ function tween(el,to){const from=+el.dataset.v||0;el.dataset.v=to;const t0=perfo
 /* ===== HIỆU ỨNG TRANG ===== */
 function info(){$("area").textContent=`Khu vực phục vụ: ${CFG.area} · Phí giao ${fmt(CFG.fee)}${CFG.perKm?` (+${fmt(CFG.perKm)}/km sau ${CFG.freeKm}km)`:""}, miễn phí từ ${fmt(CFG.free)} · Nhận đơn ${CFG.open}h–${CFG.close}h`;
   $("closed").textContent=CFG.paused?(CFG.notice||"Quán tạm nghỉ, vui lòng quay lại sau."):`Hiện đã đóng cửa. Chúng tôi nhận đơn từ ${CFG.open}h đến ${CFG.close}h hằng ngày.`;
-  $("closed").classList.toggle("show",!isOpen())}
+  $("closed").classList.toggle("show",!isOpen());
+  $("fa").textContent=CFG.area;$("fh").textContent=CFG.open==0&&CFG.close==24?"Nhận đơn cả ngày (0h–24h)":`${CFG.open}h – ${CFG.close}h hằng ngày`}
 info();
 $("mq").innerHTML=("🔥 Đặt Nhanh - Giao Nhanh &nbsp;•&nbsp; 🛵 Giao tận nơi &nbsp;•&nbsp; 🧋 Trà sữa trân châu &nbsp;•&nbsp; 🍟 Khoai tây chiên giòn rụm &nbsp;•&nbsp; 🎉 Combo tiết kiệm &nbsp;•&nbsp; ").repeat(4);
 const W=["trà sữa trân châu","khoai tây chiên","gà rán giòn","bánh tráng trộn","combo tiết kiệm"];let wi=0;
@@ -437,19 +472,32 @@ document.addEventListener("click",e=>{
   const b=e.target.closest("[data-a]");if(!b)return;
   const k=b.dataset.id,add=b.dataset.a=="+",n=Math.min(99,(cart[k]||0)+(add?1:-1));if(add)fly(b,k);
   if(n<=0)delete cart[k];else cart[k]=n;sv("alt_cart",cart);refreshCtl(k);sync();if($("co").classList.contains("show"))lines()});
-function openCo(){if(!totals().q){toast("Giỏ hàng đang trống, hãy chọn món trước nhé!");$("menu").scrollIntoView();return}fillForm();lines();open_("co")}
+function openCo(){if(!totals().q){toast("Giỏ hàng đang trống, hãy chọn món trước nhé!");$("menu").scrollIntoView();return}fillForm();lines();open_("co");if(pendCode){const c=pendCode;pendCode="";$("cdi").value=c;applyCode(c)}}
 $("cartBtn").onclick=openCo;$("barBtn").onclick=openCo;
 ["Co","Md","Ac","Qr","Pol"].forEach(n=>{const x=$("close"+n);if(x)x.onclick=()=>close_({Co:"co",Md:"md",Ac:"ac",Qr:"qr",Pol:"pol"}[n])});
 ["co","md","ac","qr","pol","op"].forEach(id=>$(id).onclick=e=>{if(e.target.id==id)close_(id)});
 addEventListener("keydown",e=>{if(e.key=="Escape")["co","md","ac","qr","pol","op","welcome"].forEach(close_)});
 $("start").onclick=()=>{close_("welcome");confetti(50);setTimeout(()=>toast("🎉 Chào mừng bạn đến với Ăn Vặt Lâm Thao!",4500),300)};
-$("polBtn").onclick=()=>open_("pol");
+document.addEventListener("click",e=>{const p=e.target.closest("[data-pol]");if(!p)return;document.querySelectorAll("#pol details").forEach(d=>d.open=d.id=="pol-"+p.dataset.pol);open_("pol");setTimeout(()=>{const d=$("pol-"+p.dataset.pol);if(d)d.scrollIntoView({block:"start"})},150)});
 
 /* mã giảm giá + hẹn giờ */
-$("cdb").onclick=async()=>{const c=$("cdi").value.trim().toUpperCase();if(!c)return;$("cdb").disabled=true;
-  try{const j=await(await fetch(APPS_SCRIPT_URL+"?a=code&c="+encodeURIComponent(c)+"&s="+totals().s)).json();
-    if(j.ok){cpn={code:j.code,type:j.type,value:j.value,min:j.min,cap:j.cap};toast("Đã áp dụng mã "+j.code+" ✔")}else{cpn=null;toast(j.msg||"Mã không hợp lệ")}lines();sync()}catch(_){toast("Không kiểm tra được mã, thử lại nhé.")}
-  $("cdb").disabled=false};
+async function applyCode(c){c=String(c||"").trim().toUpperCase();if(!c)return;$("cdb").disabled=true;
+  try{const t=await(await fetch(APPS_SCRIPT_URL+"?a=code&c="+encodeURIComponent(c)+"&s="+totals().s)).text();let j;try{j=JSON.parse(t)}catch(_){throw new Error("parse")}
+    if(j.ok&&j.code){cpn={code:j.code,type:j.type,value:j.value,min:j.min,cap:j.cap};toast("Đã áp dụng mã "+j.code+" ✔")}
+    else if(j.msg){cpn=null;toast(j.msg)}
+    else toast("Máy chủ chưa hỗ trợ kiểm tra mã. Hãy triển khai lại Code.gs bản mới nhất."+(j.error?" ("+j.error+")":""),6500);
+    lines();sync()}
+  catch(err){toast(err.message=="parse"?"Máy chủ trả về lỗi. Hãy chạy hàm authorize trong Apps Script rồi triển khai Phiên bản mới.":"Không kết nối được máy chủ, thử lại nhé.",6500)}
+  $("cdb").disabled=false}
+$("cdb").onclick=()=>applyCode($("cdi").value);
+let VC=ld("alt_vc",[]),vi=0,pendCode="";
+function showVf(){if(!VC.length)return;const v=VC[vi%VC.length],t=$("vft");t.classList.add("o");setTimeout(()=>{t.textContent=`Mã ${v.code}: ${v.s}`;t.classList.remove("o")},280)}
+function drawVc(){$("vs").hidden=!VC.length;$("vf").hidden=!VC.length;if(!VC.length)return;
+  $("vl").innerHTML=VC.map(v=>`<div class="vcard"><div><b class="vcode">${esc(v.code)}</b><small>${esc(v.desc)}</small></div><button data-vc="${esc(v.code)}">Dùng mã</button></div>`).join("");vi=0;$("vft").textContent=`Mã ${VC[0].code}: ${VC[0].s}`}
+function useCode(c){$("cdi").value=c;if(totals().q){openCo();applyCode(c)}else{pendCode=c;toast(`Đã lưu mã ${c} 🎟️ Hãy chọn món, mã sẽ tự áp dụng khi bạn mở giỏ hàng.`,5000)}}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-vc]");if(b)useCode(b.dataset.vc)});
+$("vf").onclick=()=>{if(VC.length)useCode(VC[vi%VC.length].code)};
+setInterval(()=>{if(VC.length>1&&!document.hidden){vi++;showVf()}},3200);
 $("sch").onchange=()=>{$("stm").style.display=$("sch").value?"block":"none";ready()};
 
 /* ===== TÀI KHOẢN KHÁCH ===== */
@@ -529,8 +577,10 @@ addEventListener("offline",()=>toast("Bạn đang offline, hãy kiểm tra kết
 
 /* ===== KHỞI TẠO + MENU TỪ GOOGLE SHEET ===== */
 menu();sync();reveal();requestAnimationFrame(ind);addEventListener("resize",ind);addEventListener("orientationchange",()=>setTimeout(ind,200));
+drawVc();
 if(APPS_SCRIPT_URL)fetch(APPS_SCRIPT_URL+"?a=menu").then(r=>r.json()).then(j=>{
   if(j.cfg){Object.assign(CFG,{fee:+j.cfg.fee,free:+j.cfg.free,open:+j.cfg.open,close:+j.cfg.close,paused:!!j.cfg.paused,notice:j.cfg.notice||"",shopLat:+j.cfg.shopLat||0,shopLng:+j.cfg.shopLng||0,freeKm:+j.cfg.freeKm||0,perKm:+j.cfg.perKm||0,maxKm:+j.cfg.maxKm||0});info()}
+  if(Array.isArray(j.vouchers)){VC=j.vouchers;sv("alt_vc",VC);drawVc()}
   if(j.products&&j.products.length){P=j.products;sv("alt_menu",P)}
   cleanCart();sv("alt_cart",cart);menu();sync();if($("co").classList.contains("show"))lines()}).catch(()=>{});
 if("serviceWorker"in navigator&&location.protocol=="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
