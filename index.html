@@ -234,7 +234,10 @@ function info(){$("area").textContent=`Khu vực: ${CFG.area} · Phí giao ${fmt
  $("closed").classList.toggle("show",!isOpen())}
 
 /* ===== THỰC ĐƠN ===== */
-function buildTabs(){const cs=[...new Set(P.map(x=>x.c).filter(Boolean))];if(cur!="all"&&!cs.includes(cur))cur="all";
+const GORD=["combo","nhanh","vat","uong"]; // thứ tự hiển thị: Combo → Đồ ăn nhanh → Đồ ăn vặt → Đồ uống → nhóm khác
+const grpOrder=list=>{const seen=[];list.forEach(x=>{if(x.c&&!seen.includes(x.c))seen.push(x.c)});const r=c=>{const i=GORD.indexOf(c);return i<0?99:i};return seen.sort((a,b)=>r(a)-r(b))};
+const sortP=list=>{const gs=grpOrder(list),r=c=>{const i=gs.indexOf(c);return i<0?99:i};return list.map((x,i)=>[x,i]).sort((a,b)=>r(a[0].c)-r(b[0].c)||a[1]-b[1]).map(x=>x[0])};
+function buildTabs(){const cs=grpOrder(P);if(cur!="all"&&!cs.includes(cur))cur="all";
  $("tabs").innerHTML=[["all","Tất cả"],...cs.map(c=>[c,LBL[c]||c])].map(t=>`<button data-c="${esc(t[0])}" class="${t[0]==cur?"on":""}">${esc(t[1])}</button>`).join("")}
 $("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;cur=b.dataset.c;buildTabs();menu()};
 $("q").oninput=e=>{kw=norm(e.target.value.trim());menu()};
@@ -244,7 +247,7 @@ const ctl=x=>{if(x.so)return'<button class="add" disabled>Hết món</button>';
  const k=String(x.id),n=cart[k]||0;return n?step(k,n):`<button class="add" data-a="+" data-id="${esc(k)}">+ Thêm</button>`};
 const imgU=u=>{const m=String(u).match(/(?:\/d\/|[?&]id=)([\w-]+)/);return m&&/googleusercontent|drive\.google/.test(u)?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w800`:u};
 const th=x=>`<span>${esc(x.e||"🍽️")}</span>${x.img?`<img src="${esc(imgU(x.img))}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:""}`;
-function menu(){const L=P.filter(x=>(cur=="all"||x.c==cur)&&(!kw||norm(x.n+" "+(x.d||"")).includes(kw)));
+function menu(){const L=sortP(P).filter(x=>(cur=="all"||x.c==cur)&&(!kw||norm(x.n+" "+(x.d||"")).includes(kw)));
  $("grid").innerHTML=L.length?L.map(x=>`<article class="card${x.so?" so":""}"><div class="art c-${esc(x.c)}">${x.so?"<em>Hết món</em>":x.t?`<em>${esc(x.t)}</em>`:""}${th(x)}</div><div class="info"><h3>${esc(x.n)}</h3>${x.r?`<small class="rt">★ ${x.r} (${x.rc})</small>`:""}<p>${esc(x.d||"")}</p><div class="price">${fmt(x.p)}${x.o?`<s>${fmt(x.o)}</s>`:""}</div><div class="ctl" data-id="${esc(x.id)}">${ctl(x)}</div></div></article>`).join(""):P.length?'<p class="empty">Chưa tìm thấy món phù hợp.</p>':'<p class="empty">Quán đang cập nhật thực đơn, bạn quay lại sau nhé!</p>'}
 function refreshCtl(k){const id=String(k).split("~")[0],x=P.find(p=>p.id==id);if(x)document.querySelectorAll(`.ctl[data-id="${id}"]`).forEach(c=>c.innerHTML=ctl(x))}
 
