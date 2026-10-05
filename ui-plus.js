@@ -1,7 +1,7 @@
 /* ui-plus.js – Popup chào mừng, thanh chạy, slider, hiệu ứng, footer đầy đủ
    Cách dùng: thêm 1 dòng trước </body> của index.html:  <script src="ui-plus.js"></script> */
 (function(){
-const SHOP={owner:"Trần Ngọc Hùng",addr:"[ĐIỀN ĐỊA CHỈ QUÁN]",hotline:"0978 472 704",tel:"0978472704"};
+const SHOP={owner:"Trần Ngọc Hùng",addr:"[ĐIỀN ĐỊA CHỈ QUÁN]",hotline:"0978 472 704",tel:"0978472704",fb:"https://www.facebook.com/people/%C4%82n-V%E1%BA%B7t-L%C3%A2m-Thao/61595124264489"};
 const $=id=>document.getElementById(id);
 
 /* ---------- CSS ---------- */
@@ -41,14 +41,14 @@ button:active,.cta:active,.cb a:active{transform:scale(.94)}
 @media(min-width:600px){.ft2{grid-template-columns:repeat(3,1fr)}}
 .fab{position:fixed;right:14px;bottom:calc(88px + env(safe-area-inset-bottom,0px));z-index:35;display:flex;flex-direction:column;gap:8px}
 .fab a,.fab button{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:1.2rem;text-decoration:none;box-shadow:0 6px 16px #0004;color:#fff}
-.fab .z{background:#0068ff}.fab .t{background:var(--ink);opacity:0;pointer-events:none}.fab .t.on{opacity:1;pointer-events:auto}
+.fab svg{width:26px;height:26px;display:block}.fab .z{background:#0068ff}.fab .h{background:#1aa34a;animation:ring2 1.8s infinite}.fab .f{background:#1877f2}.fab .t{background:var(--ink);opacity:0;pointer-events:none}.fab .t.on{opacity:1;pointer-events:auto}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}`;
 const st=document.createElement("style");st.textContent=css;document.head.appendChild(st);
 
 /* ---------- Thanh chữ chạy ---------- */
 const mq=document.createElement("div");mq.className="mq";
 function mqText(){let free="";try{free=fmt(CFG.free)}catch(_){free="100.000đ"}
- const t=[`🎉 Chào mừng bạn đến Ăn Vặt Lâm Thao`,`🚚 Miễn phí giao hàng từ ${free}`,`🎟️ Voucher mới mỗi ngày – bấm “Dùng mã”`,`⭐ Tích điểm: 1.000 điểm trừ ngay 10.000đ`,`⚡ Đặt Nhanh - Giao Nhanh`].map(x=>`<span>${x}</span>`).join("");
+ const t=[`🎉 Chào mừng bạn đến Ăn Vặt Lâm Thao`,`🚚 Miễn phí giao hàng từ ${free}`,`🎟️ Voucher mới mỗi ngày – bấm “Dùng mã”`,`⭐ Đăng nhập để tích điểm: 1.000 điểm trừ ngay 10.000đ (mua 100.000đ tích 1.000 điểm – hoàn 10%)`,`⚡ Đặt Nhanh - Giao Nhanh`].map(x=>`<span>${x}</span>`).join("");
  mq.innerHTML=`<div>${t}${t}</div>`}
 mqText();document.querySelector("header.top").after(mq);
 if($("area"))new MutationObserver(mqText).observe($("area"),{childList:true,characterData:true,subtree:true});
@@ -58,7 +58,7 @@ const S=[
  ["linear-gradient(120deg,#e0301f,#ff8a00)","🔥 Đặt Nhanh - Giao Nhanh","Món nóng giòn, giao tận nơi trong khu vực","#menu"],
  ["linear-gradient(120deg,#2e8b4a,#8fd3b0)","🎟️ Voucher mỗi ngày","Bấm để xem mã giảm giá hôm nay","#vs"],
  ["linear-gradient(120deg,#3a150e,#8a3b1f)","🍱 Combo tiết kiệm","Ăn no – giá mềm, xem ngay các combo","combo"],
- ["linear-gradient(120deg,#0068ff,#6aa8ff)","⭐ Tích điểm đổi hạng","Cứ 1.000 điểm trừ ngay 10.000đ","acc"]];
+ ["linear-gradient(120deg,#0068ff,#6aa8ff)","Đăng nhập để ⭐ Tích điểm đổi hạng","Cứ 1.000 điểm trừ ngay 10.000đ · Mua 100.000đ tích 1.000 điểm (hoàn 10%)","acc"]];
 const sl=document.createElement("section");sl.className="sl";
 sl.innerHTML=`<div class="tr">${S.map((s,i)=>`<div class="s" data-i="${i}" style="background:${s[0]}"><b>${s[1]}</b><small>${s[2]}</small></div>`).join("")}</div><div class="d">${S.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("")}</div>`;
 document.querySelector(".hero").after(sl);
@@ -98,7 +98,11 @@ document.querySelector(".ft").before(f2);
 
 /* ---------- Nút nổi: Zalo + lên đầu trang ---------- */
 const fab=document.createElement("div");fab.className="fab";
-fab.innerHTML=`<a class="z" href="https://zalo.me/${SHOP.tel}" target="_blank" rel="noopener" aria-label="Zalo">💬</a><button class="t" aria-label="Lên đầu trang">⬆</button>`;
+const IC={
+ h:'<svg viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>',
+ z:'<svg viewBox="0 0 24 24"><path fill="#fff" d="M12 3C6.8 3 3 6.5 3 11c0 2.3 1 4.3 2.7 5.8L5 21l4.1-1.7c.9.2 1.8.3 2.9.3 5.2 0 9-3.5 9-8.1S17.2 3 12 3z"/><path fill="none" stroke="#0068ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M8.4 8.6h6.4L8.9 14.2h6.7"/></svg>',
+ f:'<svg viewBox="0 0 24 24" fill="#fff"><path d="M13.5 21v-7.5H16l.4-3h-2.9V8.7c0-.9.3-1.5 1.5-1.5h1.5V4.5c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8v2.3H8v3h2.6V21z"/></svg>'};
+fab.innerHTML=`<a class="h" href="tel:${SHOP.tel}" aria-label="Gọi hotline">${IC.h}</a><a class="z" href="https://zalo.me/${SHOP.tel}" target="_blank" rel="noopener" aria-label="Zalo">${IC.z}</a><a class="f" href="${SHOP.fb}" target="_blank" rel="noopener" aria-label="Facebook">${IC.f}</a><button class="t" aria-label="Lên đầu trang">⬆</button>`;
 document.body.appendChild(fab);const tb=fab.querySelector(".t");
 tb.onclick=()=>scrollTo({top:0});addEventListener("scroll",()=>tb.classList.toggle("on",scrollY>500),{passive:true});
 
@@ -117,6 +121,7 @@ const st2=document.createElement("style");st2.textContent=`
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
 @keyframes wig{0%,88%,100%{transform:rotate(0)}91%{transform:rotate(-8deg)}94%{transform:rotate(8deg)}97%{transform:rotate(-5deg)}}
 @keyframes ring{from{box-shadow:0 0 0 0 #0068ff88}to{box-shadow:0 0 0 14px #0068ff00}}
+@keyframes ring2{from{box-shadow:0 0 0 0 #1aa34a88}to{box-shadow:0 0 0 14px #1aa34a00}}
 .art img,.art span{transition:transform .5s}.card:hover .art img,.card:hover .art span{transform:scale(1.1)}
 .art em{animation:pulse 1.8s infinite}
 .card:nth-child(2n){animation-delay:.08s}.card:nth-child(3n){animation-delay:.16s}

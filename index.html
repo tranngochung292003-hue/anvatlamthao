@@ -41,6 +41,7 @@ input,select{font:inherit;font-size:16px;color:inherit}
 .closed{display:none;margin-top:10px;background:var(--red);color:#fff;border-radius:14px;padding:11px 14px;font-weight:600}.closed.show{display:block}
 .vs{margin-top:12px}.vs h3{font-size:1rem;margin-bottom:6px}
 .vl{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}.vl::-webkit-scrollbar{display:none}
+@media(max-width:640px){.vl{flex-direction:column;overflow:visible;gap:8px}.vcard{min-width:0;width:100%}}
 .vcard{flex:none;min-width:230px;background:#fff;border:2px dashed var(--org);border-radius:16px;padding:10px 12px;display:flex;align-items:center;gap:10px}
 .vcard>div{flex:1}.vcard b{display:block;color:var(--red);font-size:1.05rem}.vcard small{color:var(--mute);font-size:.76rem;line-height:1.3;display:block}
 .vcard button{background:var(--sun);font-weight:800;font-size:.8rem;height:34px;padding:0 12px;border-radius:99px}
@@ -190,7 +191,7 @@ body.has-cart .bar{transform:none}
 <details id="pol-ship"><summary>Chính sách giao hàng</summary><p>Giao tận nơi trong khu vực phục vụ. Phí giao và phụ phí (nếu có) hiển thị trong giỏ hàng trước khi đặt. Vui lòng chia sẻ đúng vị trí giao hàng và giữ điện thoại để shipper liên hệ. Thời gian giao có thể lâu hơn vào giờ cao điểm.</p></details>
 <details id="pol-pay"><summary>Phương thức thanh toán</summary><p>Tiền mặt khi nhận hàng, hoặc chuyển khoản qua VietQR: MB Bank · TRAN NGOC HUNG · 0978472704, ghi đúng mã đơn. Quán xác nhận sau khi nhận được tiền.</p></details>
 <details id="pol-cancel"><summary>Hủy đơn &amp; đổi trả</summary><p>Bạn có thể tự hủy đơn trong mục "Đơn của tôi" khi quán chưa xác nhận, hoặc gọi hotline sớm. Món giao sai, thiếu hoặc có vấn đề chất lượng: liên hệ trong ngày kèm hình ảnh để được đổi hoặc hoàn tiền.</p></details>
-<details id="pol-promo"><summary>Voucher &amp; điểm thưởng</summary><p>Mỗi đơn dùng tối đa một mã giảm giá. Mã có thể có điều kiện đơn tối thiểu, mức giảm tối đa, hạn dùng và giới hạn lượt dùng. Khách có tài khoản được tích 1 điểm cho mỗi 1.000đ của đơn đã giao thành công. Mỗi 1.000 điểm được trừ thẳng 10.000đ vào đơn tiếp theo (cần tối thiểu 1.000 điểm, chọn ở bước xác nhận đơn hàng). Đơn tối thiểu 30.000đ, chưa tính phí giao.</p></details>
+<details id="pol-promo"><summary>Voucher &amp; điểm thưởng</summary><p>Mỗi đơn dùng tối đa một mã giảm giá. Mã có thể có điều kiện đơn tối thiểu, mức giảm tối đa, hạn dùng và giới hạn lượt dùng. Khách có tài khoản được tích 1 điểm cho mỗi 100đ của đơn đã giao thành công (mua 100.000đ được 1.000 điểm, tương đương hoàn 10%). Mỗi 1.000 điểm được trừ thẳng 10.000đ vào đơn tiếp theo (cần tối thiểu 1.000 điểm, chọn ở bước xác nhận đơn hàng). Đơn tối thiểu 30.000đ, chưa tính phí giao.</p></details>
 <details id="pol-privacy"><summary>Chính sách bảo mật</summary><p>Chúng tôi thu thập họ tên, số điện thoại, địa chỉ, vị trí giao hàng và lịch sử đơn chỉ để xử lý đơn, giao hàng và chăm sóc khách. Mật khẩu được mã hóa, thông tin không được bán hay chia sẻ cho bên thứ ba ngoài phục vụ giao nhận. Bạn có thể yêu cầu xóa dữ liệu qua hotline.</p></details>
 <details id="pol-terms"><summary>Điều khoản sử dụng</summary><p>Đặt hàng đồng nghĩa bạn đồng ý các chính sách trên. Quán có quyền từ chối hoặc hủy đơn khi thông tin không chính xác, địa chỉ ngoài phạm vi giao hoặc không liên lạc được. Giá và thực đơn có thể thay đổi; hình ảnh mang tính minh họa.</p></details>
 </div></div>
@@ -313,7 +314,7 @@ function sesSave(s){ses=s;myPts=null;usePts=false;sv("alt_ses",s);$("acN").textC
 const me=()=>ses?post({action:"me",phone:ses.phone,token:ses.token}):Promise.resolve(null);
 function drawAcc(){
  if(ses){$("acB").innerHTML=`<div class="od"><b>${esc(ses.name)}</b><small>${esc(ses.phone)}</small><small id="ptx">Đang tải điểm thưởng...</small></div><button class="big" id="toOrd" style="height:46px;margin-bottom:8px">📦 Đơn của tôi</button><button class="big" id="lgo" style="height:46px;background:#fff;color:var(--ink);border:2px solid var(--line)">Đăng xuất</button>`;
-  me().then(j=>{if($("ptx"))$("ptx").textContent=j&&j.ok?`⭐ ${j.points} điểm · Hạng ${j.tier} (đủ 1.000 điểm trừ ngay 10.000đ)`:"Không tải được điểm thưởng"}).catch(()=>{})}
+  me().then(j=>{if($("ptx"))$("ptx").textContent=j&&j.ok?`⭐ ${j.points} điểm · Hạng ${j.tier} (đủ 1.000 điểm trừ ngay 10.000đ · mua 100.000đ tích 1.000 điểm, hoàn 10%)`:"Không tải được điểm thưởng"}).catch(()=>{})}
  else{const r=accMode=="reg";$("acB").innerHTML=`<div class="tabs2"><button data-m="login" class="${r?"":"on"}">Đăng nhập</button><button data-m="reg" class="${r?"on":""}">Đăng ký</button></div><form id="af" novalidate>${r?'<input class="inp" id="rn" maxlength="60" autocomplete="name" placeholder="Họ và tên">':""}<input class="inp" id="rp" type="tel" maxlength="12" inputmode="tel" autocomplete="tel" placeholder="Số điện thoại"><input class="inp" id="rw" type="password" maxlength="40" autocomplete="${r?"new-password":"current-password"}" placeholder="Mật khẩu (tối thiểu 6 ký tự)"><p class="warn" id="aw"></p><button class="big">${r?"Tạo tài khoản":"Đăng nhập"}</button></form><p class="hint" style="margin-top:10px">Tài khoản giúp lưu thông tin, xem lịch sử đơn và tích điểm. Bạn vẫn đặt hàng được mà không cần đăng nhập.</p>`}}
 $("acBtn").onclick=()=>{drawAcc();open_("ac")};
 $("acB").onclick=e=>{const m=e.target.closest("[data-m]");if(m){accMode=m.dataset.m;drawAcc();return}
@@ -387,11 +388,12 @@ $("f").onsubmit=async e=>{e.preventDefault();if(busy)return;
  showDone({code,total,pay,off:jr.off||0,po,pu,cm,name:d.name})};
 addEventListener("offline",()=>toast("Bạn đang offline, hãy kiểm tra mạng."));
 
-/* ===== ĐIỂM THƯỞNG: 1.000 điểm = 10.000đ, tối thiểu 1.000 điểm ===== */
+/* ===== ĐIỂM THƯỞNG: tích 1 điểm/100đ (100.000đ = 1.000 điểm = hoàn 10%); dùng 1.000 điểm = 10.000đ, tối thiểu 1.000 điểm ===== */
 function loadPts(){if(!ses)return;me().then(j=>{if(j&&j.ok){myPts=j.points;if($("co").classList.contains("show"))lines();sync()}}).catch(()=>{})}
-function drawPts(base){const c=$("ptc"),t=$("ptt");$("ptw").style.display="flex";let ok=false;
- if(!ses)t.textContent="⭐ Đăng nhập để dùng điểm thưởng (1.000 điểm = 10.000đ).";
- else if(myPts==null)t.textContent="⭐ Đang tải điểm thưởng...";
+function drawPts(base){const c=$("ptc"),t=$("ptt");
+ if(!ses){$("ptw").style.display="none";usePts=false;c.checked=false;c.disabled=true;return}
+ $("ptw").style.display="flex";let ok=false;
+ if(myPts==null)t.textContent="⭐ Đang tải điểm thưởng...";
  else if(myPts<1000)t.textContent=`⭐ Bạn có ${myPts} điểm. Cần tối thiểu 1.000 điểm để trừ 10.000đ.`;
  else{const b=Math.min(Math.floor(myPts/1000),Math.floor(Math.max(0,base)/10000));ok=b>0;t.textContent=ok?`⭐ Dùng ${b*1000} điểm để trừ ${fmt(b*10000)} (bạn có ${myPts} điểm)`:`⭐ Bạn có ${myPts} điểm, đơn chưa đủ 10.000đ để trừ.`}
  c.disabled=!ok;if(!ok){usePts=false}c.checked=usePts}
