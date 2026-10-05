@@ -45,14 +45,14 @@ label.ck{display:flex;align-items:center;gap:8px;margin-bottom:10px}label.ck inp
     <p class="l" style="margin:4px 0 10px">Chọn 10–15 ảnh một lúc (tối đa 30). Mỗi ảnh sẽ hiện thành 1 form để điền tên, giá… Ảnh được tự tải lên Drive trong lúc bạn điền.</p>
     <input id="mif" type="file" accept="image/*" multiple hidden><button id="mib" type="button">📷 Chọn ảnh sản phẩm</button>
     <div id="mic" class="mic hide"><span class="l">Điền chung cho tất cả món bên dưới (ô nào để trống thì bỏ qua):</span>
-     <div class="row" style="margin-top:6px"><select id="micg"></select><input id="mice" placeholder="Emoji 🍟" maxlength="8"><input id="micp" type="number" inputmode="numeric" placeholder="Giá bán"><input id="mict" placeholder="Nhãn" maxlength="20"></div>
+     <div class="row" style="margin-top:6px"><select id="micg"></select><input id="mice" placeholder="Emoji 🍟" maxlength="8"><input id="micp" type="text" inputmode="numeric" placeholder="Giá bán"><input id="mict" placeholder="Nhãn" maxlength="20"></div>
      <button class="g" id="mica" type="button">Áp dụng cho tất cả</button></div>
     <div id="mil" style="margin-top:12px"></div>
     <div id="mia" class="mia hide"><div class="l" id="mism" style="margin-bottom:6px"></div><button id="mis" class="k" disabled>💾 Lưu sản phẩm</button> <button class="g" id="mix" type="button">Xóa tất cả</button></div>
    </div>
    <div class="c"><b id="ft">Thêm sản phẩm</b><br><br>
     <input id="n" placeholder="Tên món" maxlength="60"><input id="d" placeholder="Mô tả ngắn" maxlength="100">
-    <div class="row"><input id="pr" type="number" inputmode="numeric" placeholder="Giá bán"><input id="ol2" type="number" inputmode="numeric" placeholder="Giá cũ (nếu có)"></div>
+    <div class="row"><input id="pr" type="text" inputmode="numeric" placeholder="Giá bán (VD 25000 hoặc 25k)"><input id="ol2" type="text" inputmode="numeric" placeholder="Giá cũ (nếu có)"></div>
     <div class="row"><select id="cat"><option value="combo">Combo</option><option value="nhanh">Đồ ăn nhanh</option><option value="vat">Đồ ăn vặt</option><option value="uong">Đồ uống</option></select><input id="em" placeholder="Emoji 🍟"><input id="tg" placeholder="Nhãn (Bán chạy...)"></div>
     <input id="cat2" placeholder="Hoặc nhóm mới (viết không dấu, VD: banh). Để trống = dùng nhóm ở trên" maxlength="20">
     <textarea id="op" rows="2" placeholder="Tùy chọn (không bắt buộc). VD: Size:M|L+5000;Đường:100%|70%|50%;Topping:Không|Trân châu+5000"></textarea>
@@ -95,7 +95,10 @@ label.ck{display:flex;align-items:center;gap:8px;margin-bottom:10px}label.ck inp
     <div class="row"><div><span class="l">Phí giao (đ)</span><input id="cf" type="number" inputmode="numeric"></div><div><span class="l">Miễn phí từ (đ)</span><input id="cr" type="number" inputmode="numeric"></div></div>
     <div class="row"><div><span class="l">Giờ mở cửa (0–24)</span><input id="co" type="number" min="0" max="24"></div><div><span class="l">Giờ đóng cửa (0–24)</span><input id="cc" type="number" min="0" max="24"></div></div>
     <div class="row"><div><span class="l">Vĩ độ quán</span><input id="sla" type="number" step="any"></div><div><span class="l">Kinh độ quán</span><input id="sln" type="number" step="any"></div></div>
-    <button class="g" id="sloc" type="button" style="margin-bottom:10px">📍 Dùng vị trí hiện tại của tôi làm vị trí quán</button>
+    <button class="g" id="sloc" type="button" style="margin-bottom:6px">📍 Dùng vị trí hiện tại của tôi làm vị trí quán</button>
+    <p class="l" style="margin-bottom:6px">⚠️ Nên bấm nút này bằng <b>ĐIỆN THOẠI bật GPS, khi đang đứng tại quán</b>. Máy tính chỉ lấy vị trí theo mạng, có thể lệch cả chục km → phí giao của khách sẽ sai.</p>
+    <a id="sman" href="#" target="_blank" rel="noopener" style="display:none;margin-bottom:10px">🗺️ Xem vị trí quán đang lưu trên Google Maps (kiểm tra có đúng quán không)</a>
+    <div class="c" style="background:var(--cream)"><b>🧪 Thử tính phí giao</b><br><small>Dán tọa độ khách (VD <i>21.3553,105.2944</i>) hoặc link bản đồ trong đơn, nhập tiền hàng. Dùng đúng các ô cài đặt đang nhập ở trên (chưa cần Lưu).</small><div class="row" style="margin-top:6px"><input id="tq" placeholder="Tọa độ hoặc link bản đồ"><input id="tsub" type="text" inputmode="numeric" placeholder="Tiền hàng (VD 30000)"></div><button class="g" id="tgo" type="button">Tính phí</button><div id="tres" style="margin-top:8px"></div></div>
     <div class="row"><div><span class="l">Không phụ phí trong (km)</span><input id="fk" type="number" step="any"></div><div><span class="l">Phụ phí mỗi km (đ, 0 = tắt)</span><input id="pk" type="number"></div><div><span class="l">Giao tối đa (km, 0 = không giới hạn)</span><input id="mk" type="number" step="any"></div></div>
     <button id="sc">Lưu cài đặt</button></div></div>
  </div>
@@ -114,7 +117,7 @@ async function load(silent){try{const j=await post({action:"admin"});
   D=j;sessionStorage.setItem("ak",KEY);if(window.miRefresh)miRefresh();$("login").classList.add("hide");$("app").classList.remove("hide");
   const lc=j.stats.latest||"";
   if(lastCode!==null&&lc&&lc!==lastCode){beep();msg("🛎️ Có đơn mới!",5000);document.title="(!) Đơn mới – Admin"}
-  lastCode=lc;draw();clearInterval(timer);timer=setInterval(()=>load(true),30000)}catch(e){if(!silent)msg("Không kết nối được máy chủ")}}
+  lastCode=lc;draw();if(window.updMan)updMan();clearInterval(timer);timer=setInterval(()=>load(true),30000)}catch(e){if(!silent)msg("Không kết nối được máy chủ")}}
 const dayKey=t=>String(t).trim().split(" ").pop();
 function report(){const ok=D.orders.filter(o=>o.status!="Đã hủy"),days={},top={};
  ok.forEach(o=>{const k=dayKey(o.time);days[k]=(days[k]||0)+Number(o.total||0);String(o.items).split(" | ").forEach(t=>{const m=t.match(/^(.*?)(?: \(.*\))? x(\d+)$/);if(m)top[m[1]]=(top[m[1]]||0)+ +m[2]})});
@@ -136,6 +139,9 @@ const ADM_ORD=["combo","nhanh","vat","uong"],ADM_LBL={combo:"Combo",nhanh:"Đồ
 function admSort(list){const seen=[];list.forEach(x=>{if(x.c&&!seen.includes(x.c))seen.push(x.c)});const r0=c=>{const i=ADM_ORD.indexOf(c);return i<0?99:i};seen.sort((x,y)=>r0(x)-r0(y));
  const r=c=>{const i=seen.indexOf(c);return i<0?99:i};return list.map((x,i)=>[x,i]).sort((x,y)=>r(x[0].c)-r(y[0].c)||x[1]-y[1]).map(x=>x[0])}
 const admHead=(c,a)=>`<h3 style="margin:16px 2px 6px;font-size:1.02rem;background:var(--sun);border-radius:10px;padding:6px 12px">${esc(ADM_LBL[c]||c||"Chưa phân nhóm")} <small>(${a.filter(x=>x.c==c).length} món)</small></h3>`;
+const coordOf=t=>{const m=String(t||"").match(/(-?\d{1,3}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/);return m?[+m[1],+m[2]]:null};
+const havKm=(a,b,c,d)=>{const t=x=>x*Math.PI/180,l=t(c-a),g=t(d-b),h=Math.sin(l/2)**2+Math.cos(t(a))*Math.cos(t(c))*Math.sin(g/2)**2;return 2*6371*Math.asin(Math.sqrt(h))};
+const distTxt=o=>{const c=D.cfg||{},p=coordOf(o.map);if(!p||!c.shopLat||!c.shopLng)return"";const k=havKm(c.shopLat,c.shopLng,p[0],p[1]);return` · <b${k>30?' style="color:var(--red)"':""}>cách quán ${k.toFixed(1)} km</b>`};
 function draw(){
  $("s1").textContent=D.stats.count;$("s2").textContent=fmt(D.stats.revenue);$("s3").textContent=D.stats.pending;
  const F=[["all","Tất cả"],["Mới","Mới"],["doing","Đang xử lý"],["Đã giao","Đã giao"],["Đã hủy","Đã hủy"]];
@@ -143,7 +149,7 @@ function draw(){
  const L=D.orders.filter(o=>flt=="all"||(flt=="doing"?o.status=="Đã xác nhận"||o.status=="Đang giao":o.status==flt));
  $("ol").innerHTML=L.map(o=>{const n=NX[o.status],tf=o.pay=="Chuyển khoản";return `<div class="c"><div class="row"><b>${esc(o.code)}</b><span class="b ${o.status=="Đã hủy"?"hu":esc(o.status.split(" ")[0])}">${esc(o.status)}</span></div><small>${esc(o.time)} · ${esc(o.pay)} ${tf?(o.paid?'<span class="b paid">Đã nhận tiền</span>':'<span class="b">Chờ chuyển khoản</span>'):""}</small>
  <p><b>${esc(o.name)}</b> · <a href="tel:${esc(o.phone)}">${esc(o.phone)}</a></p><p>${esc(o.address)}</p>${itemsTbl(o)}${o.note?`<p><i>📝 ${esc(o.note)}</i></p>`:""}
- ${amtTbl(o)}<p><a href="${esc(o.map)}" target="_blank" rel="noopener">📍 Xem bản đồ</a></p>
+ ${amtTbl(o)}<p><a href="${esc(o.map)}" target="_blank" rel="noopener">📍 Xem bản đồ</a>${distTxt(o)}</p>
  <div class="row">${n?`<button class="k" data-code="${esc(o.code)}" data-st="${n[1]}">${n[0]}</button>`:""}${tf&&!o.paid&&o.status!="Đã hủy"?`<button data-code="${esc(o.code)}" data-paid="1">💰 Đã nhận tiền</button>`:""}<button class="g" data-print="${esc(o.code)}">🖨️ In phiếu</button>${n?`<button class="r" data-code="${esc(o.code)}" data-st="Đã hủy">Hủy đơn</button>`:""}</div></div>`}).join("")||"<p>Không có đơn.</p>";
  $("pl").innerHTML=admSort(D.products).map((p,i,arr)=>(i&&arr[i-1].c==p.c?"":admHead(p.c,arr))+`<div class="c row" style="flex-wrap:nowrap"><img class="pv" src="${esc(p.img||"")}" alt="" onerror="this.style.visibility='hidden'"><div style="flex:1"><b>${esc(p.e)} ${esc(p.n)}</b> ${p.on?"":'<span class="b">Ẩn</span>'} ${p.so?'<span class="b so">Hết món</span>':""}<br><small>${fmt(p.p)} · ${esc(p.c)}${p.op?" · có tùy chọn":""}</small></div><button class="g" data-e="${esc(p.id)}">Sửa</button><button class="r" data-x="${esc(p.id)}">Xóa</button></div>`).join("")||"<p>Chưa có sản phẩm. Web sẽ hiện thông báo đang cập nhật thực đơn cho đến khi bạn thêm món.</p>";
  $("cl").innerHTML=D.coupons.map(k=>`<div class="c row" style="flex-wrap:nowrap"><div style="flex:1"><b>${esc(k.code)}</b> ${k.on?"":'<span class="b so">Tắt</span>'} ${k.pub?'<span class="b paid">Hiện trên web</span>':""}<br><small>${k.exp?"HSD "+esc(k.exp)+" · ":""}${k.type=="percent"?"Giảm "+k.value+"%":"Giảm "+fmt(k.value)} · tối thiểu ${fmt(k.min)}${k.cap?" · tối đa "+fmt(k.cap):""} · dùng ${k.used||0}${+k.max?"/"+k.max:""} · ${+k.per?k.per+" lần/SĐT":"không giới hạn/SĐT"}</small></div><button class="g" data-ke="${esc(k.code)}">Sửa</button><button class="r" data-kx="${esc(k.code)}">Xóa</button></div>`).join("")||"<p>Chưa có mã giảm giá.</p>";
@@ -170,9 +176,9 @@ $("file").onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image
  const u=c.toDataURL("image/jpeg",.82);$("pv").src=u;img="";$("save").disabled=true;msg("Đang tải ảnh lên Drive...",15000);
  try{const j=await post({action:"upload",data:u.split(",")[1],mime:"image/jpeg"});if(j.ok){img=j.url;msg("Đã tải ảnh lên Drive ✔")}else alert("Tải ảnh lỗi: "+(j.error||"không rõ"))}catch(err){alert("Không tải được ảnh. Hãy chạy hàm authorize trong Apps Script và triển khai lại phiên bản mới.")}
  $("save").disabled=false};im.src=URL.createObjectURL(f)};
-$("save").onclick=async()=>{if(!$("n").value.trim()||!+$("pr").value)return msg("Nhập tên và giá");$("save").disabled=true;
+$("save").onclick=async()=>{if(!$("n").value.trim()||!money($("pr").value))return msg("Nhập tên và giá");if(money($("pr").value)<1000)return msg("Giá dưới 1.000đ – hãy kiểm tra lại (VD 25000 hoặc 25k)",4000);$("save").disabled=true;
  const grp=($("cat2").value.trim().toLowerCase().replace(/[^a-z0-9_-]/g,""))||$("cat").value;
- try{const j=await post({action:"saveProduct",product:{id:eid,n:$("n").value.trim(),d:$("d").value.trim(),p:+$("pr").value,o:+$("ol2").value||0,c:grp,e:$("em").value.trim()||"🍽️",t:$("tg").value.trim(),img,on:$("on").checked,op:$("op").value.trim(),so:$("so").checked}});
+ try{const j=await post({action:"saveProduct",product:{id:eid,n:$("n").value.trim(),d:$("d").value.trim(),p:money($("pr").value),o:money($("ol2").value),c:grp,e:$("em").value.trim()||"🍽️",t:$("tg").value.trim(),img,on:$("on").checked,op:$("op").value.trim(),so:$("so").checked}});
  msg(j.ok?"Đã lưu ✔":"Lỗi lưu");if(j.ok){reset();load(true)}}catch(_){msg("Lỗi kết nối")}$("save").disabled=false};
 $("pl").onclick=async e=>{const ed=e.target.dataset.e,x=e.target.dataset.x;
  if(ed){const p=D.products.find(q=>String(q.id)==ed);eid=p.id;img=p.img||"";$("n").value=p.n;$("d").value=p.d;$("pr").value=p.p;$("ol2").value=p.o||"";const std=["nhanh","vat","uong","combo"].includes(p.c);$("cat").value=std?p.c:"nhanh";$("cat2").value=std?"":p.c;$("em").value=p.e;$("tg").value=p.t||"";$("op").value=p.op||"";$("on").checked=p.on;$("so").checked=!!p.so;if(img)$("pv").src=img;else $("pv").removeAttribute("src");$("ft").textContent="Sửa sản phẩm";scrollTo({top:0,behavior:"smooth"})}
@@ -186,7 +192,7 @@ $("cl").onclick=async e=>{const ke=e.target.dataset.ke,kx=e.target.dataset.kx;
 $("sc").onclick=async()=>{const j=await post({action:"saveCfg",cfg:{paused:$("cp").checked,min:+$("cmin").value,notice:$("cn").value,fee:+$("cf").value,free:+$("cr").value,open:+$("co").value,close:+$("cc").value,shopLat:+$("sla").value,shopLng:+$("sln").value,freeKm:+$("fk").value,perKm:+$("pk").value,maxKm:+$("mk").value}});msg(j.ok?"Đã lưu cài đặt ✔":"Lỗi lưu");if(j.ok)D.cfg=j.cfg};
 function drawU(){const q=($("uq").value||"").toLowerCase();$("ul").innerHTML=(D.customersList||[]).filter(c=>!q||(c.name+" "+c.phone).toLowerCase().includes(q)).map(c=>`<div class="c"><b>${esc(c.name)}</b> · <a href="tel:${esc(c.phone)}">${esc(c.phone)}</a><br><small>${esc(c.address||"")} · đăng ký ${esc(c.date)}</small><br><small>🧾 ${c.orders} đơn · 💰 ${fmt(c.spent)} đã chi · ⭐ ${c.bal||0} điểm</small></div>`).join("")||"<p>Chưa có khách đăng ký.</p>"}
 $("uq").oninput=drawU;
-$("sloc").onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{$("sla").value=p.coords.latitude.toFixed(6);$("sln").value=p.coords.longitude.toFixed(6);msg("Đã lấy vị trí – nhớ bấm Lưu cài đặt")},()=>msg("Không lấy được vị trí"),{enableHighAccuracy:true,timeout:15000}):msg("Trình duyệt không hỗ trợ");
+$("sloc").onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{if(p.coords.accuracy>300&&!confirm("Vị trí chỉ chính xác khoảng ±"+Math.round(p.coords.accuracy)+" m (máy tính thường lấy theo mạng, có thể lệch cả chục km).\nNên dùng ĐIỆN THOẠI bật GPS tại quán.\n\nVẫn dùng vị trí này?"))return;$("sla").value=p.coords.latitude.toFixed(6);$("sln").value=p.coords.longitude.toFixed(6);msg("Đã lấy vị trí – nhớ bấm Lưu cài đặt");if(window.updMan)updMan()},()=>msg("Không lấy được vị trí"),{enableHighAccuracy:true,timeout:15000}):msg("Trình duyệt không hỗ trợ");
 
 /* ===== QUẢN LÝ ĐIỂM THƯỞNG ===== */
 let PH="";
@@ -226,7 +232,7 @@ const nz=s=>String(s==null?"":s).normalize("NFD").replace(/[\u0300-\u036f]/g,"")
 const FLD={"ten":"n","ten mon":"n","ten san pham":"n","name":"n","mo ta":"d","description":"d","gia":"p","gia ban":"p","price":"p","gia cu":"o","gia goc":"o","nhom":"c","danh muc":"c","category":"c","emoji":"e","bieu tuong":"e","nhan":"t","tag":"t","anh":"img","hinh":"img","hinh anh":"img","link anh":"img","image":"img","tuy chon":"op","options":"op","hien thi":"on","het mon":"so","het hang":"so"};
 const ORD=["n","d","p","o","c","e","t","img","op","on","so"];
 const grpOf=c=>{const s=nz(c),m={"do an nhanh":"nhanh","an nhanh":"nhanh","do an vat":"vat","an vat":"vat","do uong":"uong","nuoc uong":"uong","combo":"combo"};return m[s]||s.replace(/[^a-z0-9_-]/g,"")||"vat"};
-const money=v=>{const s=String(v==null?"":v).trim().toLowerCase();if(!s)return 0;const k=s.match(/^(\d+(?:[.,]\d+)?)\s*k$/);if(k)return Math.round(parseFloat(k[1].replace(",","."))*1000);return Number(s.replace(/[^\d]/g,""))||0};
+const money=v=>{let s=String(v==null?"":v).trim().toLowerCase();if(!s)return 0;const k=s.match(/^(\d+(?:[.,]\d+)?)\s*k$/);if(k)return Math.round(parseFloat(k[1].replace(",","."))*1000);s=s.replace(/\s*(đ|₫|vnđ|vnd|d)\s*$/,"").replace(/[.,]\d{1,2}$/,"");return Number(s.replace(/[^\d]/g,""))||0};
 const bl=(v,def)=>{const s=nz(v);if(s==="")return def;return !/^(0|khong|false|no|n|an|off|-)$/.test(s)};
 function table(txt,del){const rows=[];let r=[],f="",q=false;
  for(let i=0;i<txt.length;i++){const c=txt[i];
@@ -246,7 +252,7 @@ function bkParse(){let txt=$("bkt").value.replace(/^\uFEFF/,"");txt=txt.replace(
  if(h.filter(x=>FLD[x]).length>=2&&h.some(x=>FLD[x]=="n")){map=h.map(x=>FLD[x]||null);rows=rows.slice(1)}
  BK=rows.slice(0,500).map(r=>{const o={};map.forEach((k,j)=>{if(k)o[k]=r[j]==null?"":String(r[j]).trim()});
   const it={n:(o.n||"").slice(0,60),d:(o.d||"").slice(0,100),p:money(o.p),o:money(o.o),c:grpOf(o.c),e:(o.e||"").slice(0,8),t:(o.t||"").slice(0,20),img:/^https?:\/\//i.test(o.img||"")?o.img:"",op:(o.op||"").slice(0,400),on:bl(o.on,true),so:bl(o.so,false)};
-  it.err=!it.n?"Thiếu tên":!(it.p>0)?"Giá không hợp lệ":"";return it});
+  it.err=!it.n?"Thiếu tên":!(it.p>0)?"Giá không hợp lệ":it.p<1000?"Giá dưới 1.000đ (thiếu số 0?)":"";return it});
  bkDraw()}
 function bkDraw(){const ok=BK.filter(x=>!x.err),bad=BK.length-ok.length,upd=$("bkm").value=="update",ex=new Set((D.products||[]).map(p=>String(p.n).trim().toLowerCase()));
  $("bkp").innerHTML=BK.length?`<p class="l">Đọc được <b>${BK.length}</b> dòng: <b style="color:var(--ok)">${ok.length} hợp lệ</b>${bad?`, <b style="color:var(--red)">${bad} lỗi (sẽ bị bỏ qua)</b>`:""}.</p><div style="overflow-x:auto"><table class="bt pv2"><tr><th>#</th><th>Món</th><th>Giá</th><th>Nhóm</th><th>Trạng thái</th></tr>${BK.map((x,i)=>`<tr class="${x.err?"er":""}"><td>${i+1}</td><td>${esc(x.e)} ${esc(x.n)}${x.op?" <small>(có tùy chọn)</small>":""}${x.on?"":" <span class=\"b\">Ẩn</span>"}${x.so?" <span class=\"b so\">Hết món</span>":""}</td><td>${fmt(x.p)}${x.o?` <small><s>${fmt(x.o)}</s></small>`:""}</td><td>${esc(x.c)}</td><td>${x.err?`<b style="color:var(--red)">${esc(x.err)}</b>`:upd&&ex.has(x.n.toLowerCase())?"Cập nhật":"Thêm mới"}</td></tr>`).join("")}</table></div>`:"";
@@ -282,7 +288,7 @@ function miCard(it,n){return `<div class="c mi" id="mi_${it.id}" data-id="${it.i
  <div class="row" style="flex-wrap:nowrap;align-items:flex-start"><img class="pv" style="width:84px;height:84px" src="${it.prev}" alt="">
   <div style="flex:1;min-width:0"><div class="row" style="flex-wrap:nowrap;margin-bottom:6px"><b style="flex:none;min-width:0">#<span class="mn">${n}</span></b><span id="mis_${it.id}" class="b" style="flex:none;min-width:0"></span><span style="flex:1;min-width:0"></span><button class="g" data-del="1" type="button" style="flex:none;min-width:0;padding:5px 10px">✕ Bỏ</button></div>
   <input data-k="n" placeholder="Tên món *" maxlength="60" value="${esc(it.n)}">
-  <div class="row"><input data-k="p" type="number" inputmode="numeric" placeholder="Giá bán *"><input data-k="o" type="number" inputmode="numeric" placeholder="Giá cũ (nếu có)"></div></div></div>
+  <div class="row"><input data-k="p" type="text" inputmode="numeric" placeholder="Giá bán * (25000 / 25k)"><input data-k="o" type="text" inputmode="numeric" placeholder="Giá cũ (nếu có)"></div></div></div>
  <div class="row"><select data-k="c">${miOpts(it.c)}</select><input data-k="e" placeholder="Emoji 🍟" maxlength="8"><input data-k="t" placeholder="Nhãn (Bán chạy...)" maxlength="20"></div>
  <input data-k="d" placeholder="Mô tả ngắn" maxlength="100">
  <details><summary class="l">Tùy chọn thêm (size, topping...)</summary><textarea data-k="op" rows="2" placeholder="VD: Size:M|L+5000;Đường:100%|70%|50%"></textarea></details>
@@ -315,29 +321,40 @@ $("mif").onchange=async e=>{const fs=[...e.target.files].filter(f=>/^image\//.te
  $("mib").disabled=false;msg(bad?`Đã thêm ${sel.length-bad} ảnh, ${bad} ảnh không đọc được (HEIC?)`:`Đã thêm ${sel.length} ảnh ✔ – điền thông tin từng món`,4000);
  const first=$("mil").querySelector(".mi:not(.chk) input[data-k=n]");if(first&&sel.length>bad&&MI.length==sel.length-bad)first.scrollIntoView({behavior:"smooth",block:"center"})};
 function miBind(e){const t=e.target,k=t.dataset.k,c=t.closest(".mi");if(!k||!c)return;
- const it=MI.find(x=>x.id==c.dataset.id);if(!it)return;it[k]=t.type=="checkbox"?t.checked:t.value;c.classList.remove("bad")}
+ const it=MI.find(x=>x.id==c.dataset.id);if(!it)return;it[k]=t.type=="checkbox"?t.checked:t.value;if((k=="p"||k=="o")&&e.type=="change"){const v=money(t.value);t.value=v?nf(v):"";it[k]=String(v)}c.classList.remove("bad")}
 $("mil").addEventListener("input",miBind);$("mil").addEventListener("change",miBind);
 $("mil").onclick=e=>{const t=e.target,c=t.closest(".mi");if(!c)return;const it=MI.find(x=>x.id==c.dataset.id);if(!it)return;
  if(t.dataset.del){if((it.n||it.p)&&!confirm("Bỏ món này khỏi danh sách?"))return;MI=MI.filter(x=>x!==it);c.remove();miSum()}
  if(t.dataset.retry){it.st="wait";miSt(it);miSum();miPump()}};
-$("mica").onclick=()=>{const g=$("micg").value,em=$("mice").value.trim(),pr=$("micp").value,tg=$("mict").value.trim();
+$("mica").onclick=()=>{const g=$("micg").value,em=$("mice").value.trim(),pr=money($("micp").value),tg=$("mict").value.trim();
  if(!g&&!em&&!pr&&!tg)return msg("Nhập ít nhất 1 ô để áp dụng chung");
  MI.forEach(it=>{const c=$("mi_"+it.id);if(!c)return;
-  [["c",g],["e",em],["p",pr],["t",tg]].forEach(([k,v])=>{if(v){it[k]=v;c.querySelector(`[data-k=${k}]`).value=v;if(k=="p")c.classList.remove("bad")}})});
+  [["c",g],["e",em],["p",pr?String(pr):""],["t",tg]].forEach(([k,v])=>{if(v){it[k]=v;c.querySelector(`[data-k=${k}]`).value=v;if(k=="p")c.classList.remove("bad")}})});MI.forEach(it=>{const i=$("mi_"+it.id).querySelector("[data-k=p]");if(i&&pr)i.value=nf(pr)});
  msg("Đã áp dụng cho "+MI.length+" món ✔")};
 $("mix").onclick=()=>{if(MI.length&&!confirm("Xóa toàn bộ "+MI.length+" ảnh/form đang điền?"))return;MI=[];$("mil").innerHTML="";miSum()};
 $("mis").onclick=async()=>{if(miBusy||MI.some(x=>x.st!="ok"))return msg("Chờ ảnh tải xong đã");
- let first=null;MI.forEach(it=>{const bad=!String(it.n).trim()||!(+it.p>0),c=$("mi_"+it.id);c.classList.toggle("bad",bad);if(bad&&!first)first=c});
- if(first){first.scrollIntoView({behavior:"smooth",block:"center"});return msg("Còn món thiếu tên hoặc giá (viền đỏ)",4000)}
+ let first=null;MI.forEach(it=>{const bad=!String(it.n).trim()||!(money(it.p)>=1000),c=$("mi_"+it.id);c.classList.toggle("bad",bad);if(bad&&!first)first=c});
+ if(first){first.scrollIntoView({behavior:"smooth",block:"center"});return msg("Còn món thiếu tên hoặc giá (giá phải từ 1.000đ) – xem viền đỏ",4500)}
  const ex=new Set((D.products||[]).map(p=>String(p.n).trim().toLowerCase())),dup=MI.filter(x=>ex.has(String(x.n).trim().toLowerCase())).map(x=>x.n.trim());
  if(dup.length&&!confirm("Có "+dup.length+" món trùng tên với thực đơn hiện tại ("+dup.slice(0,3).join(", ")+(dup.length>3?"...":"")+").\nVẫn thêm mới?"))return;
  if(!confirm("Lưu "+MI.length+" sản phẩm lên web?"))return;
  $("mis").disabled=true;
- try{const j=await post({action:"saveProducts",mode:"add",items:MI.map(x=>({n:x.n.trim(),d:x.d.trim(),p:+x.p,o:+x.o||0,c:x.c,e:x.e.trim(),t:x.t.trim(),img:x.img,op:x.op.trim(),on:x.on,so:x.so}))});
+ try{const j=await post({action:"saveProducts",mode:"add",items:MI.map(x=>({n:x.n.trim(),d:x.d.trim(),p:money(x.p),o:money(x.o),c:x.c,e:x.e.trim(),t:x.t.trim(),img:x.img,op:x.op.trim(),on:x.on,so:x.so}))});
   if(j.ok){msg(`Đã lưu ✔ thêm ${j.added} sản phẩm${j.skipped?`, bỏ qua ${j.skipped}`:""}`,5000);MI=[];$("mil").innerHTML="";miSum();await load(true);return}
   msg("Lỗi lưu: "+(j.error||"không rõ"),5000)}catch(_){msg("Lỗi kết nối – dữ liệu vẫn còn, bấm Lưu lại")}
  miSum()};
 window.addEventListener("beforeunload",e=>{if(MI.length){e.preventDefault();e.returnValue=""}});
 window.miRefresh=()=>{const v=$("micg").value;$("micg").innerHTML=miOpts("",true);$("micg").value=v};miRefresh();
+/* ===== KIỂM TRA VỊ TRÍ QUÁN + THỬ TÍNH PHÍ GIAO ===== */
+window.updMan=()=>{const la=$("sla").value,ln=$("sln").value,l=$("sman");l.style.display=la&&ln?"inline-block":"none";l.href=la&&ln?`https://maps.google.com/?q=${la},${ln}`:"#"};
+["sla","sln"].forEach(i=>$(i).addEventListener("input",updMan));
+$("tgo").onclick=()=>{const c=coordOf($("tq").value);if(!c)return msg("Dán tọa độ dạng 21.3553,105.2944 hoặc link bản đồ của đơn",3500);
+ const f=id=>+$(id).value||0,la=f("sla"),ln=f("sln"),sub=money($("tsub").value)||0,fee=f("cf"),free=f("cr"),fk=f("fk"),pk=f("pk"),mk=f("mk");
+ if(!la||!ln){$("tres").innerHTML='<b style="color:var(--red)">Chưa có vị trí quán – phí theo km đang KHÔNG được tính.</b>';return}
+ const km=havKm(la,ln,c[0],c[1]);let r=`Cách quán <b>${km.toFixed(1)} km</b> → `;
+ if(mk&&km>mk)r+='<b style="color:var(--red)">NGOÀI phạm vi giao ('+mk+' km)</b>';
+ else{let p=sub>=free?0:fee;if(pk>0&&km>fk)p+=Math.ceil(km-fk)*pk;r+=`phí giao <b>${p?fmt(p):"Miễn phí"}</b> (tiền hàng ${fmt(sub)})`}
+ if(km>30)r+='<br><b style="color:var(--red)">⚠️ Rất xa quán – hãy kiểm tra lại tọa độ quán ở trên có đúng không.</b>';
+ $("tres").innerHTML=r};
 if(KEY)load();
 </script></body></html>
