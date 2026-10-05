@@ -200,12 +200,7 @@ body.has-cart .bar{transform:none}
 const API="https://script.google.com/macros/s/AKfycbyFkloT5OSrStEVY7vk2M1PTfxVerxJG-BzPUBThPqHse2LZOllHMigtpmaqN4ofXYQRA/exec";
 const BANK={id:"MB",acc:"0978472704",name:"TRAN NGOC HUNG",label:"MB Bank"};
 const CFG={min:30000,fee:10000,free:100000,open:0,close:24,area:"Lâm Thao",paused:false,notice:"",shopLat:0,shopLng:0,freeKm:3,perKm:0,maxKm:0};
-let P=[
- {id:1,n:"Khoai tây chiên",d:"Giòn rụm, lắc phô mai",p:25000,c:"nhanh",e:"🍟"},
- {id:2,n:"Gà rán giòn",d:"3 miếng gà rán, sốt cay",p:45000,c:"nhanh",e:"🍗"},
- {id:5,n:"Bánh tráng trộn",d:"Chua cay mặn ngọt",p:20000,c:"vat",e:"🥗"},
- {id:9,n:"Trà sữa trân châu",d:"Đậm vị, trân châu dai",p:25000,c:"uong",e:"🧋",op:"Size:M|L+5000;Đường:100%|70%|50%"}
-];
+let P=[]; // thực đơn lấy từ máy chủ (không còn menu mẫu)
 const LBL={nhanh:"Đồ ăn nhanh",vat:"Đồ ăn vặt",uong:"Đồ uống",combo:"Combo"};
 const $=id=>document.getElementById(id),fmt=v=>Number(v||0).toLocaleString("vi-VN")+"đ";
 const norm=s=>String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").toLowerCase();
@@ -217,7 +212,7 @@ const isOpen=()=>{const h=vnHour();return !CFG.paused&&h>=CFG.open&&h<CFG.close}
 const post=async o=>(await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(o)})).json();
 const PHONE_RE=/^(0|\+84)[35789][0-9]{8}$/;
 let cur="all",kw="",cart=ld("alt_cart",{}),pos=null,tm,busy=false,cpn=null,ses=ld("alt_ses",null),accMode="login",OL=[],km=0,VC=ld("alt_vc",[]),pendCode="",usePts=false,myPts=null;
-{const mc=ld("alt_menu",null);if(Array.isArray(mc)&&mc.length)P=mc}
+{const mc=ld("alt_menu",null);if(Array.isArray(mc))P=mc}
 
 const parseOp=s=>String(s||"").split(";").map(g=>{const i=g.indexOf(":");if(i<1)return null;return{g:g.slice(0,i).trim(),c:g.slice(i+1).split("|").map(c=>{c=c.trim();const m=c.match(/^(.*?)\+(\d+)$/);return m?{n:m[1].trim(),p:+m[2]}:{n:c,p:0}}).filter(c=>c.n)}}).filter(g=>g&&g.c.length);
 function kp(k){const a=String(k).split("~"),id=a.shift(),p=P.find(x=>x.id==id);if(!p)return null;const sel=a.join("~"),lab=[];let price=p.p;
@@ -250,7 +245,7 @@ const ctl=x=>{if(x.so)return'<button class="add" disabled>Hết món</button>';
 const imgU=u=>{const m=String(u).match(/(?:\/d\/|[?&]id=)([\w-]+)/);return m&&/googleusercontent|drive\.google/.test(u)?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w800`:u};
 const th=x=>`<span>${esc(x.e||"🍽️")}</span>${x.img?`<img src="${esc(imgU(x.img))}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:""}`;
 function menu(){const L=P.filter(x=>(cur=="all"||x.c==cur)&&(!kw||norm(x.n+" "+(x.d||"")).includes(kw)));
- $("grid").innerHTML=L.length?L.map(x=>`<article class="card${x.so?" so":""}"><div class="art c-${esc(x.c)}">${x.so?"<em>Hết món</em>":x.t?`<em>${esc(x.t)}</em>`:""}${th(x)}</div><div class="info"><h3>${esc(x.n)}</h3>${x.r?`<small class="rt">★ ${x.r} (${x.rc})</small>`:""}<p>${esc(x.d||"")}</p><div class="price">${fmt(x.p)}${x.o?`<s>${fmt(x.o)}</s>`:""}</div><div class="ctl" data-id="${esc(x.id)}">${ctl(x)}</div></div></article>`).join(""):'<p class="empty">Chưa tìm thấy món phù hợp.</p>'}
+ $("grid").innerHTML=L.length?L.map(x=>`<article class="card${x.so?" so":""}"><div class="art c-${esc(x.c)}">${x.so?"<em>Hết món</em>":x.t?`<em>${esc(x.t)}</em>`:""}${th(x)}</div><div class="info"><h3>${esc(x.n)}</h3>${x.r?`<small class="rt">★ ${x.r} (${x.rc})</small>`:""}<p>${esc(x.d||"")}</p><div class="price">${fmt(x.p)}${x.o?`<s>${fmt(x.o)}</s>`:""}</div><div class="ctl" data-id="${esc(x.id)}">${ctl(x)}</div></div></article>`).join(""):P.length?'<p class="empty">Chưa tìm thấy món phù hợp.</p>':'<p class="empty">Quán đang cập nhật thực đơn, bạn quay lại sau nhé!</p>'}
 function refreshCtl(k){const id=String(k).split("~")[0],x=P.find(p=>p.id==id);if(x)document.querySelectorAll(`.ctl[data-id="${id}"]`).forEach(c=>c.innerHTML=ctl(x))}
 
 let opP=null;
@@ -416,7 +411,7 @@ info();buildTabs();menu();sync();drawVc();ready();
 function loadMenu(){return fetch(API+"?a=menu").then(r=>r.json()).then(j=>{
  if(j.cfg){Object.assign(CFG,{min:j.cfg.min==null?30000:+j.cfg.min,fee:+j.cfg.fee,free:+j.cfg.free,open:+j.cfg.open,close:+j.cfg.close,paused:!!j.cfg.paused,notice:j.cfg.notice||"",shopLat:+j.cfg.shopLat||0,shopLng:+j.cfg.shopLng||0,freeKm:+j.cfg.freeKm||0,perKm:+j.cfg.perKm||0,maxKm:+j.cfg.maxKm||0});info()}
  if(Array.isArray(j.vouchers)){VC=j.vouchers;sv("alt_vc",VC);drawVc()}
- if(j.products&&j.products.length){P=j.products;sv("alt_menu",P)}
+ if(Array.isArray(j.products)){P=j.products;sv("alt_menu",P)}
  cleanCart();sv("alt_cart",cart);buildTabs();menu();sync();if($("co").classList.contains("show"))lines()}).catch(()=>toast("Không tải được thực đơn mới, đang dùng bản đã lưu.",3500))}
 loadMenu();
 if("serviceWorker"in navigator&&location.protocol=="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});

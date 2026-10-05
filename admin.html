@@ -30,7 +30,7 @@ label.ck{display:flex;align-items:center;gap:8px;margin-bottom:10px}label.ck inp
  <div id="login" class="c" style="margin-top:20px"><b>Đăng nhập</b><br><br><input id="key" type="password" placeholder="Mật khẩu admin" autocomplete="current-password"><button id="go" style="width:100%">Vào</button></div>
  <div id="app" class="hide">
   <div class="st"><div><b id="s1">0</b><small>Đơn hôm nay</small></div><div><b id="s2">0đ</b><small>Doanh thu hôm nay</small></div><div><b id="s3">0</b><small>Đơn mới chờ xử lý</small></div></div>
-  <div class="tabs"><button data-t="o" class="on">Đơn hàng</button><button data-t="p">Sản phẩm</button><button data-t="c">Mã giảm giá</button><button data-t="g">Báo cáo</button><button data-t="u">Khách hàng</button><button data-t="r">Đánh giá</button><button data-t="s">Cài đặt</button></div>
+  <div class="tabs"><button data-t="o" class="on">Đơn hàng</button><button data-t="p">Sản phẩm</button><button data-t="c">Mã giảm giá</button><button data-t="g">Báo cáo</button><button data-t="u">Khách hàng</button><button data-t="pt">⭐ Điểm</button><button data-t="r">Đánh giá</button><button data-t="s">Cài đặt</button></div>
 
   <div id="o"><div class="fl" id="fl"></div><div id="ol"></div></div>
 
@@ -63,6 +63,8 @@ label.ck{display:flex;align-items:center;gap:8px;margin-bottom:10px}label.ck inp
   <div id="g" class="hide"></div>
   <div id="u" class="hide"><input id="uq" placeholder="Tìm tên hoặc số điện thoại"><div id="ul"></div></div>
   <div id="r" class="hide"></div>
+
+  <div id="pt" class="hide"><div class="c" id="pts"></div><div id="pd"></div><input id="pq" placeholder="Tìm tên hoặc số điện thoại"><div id="pls"></div></div>
 
   <div id="s" class="hide"><div class="c"><b>Cài đặt cửa hàng</b><br><br>
     <label class="ck"><input id="cp" type="checkbox">Tạm nghỉ bán (khách không đặt được)</label>
@@ -108,9 +110,9 @@ function draw(){
  <p><b>${esc(o.name)}</b> · <a href="tel:${esc(o.phone)}">${esc(o.phone)}</a></p><p>${esc(o.address)}</p><p>${esc(o.items).replace(/ \| /g,"<br>")}</p>${o.note?`<p><i>📝 ${esc(o.note)}</i></p>`:""}
  <p><b>${fmt(o.total)}</b>${o.off?` <small>(đã giảm ${fmt(o.off)})</small>`:""}${o.pts?` <small>⭐ dùng ${o.pts} điểm</small>`:""} · <a href="${esc(o.map)}" target="_blank" rel="noopener">📍 Xem bản đồ</a></p>
  <div class="row">${n?`<button class="k" data-code="${esc(o.code)}" data-st="${n[1]}">${n[0]}</button>`:""}${tf&&!o.paid&&o.status!="Đã hủy"?`<button data-code="${esc(o.code)}" data-paid="1">💰 Đã nhận tiền</button>`:""}<button class="g" data-print="${esc(o.code)}">🖨️ In phiếu</button>${n?`<button class="r" data-code="${esc(o.code)}" data-st="Đã hủy">Hủy đơn</button>`:""}</div></div>`}).join("")||"<p>Không có đơn.</p>";
- $("pl").innerHTML=D.products.map(p=>`<div class="c row" style="flex-wrap:nowrap"><img class="pv" src="${esc(p.img||"")}" alt="" onerror="this.style.visibility='hidden'"><div style="flex:1"><b>${esc(p.e)} ${esc(p.n)}</b> ${p.on?"":'<span class="b">Ẩn</span>'} ${p.so?'<span class="b so">Hết món</span>':""}<br><small>${fmt(p.p)} · ${esc(p.c)}${p.op?" · có tùy chọn":""}</small></div><button class="g" data-e="${esc(p.id)}">Sửa</button><button class="r" data-x="${esc(p.id)}">Xóa</button></div>`).join("")||"<p>Chưa có sản phẩm. Web sẽ dùng menu mẫu cho đến khi bạn thêm món.</p>";
+ $("pl").innerHTML=D.products.map(p=>`<div class="c row" style="flex-wrap:nowrap"><img class="pv" src="${esc(p.img||"")}" alt="" onerror="this.style.visibility='hidden'"><div style="flex:1"><b>${esc(p.e)} ${esc(p.n)}</b> ${p.on?"":'<span class="b">Ẩn</span>'} ${p.so?'<span class="b so">Hết món</span>':""}<br><small>${fmt(p.p)} · ${esc(p.c)}${p.op?" · có tùy chọn":""}</small></div><button class="g" data-e="${esc(p.id)}">Sửa</button><button class="r" data-x="${esc(p.id)}">Xóa</button></div>`).join("")||"<p>Chưa có sản phẩm. Web sẽ hiện thông báo đang cập nhật thực đơn cho đến khi bạn thêm món.</p>";
  $("cl").innerHTML=D.coupons.map(k=>`<div class="c row" style="flex-wrap:nowrap"><div style="flex:1"><b>${esc(k.code)}</b> ${k.on?"":'<span class="b so">Tắt</span>'} ${k.pub?'<span class="b paid">Hiện trên web</span>':""}<br><small>${k.exp?"HSD "+esc(k.exp)+" · ":""}${k.type=="percent"?"Giảm "+k.value+"%":"Giảm "+fmt(k.value)} · tối thiểu ${fmt(k.min)}${k.cap?" · tối đa "+fmt(k.cap):""} · dùng ${k.used||0}${+k.max?"/"+k.max:""} · ${+k.per?k.per+" lần/SĐT":"không giới hạn/SĐT"}</small></div><button class="g" data-ke="${esc(k.code)}">Sửa</button><button class="r" data-kx="${esc(k.code)}">Xóa</button></div>`).join("")||"<p>Chưa có mã giảm giá.</p>";
- $("g").innerHTML=report();drawU();
+ $("g").innerHTML=report();drawU();drawP();
  if(D.role=="staff")document.querySelectorAll(".tabs button").forEach(b=>{if(b.dataset.t!="o")b.style.display="none"});
  $("r").innerHTML=D.reviews.map(r=>`<div class="c"><b>${esc(r.item)}</b> ${"★".repeat(r.stars)}<br>${esc(r.text)}<br><small>${esc(r.code)} · ${esc(r.time)}</small></div>`).join("")||"<p>Chưa có đánh giá.</p>";
  const c=D.cfg;if(c&&!$("s").dataset.f){$("s").dataset.f=1;$("cp").checked=c.paused;$("cn").value=c.notice;$("cmin").value=c.min==null?30000:c.min;$("cf").value=c.fee;$("cr").value=c.free;$("co").value=c.open;$("cc").value=c.close;$("sla").value=c.shopLat||"";$("sln").value=c.shopLng||"";$("fk").value=c.freeKm;$("pk").value=c.perKm;$("mk").value=c.maxKm}}
@@ -119,7 +121,7 @@ function slip(o){const w=window.open("","_blank");if(!w)return msg("Trình duy�
 $("go").onclick=()=>{KEY=$("key").value.trim();lastCode=null;load()};$("key").onkeydown=e=>{if(e.key=="Enter")$("go").click()};
 $("out").onclick=()=>{sessionStorage.removeItem("ak");location.reload()};$("rf").onclick=()=>load();
 document.addEventListener("visibilitychange",()=>{if(!document.hidden){document.title="Admin – Ăn Vặt Lâm Thao";if(KEY)load(true)}});
-const TABS=["o","p","c","g","u","r","s"];
+const TABS=["o","p","c","g","u","pt","r","s"];
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x==b));TABS.forEach(t=>$(t).classList.toggle("hide",t!=b.dataset.t))});
 $("o").onclick=async e=>{const t=e.target,f=t.dataset.f;if(f){flt=f;draw();return}
  if(t.dataset.print){const o=D.orders.find(x=>x.code==t.dataset.print);if(o)slip(o);return}
@@ -139,7 +141,7 @@ $("save").onclick=async()=>{if(!$("n").value.trim()||!+$("pr").value)return msg(
  msg(j.ok?"Đã lưu ✔":"Lỗi lưu");if(j.ok){reset();load(true)}}catch(_){msg("Lỗi kết nối")}$("save").disabled=false};
 $("pl").onclick=async e=>{const ed=e.target.dataset.e,x=e.target.dataset.x;
  if(ed){const p=D.products.find(q=>String(q.id)==ed);eid=p.id;img=p.img||"";$("n").value=p.n;$("d").value=p.d;$("pr").value=p.p;$("ol2").value=p.o||"";const std=["nhanh","vat","uong","combo"].includes(p.c);$("cat").value=std?p.c:"nhanh";$("cat2").value=std?"":p.c;$("em").value=p.e;$("tg").value=p.t||"";$("op").value=p.op||"";$("on").checked=p.on;$("so").checked=!!p.so;if(img)$("pv").src=img;else $("pv").removeAttribute("src");$("ft").textContent="Sửa sản phẩm";scrollTo({top:0,behavior:"smooth"})}
- if(x&&confirm("Xóa sản phẩm này?")){await post({action:"deleteProduct",id:x});load(true)}};
+ if(x&&confirm("Xóa sản phẩm này?")){try{const j=await post({action:"deleteProduct",id:x});msg(j.ok?"Đã xóa ✔ (web cập nhật sau tối đa 1 phút)":j.error=="notfound"?"Không tìm thấy sản phẩm (có thể đã xóa rồi)":"Không xóa được: "+(j.error||"không rõ"),4000)}catch(_){msg("Lỗi kết nối")}load(true)}};
 $("ksv").onclick=async()=>{if(!$("kc").value.trim()||!+$("kv").value)return msg("Nhập mã và giá trị");
  const j=await post({action:"saveCoupon",coupon:{code:$("kc").value,type:$("kt").value,value:+$("kv").value,min:+$("km").value||0,cap:+$("kp").value||0,max:+$("kx").value||0,per:$("kpp").value===""?1:+$("kpp").value,on:$("kon").checked,pub:$("kpb").checked,exp:$("kex").value}});
  msg(j.ok?"Đã lưu mã ✔":"Lỗi lưu");if(j.ok){["kc","kv","km","kp","kx","kpp","kex"].forEach(i=>$(i).value="");$("kpb").checked=true;load(true)}};
@@ -147,8 +149,41 @@ $("cl").onclick=async e=>{const ke=e.target.dataset.ke,kx=e.target.dataset.kx;
  if(ke){const k=D.coupons.find(q=>q.code==ke);$("kc").value=k.code;$("kt").value=k.type;$("kv").value=k.value;$("km").value=k.min||"";$("kp").value=k.cap||"";$("kx").value=k.max||"";$("kpp").value=k.per;$("kon").checked=k.on;$("kpb").checked=!!k.pub;$("kex").value=k.exp||"";scrollTo({top:0,behavior:"smooth"})}
  if(kx&&confirm("Xóa mã "+kx+"?")){await post({action:"deleteCoupon",code:kx});load(true)}};
 $("sc").onclick=async()=>{const j=await post({action:"saveCfg",cfg:{paused:$("cp").checked,min:+$("cmin").value,notice:$("cn").value,fee:+$("cf").value,free:+$("cr").value,open:+$("co").value,close:+$("cc").value,shopLat:+$("sla").value,shopLng:+$("sln").value,freeKm:+$("fk").value,perKm:+$("pk").value,maxKm:+$("mk").value}});msg(j.ok?"Đã lưu cài đặt ✔":"Lỗi lưu");if(j.ok)D.cfg=j.cfg};
-function drawU(){const q=($("uq").value||"").toLowerCase();$("ul").innerHTML=(D.customersList||[]).filter(c=>!q||(c.name+" "+c.phone).toLowerCase().includes(q)).map(c=>`<div class="c"><b>${esc(c.name)}</b> · <a href="tel:${esc(c.phone)}">${esc(c.phone)}</a><br><small>${esc(c.address||"")} · đăng ký ${esc(c.date)}</small><br><small>🧾 ${c.orders} đơn · 💰 ${fmt(c.spent)} đã chi</small></div>`).join("")||"<p>Chưa có khách đăng ký.</p>"}
+function drawU(){const q=($("uq").value||"").toLowerCase();$("ul").innerHTML=(D.customersList||[]).filter(c=>!q||(c.name+" "+c.phone).toLowerCase().includes(q)).map(c=>`<div class="c"><b>${esc(c.name)}</b> · <a href="tel:${esc(c.phone)}">${esc(c.phone)}</a><br><small>${esc(c.address||"")} · đăng ký ${esc(c.date)}</small><br><small>🧾 ${c.orders} đơn · 💰 ${fmt(c.spent)} đã chi · ⭐ ${c.bal||0} điểm</small></div>`).join("")||"<p>Chưa có khách đăng ký.</p>"}
 $("uq").oninput=drawU;
 $("sloc").onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{$("sla").value=p.coords.latitude.toFixed(6);$("sln").value=p.coords.longitude.toFixed(6);msg("Đã lấy vị trí – nhớ bấm Lưu cài đặt")},()=>msg("Không lấy được vị trí"),{enableHighAccuracy:true,timeout:15000}):msg("Trình duyệt không hỗ trợ");
+
+/* ===== QUẢN LÝ ĐIỂM THƯỞNG ===== */
+let PH="";
+const nf=n=>Number(n||0).toLocaleString("vi-VN");
+function drawP(){const L=D.customersList||[],q=($("pq").value||"").toLowerCase(),tot=L.reduce((s,c)=>s+(c.bal||0),0),val=L.reduce((s,c)=>s+Math.floor((c.bal||0)/1000)*10000,0);
+ $("pts").innerHTML=`<b>⭐ Quản lý điểm thưởng</b><br><small>Tích: 100đ = 1 điểm (100.000đ = 1.000 điểm, hoàn 10%) · Dùng: 1.000 điểm = 10.000đ</small><br><br>Khách đang giữ: <b>${nf(tot)}</b> điểm ≈ <b>${fmt(val)}</b> giá trị quy đổi`;
+ $("pls").innerHTML=L.filter(c=>!q||(c.name+" "+c.phone).toLowerCase().includes(q)).sort((x,y)=>(y.bal||0)-(x.bal||0)).map(c=>`<div class="c row" style="flex-wrap:nowrap"><div style="flex:1"><b>${esc(c.name)}</b> · ${esc(c.phone)}<br><small>Còn <b>${nf(c.bal)}</b> điểm · đã tích ${nf(c.earned)} · đã dùng ${nf(c.used)}${c.adj?` · điều chỉnh ${c.adj>0?"+":""}${nf(c.adj)}`:""}</small></div><button class="g" data-pv="${esc(c.phone)}" style="flex:none">Chi tiết</button></div>`).join("")||"<p>Chưa có khách đăng ký.</p>"}
+const PL={earn:["🟢","Đơn đã giao"],use:["🔴","Dùng điểm cho đơn"],refund:["↩️","Đơn đã hủy – hoàn lại điểm đã dùng"],pending:["⏳","Đơn chưa giao – sẽ tích khi giao xong"],adj:["✏️","Điều chỉnh tay"]};
+function histRow(x){const p=PL[x.type]||["•",""],sg=x.pts>0&&x.type!="refund"&&x.type!="pending"?"+":x.type=="pending"||x.type=="refund"?"":"";
+ const num=x.type=="pending"?`(+${nf(x.pts)})`:x.type=="refund"?`(${nf(x.pts)} đã hoàn)`:(x.pts>0?"+":"")+nf(x.pts);
+ const col=x.type=="use"?"var(--red)":x.type=="earn"||(x.type=="adj"&&x.pts>0)?"var(--ok)":x.type=="adj"?"var(--red)":"var(--mute)";
+ return `<div class="row" style="flex-wrap:nowrap;border-top:1px solid var(--line);padding:7px 0"><span style="flex:none;min-width:24px">${p[0]}</span><div style="flex:1"><small>${esc(x.t)}</small><br>${esc(p[1])}${x.code?` <b>${esc(x.code)}</b>`:""}${x.off?` <small>(giảm ${fmt(x.off)})</small>`:""}${x.type=="adj"?`<br><small>Lý do: ${esc(x.note)} · ${esc(x.by)}</small>`:""}</div><b style="flex:none;color:${col}">${num}</b></div>`}
+async function openP(phone){PH=phone;const c=(D.customersList||[]).find(x=>x.phone==phone);if(!c)return;
+ $("pd").innerHTML=`<div class="c"><div class="row" style="flex-wrap:nowrap"><div style="flex:1"><b>${esc(c.name)}</b> · ${esc(c.phone)}<br><small id="pds">Đang tải...</small></div><button class="g" id="pdx" style="flex:none">Đóng</button></div><br>
+ <b>Cộng / trừ điểm</b><div class="row" style="margin-top:6px"><input id="pa" type="number" inputmode="numeric" placeholder="Số điểm (+ cộng, - trừ)"><input id="pn" placeholder="Lý do (bắt buộc)" maxlength="100"></div><button id="pas">Lưu điều chỉnh</button>
+ <br><br><b>Lịch sử điểm</b><div id="phl"><small>Đang tải...</small></div></div>`;
+ scrollTo({top:0,behavior:"smooth"});
+ try{const j=await post({action:"ptsHistory",phone});if(PH!=phone)return;
+  if(!j.ok){$("pds").textContent="Không tải được lịch sử";$("phl").innerHTML="";return}
+  $("pds").innerHTML=`Còn <b>${nf(j.pt.bal)}</b> điểm · đã tích ${nf(j.pt.earned)} · đã dùng ${nf(j.pt.used)}${j.pt.adj?` · điều chỉnh ${j.pt.adj>0?"+":""}${nf(j.pt.adj)}`:""}`;
+  $("phl").innerHTML=j.items.map(histRow).join("")||"<small>Chưa có biến động điểm.</small>"}catch(_){if($("pds"))$("pds").textContent="Lỗi kết nối"}}
+$("pq").oninput=drawP;
+$("pls").onclick=e=>{const p=e.target.dataset.pv;if(p)openP(p)};
+$("pd").onclick=async e=>{const t=e.target;
+ if(t.id=="pdx"){$("pd").innerHTML="";PH="";return}
+ if(t.id=="pas"){const pts=Math.round(+$("pa").value),why=$("pn").value.trim();
+  if(!pts)return msg("Nhập số điểm khác 0");if(why.length<2)return msg("Nhập lý do điều chỉnh");
+  if(!confirm((pts>0?"Cộng ":"Trừ ")+nf(Math.abs(pts))+" điểm cho khách "+PH+"?\nLý do: "+why))return;
+  t.disabled=true;
+  try{const j=await post({action:"ptsAdjust",phone:PH,pts,reason:why});
+   if(j.ok){msg("Đã cập nhật điểm ✔");await load(true);openP(PH);return}
+   msg(j.error=="exceed"?"Không trừ quá số điểm khách đang có ("+nf(j.bal)+")":j.error=="notfound"?"Không tìm thấy khách":"Không lưu được: "+(j.error||"không rõ"),4000)}catch(_){msg("Lỗi kết nối")}
+  t.disabled=false}};
 if(KEY)load();
 </script></body></html>
