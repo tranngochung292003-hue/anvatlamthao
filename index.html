@@ -2,6 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<link rel="preconnect" href="https://script.google.com"><link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ăn Vặt Lâm Thao – Đặt Nhanh - Giao Nhanh</title>
 <meta name="description" content="Ăn Vặt Lâm Thao: đồ ăn nhanh, ăn vặt, đồ uống, combo. Đặt Nhanh - Giao Nhanh tận nơi.">
@@ -65,6 +66,7 @@ input,select{font:inherit;font-size:16px;color:inherit}
 .add{width:100%;height:38px;border-radius:99px;background:var(--sun);font-weight:800}.add:disabled{background:#ddd;color:#888}
 .step{display:grid;grid-template-columns:38px 1fr 38px;align-items:center;height:38px;background:var(--ink);color:#fff;border-radius:99px;font-weight:800;text-align:center}
 .step button{height:38px;font-size:1.3rem;color:#fff;border-radius:99px}
+@keyframes skl{to{background-position:-200% 0}}.sk{pointer-events:none}.sk .art,.sk h3,.sk p,.sk .price{background:linear-gradient(90deg,#f3e6cc 25%,#fff4dc 50%,#f3e6cc 75%) 0 0/200% 100%;animation:skl 1.2s linear infinite;border-radius:8px;color:transparent;min-height:1em}.sk .art{border-radius:0}.sk h3,.sk p,.sk .price{margin-bottom:6px;width:80%}.sk p{width:60%}.sk .price{width:40%}
 .empty{grid-column:1/-1;text-align:center;padding:34px 0;color:var(--mute)}
 .contact{margin-top:20px;background:var(--ink);color:#fff;border-radius:24px;padding:22px 16px;text-align:center}
 .contact h2{font-size:1.3rem}.contact p{opacity:.8;margin:2px 0 14px}
@@ -200,7 +202,7 @@ body.has-cart .bar{transform:none}
 const API="https://script.google.com/macros/s/AKfycbyFkloT5OSrStEVY7vk2M1PTfxVerxJG-BzPUBThPqHse2LZOllHMigtpmaqN4ofXYQRA/exec";
 const BANK={id:"MB",acc:"0978472704",name:"TRAN NGOC HUNG",label:"MB Bank"};
 const CFG={min:30000,fee:10000,free:100000,open:0,close:24,area:"Lâm Thao",paused:false,notice:"",shopLat:0,shopLng:0,freeKm:3,perKm:0,maxKm:0};
-let P=[]; // thực đơn lấy từ máy chủ (không còn menu mẫu)
+let P=[],menuDone=false; // thực đơn lấy từ máy chủ (không còn menu mẫu)
 const LBL={nhanh:"Đồ ăn nhanh",vat:"Đồ ăn vặt",uong:"Đồ uống",combo:"Combo"};
 const $=id=>document.getElementById(id),fmt=v=>Number(v||0).toLocaleString("vi-VN")+"đ";
 const norm=s=>String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").toLowerCase();
@@ -248,7 +250,7 @@ const ctl=x=>{if(x.so)return'<button class="add" disabled>Hết món</button>';
 const imgU=u=>{const m=String(u).match(/(?:\/d\/|[?&]id=)([\w-]+)/);return m&&/googleusercontent|drive\.google/.test(u)?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w800`:u};
 const th=x=>`<span>${esc(x.e||"🍽️")}</span>${x.img?`<img src="${esc(imgU(x.img))}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:""}`;
 function menu(){const L=sortP(P).filter(x=>(cur=="all"||x.c==cur)&&(!kw||norm(x.n+" "+(x.d||"")).includes(kw)));
- $("grid").innerHTML=L.length?L.map(x=>`<article class="card${x.so?" so":""}"><div class="art c-${esc(x.c)}">${x.so?"<em>Hết món</em>":x.t?`<em>${esc(x.t)}</em>`:""}${th(x)}</div><div class="info"><h3>${esc(x.n)}</h3>${x.r?`<small class="rt">★ ${x.r} (${x.rc})</small>`:""}<p>${esc(x.d||"")}</p><div class="price">${fmt(x.p)}${x.o?`<s>${fmt(x.o)}</s>`:""}</div><div class="ctl" data-id="${esc(x.id)}">${ctl(x)}</div></div></article>`).join(""):P.length?'<p class="empty">Chưa tìm thấy món phù hợp.</p>':'<p class="empty">Quán đang cập nhật thực đơn, bạn quay lại sau nhé!</p>'}
+ $("grid").innerHTML=L.length?L.map(x=>`<article class="card${x.so?" so":""}"><div class="art c-${esc(x.c)}">${x.so?"<em>Hết món</em>":x.t?`<em>${esc(x.t)}</em>`:""}${th(x)}</div><div class="info"><h3>${esc(x.n)}</h3>${x.r?`<small class="rt">★ ${x.r} (${x.rc})</small>`:""}<p>${esc(x.d||"")}</p><div class="price">${fmt(x.p)}${x.o?`<s>${fmt(x.o)}</s>`:""}</div><div class="ctl" data-id="${esc(x.id)}">${ctl(x)}</div></div></article>`).join(""):P.length?'<p class="empty">Chưa tìm thấy món phù hợp.</p>':menuDone?'<p class="empty">Quán đang cập nhật thực đơn, bạn quay lại sau nhé!</p>':Array.from({length:6},()=>'<article class="card sk"><div class="art"></div><div class="info"><h3>&nbsp;</h3><p>&nbsp;</p><div class="price">&nbsp;</div></div></article>').join("")}
 function refreshCtl(k){const id=String(k).split("~")[0],x=P.find(p=>p.id==id);if(x)document.querySelectorAll(`.ctl[data-id="${id}"]`).forEach(c=>c.innerHTML=ctl(x))}
 
 let opP=null;
@@ -271,7 +273,7 @@ function totals(){let q=0,s=0;Object.keys(cart).forEach(k=>{const i=kp(k);if(!i)
 function sync(){const{q,t}=totals();$("cnt").textContent=q;document.body.classList.toggle("has-cart",q>0);$("barTxt").textContent=`Giỏ hàng · ${q} món`;$("barTot").textContent=fmt(t)}
 function lines(){const{q,s,off,po,fee,t}=totals();if(!q){close_("co");return}
  $("lines").innerHTML=Object.keys(cart).map(k=>{const i=kp(k);return i?`<div class="ln"><span>${esc(i.name)}<small>${fmt(i.price)}</small></span>${step(k,cart[k])}</div>`:""}).join("");
- $("sub").textContent=fmt(s);$("fee").textContent=fee?fmt(fee):"Miễn phí";$("tot").textContent=fmt(t);
+ $("sub").textContent=fmt(s);$("fee").textContent=fee?fmt(fee)+(CFG.perKm>0&&km>CFG.freeKm?` (${km.toFixed(1)}km)`:""):"Miễn phí";$("tot").textContent=fmt(t);
  $("dl").style.display=off?"flex":"none";$("dv").textContent="-"+fmt(off);$("pl").style.display=po?"flex":"none";$("pv").textContent="-"+fmt(po);drawPts(s-off);
  $("fw").textContent=tooFar()?`Rất tiếc, địa chỉ cách quán ${km.toFixed(1)}km, ngoài phạm vi giao (${CFG.maxKm}km).`:s<CFG.min?`Đơn tối thiểu ${fmt(CFG.min)} (chưa tính phí giao). Mua thêm ${fmt(CFG.min-s)} để đặt hàng.`:s<CFG.free?`Mua thêm ${fmt(CFG.free-s)} để được miễn phí giao hàng.`:"Đơn của bạn được miễn phí giao hàng 🎉";ready()}
 document.addEventListener("click",e=>{
@@ -364,7 +366,7 @@ const LOC0="📍 Chia sẻ vị trí giao hàng (bắt buộc)";
 $("loc").onclick=()=>{
  if(!navigator.geolocation||!isSecureContext){$("lh").textContent="Trình duyệt hiện tại không hỗ trợ định vị (cần HTTPS).";return}
  $("loc").disabled=true;$("loc").textContent="Đang lấy vị trí...";
- navigator.geolocation.getCurrentPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude};$("loc").disabled=false;$("loc").className="loc ok";$("loc").textContent="✅ Đã chia sẻ vị trí";$("lh").textContent="Cảm ơn bạn!";setKm();lines();sync();if(tooFar())$("lh").textContent="Địa chỉ của bạn ngoài phạm vi giao hàng của quán.";ready()},
+ navigator.geolocation.getCurrentPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude};$("loc").disabled=false;$("loc").className="loc ok";$("loc").textContent="✅ Đã chia sẻ vị trí";$("lh").textContent="Cảm ơn bạn!";setKm();lines();sync();if(p.coords.accuracy>1000)$("lh").textContent="⚠️ Vị trí chỉ chính xác khoảng "+(p.coords.accuracy/1000).toFixed(1)+"km (hay gặp trên máy tính) nên phí giao có thể lệch. Nên đặt bằng điện thoại bật GPS.";if(tooFar())$("lh").textContent="Địa chỉ của bạn ngoài phạm vi giao hàng của quán.";ready()},
  er=>{pos=null;setKm();$("loc").disabled=false;$("loc").textContent=LOC0;$("lh").textContent=er.code==1?"Bạn đã từ chối quyền vị trí. Hãy cho phép vị trí trong cài đặt Safari rồi bấm lại.":"Chưa lấy được vị trí. Hãy bật GPS và thử lại.";ready()},{enableHighAccuracy:true,timeout:15000,maximumAge:30000})};
 $("f").onsubmit=async e=>{e.preventDefault();if(busy)return;
  const w=why();if(w.length){toast("Còn thiếu: "+w.join(", "),5000);ready();return}
@@ -373,7 +375,7 @@ $("f").onsubmit=async e=>{e.preventDefault();if(busy)return;
  if(T_.pb>0&&(!ses||phN($("ph").value)!==phN(ses.phone))){toast("Muốn dùng điểm thưởng, hãy đặt bằng đúng số điện thoại tài khoản ("+(ses?ses.phone:"")+").",6000);return}
  const code="LT"+Date.now().toString(36).toUpperCase().slice(-6),pay=document.querySelector("[name=pm]:checked").value;
  const L=Object.keys(cart).filter(k=>kp(k)).map(k=>({k,q:cart[k]})),items=L.map(l=>kp(l.k).name+" x"+l.q).join(" | ");
- const d={action:"order",code,time:new Date().toLocaleString("vi-VN"),items,lines:L,coupon:cpn?cpn.code:"",usePts:T_.pb>0,subtotal:T_.s,fee:T_.fee,total:T_.t,pay,
+ const d={action:"order",code,time:new Date().toLocaleString("vi-VN"),items,lines:L,coupon:cpn?cpn.code:"",usePts:T_.pb>0,subtotal:T_.s,fee:T_.fee,total:(cpn&&cpn.tentative)?null:T_.t,pay,
   name:$("nm").value.trim(),phone:$("ph").value.trim(),address:"Giao theo vị trí Google Maps",note:$("nt").value.trim(),map:`https://maps.google.com/?q=${pos.lat},${pos.lng}`,website:$("hp").value,lat:pos.lat,lng:pos.lng,token:ses?ses.token:""};
  busy=true;$("send").disabled=true;$("send").textContent="Đang gửi đơn...";
  let ok=false,er="",total=T_.t,jr={},lastJ={};
@@ -415,7 +417,7 @@ function loadMenu(){return fetch(API+"?a=menu").then(r=>r.json()).then(j=>{
  if(j.cfg){Object.assign(CFG,{min:j.cfg.min==null?30000:+j.cfg.min,fee:+j.cfg.fee,free:+j.cfg.free,open:+j.cfg.open,close:+j.cfg.close,paused:!!j.cfg.paused,notice:j.cfg.notice||"",shopLat:+j.cfg.shopLat||0,shopLng:+j.cfg.shopLng||0,freeKm:+j.cfg.freeKm||0,perKm:+j.cfg.perKm||0,maxKm:+j.cfg.maxKm||0});info()}
  if(Array.isArray(j.vouchers)){VC=j.vouchers;sv("alt_vc",VC);drawVc()}
  if(Array.isArray(j.products)){P=j.products;sv("alt_menu",P)}
- cleanCart();sv("alt_cart",cart);buildTabs();menu();sync();if($("co").classList.contains("show"))lines()}).catch(()=>toast("Không tải được thực đơn mới, đang dùng bản đã lưu.",3500))}
+ menuDone=true;cleanCart();sv("alt_cart",cart);buildTabs();menu();sync();if($("co").classList.contains("show"))lines()}).catch(()=>{menuDone=true;menu();toast("Không tải được thực đơn mới, đang dùng bản đã lưu.",3500)})}
 loadMenu();
 if("serviceWorker"in navigator&&location.protocol=="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
