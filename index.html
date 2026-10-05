@@ -434,10 +434,9 @@ function showDone(o){const nm=String(o.name||"").trim().split(" ").pop(),C=["#ff
 $("okB").onclick=()=>close_("ok");
 $("okQ").onclick=()=>{close_("ok");showQR(okQR[0],okQR[1])};
 
-/* ===== POPUP CHÀO MỪNG (hiện 1 lần mỗi lần mở trang, sau khi tải xong cấu hình quán) ===== */
+/* ===== POPUP CHÀO MỪNG (hiện mỗi lần mở / tải lại trang, sau khi tải xong cấu hình quán) ===== */
 let wlDone=false;
 function showWelcome(){if(wlDone)return;wlDone=true;
- try{if(sessionStorage.getItem("alt_wl"))return;sessionStorage.setItem("alt_wl","1")}catch(_){}
  if(document.querySelector(".mask.show"))return;
  const nm=ses&&ses.name?String(ses.name).trim().split(" ").pop():"";
  $("wlH").textContent=nm?`Chào mừng ${nm} quay lại! 👋`:"Chào mừng bạn đến với quán! 👋";
@@ -458,9 +457,9 @@ function loadMenu(){return fetch(API+"?a=menu").then(r=>r.json()).then(j=>{
  if(Array.isArray(j.vouchers)){VC=j.vouchers;sv("alt_vc",VC);drawVc()}
  if(Array.isArray(j.products)){P=j.products;sv("alt_menu",P)}
  menuDone=true;cleanCart();sv("alt_cart",cart);buildTabs();menu();sync();if($("co").classList.contains("show"))lines()}).catch(()=>{menuDone=true;menu();toast("Không tải được thực đơn mới, đang dùng bản đã lưu.",3500)})}
-loadMenu().then(showWelcome,showWelcome);setTimeout(showWelcome,3500); // tối đa chờ 3,5 giây nếu mạng chậm
+loadMenu().then(showWelcome,showWelcome);setTimeout(showWelcome,2000); // tối đa chờ 2 giây nếu mạng chậm
 if("serviceWorker"in navigator&&location.protocol=="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
-<script src="ui-plus.js"></script>
+<script src="ui-plus.js?v=2"></script>
 </body>
 </html>

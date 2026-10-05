@@ -80,7 +80,7 @@ function welcome(){const day=new Date().toDateString();let seen;try{seen=localSt
  document.body.appendChild(m);open_("wl");
  $("wlm").onclick=()=>{close_("wl");document.getElementById("menu").scrollIntoView()};
  if($("wlv"))$("wlv").addEventListener("click",()=>close_("wl"))}
-setTimeout(welcome,1800);
+/* popup chào mừng nay nằm trong index.html (showWelcome) – tắt bản cũ để không trùng id "wl" */
 
 /* ---------- Hiệu ứng giỏ hàng khi thêm món ---------- */
 if($("cnt"))new MutationObserver(()=>{const b=$("cartBtn");b.classList.remove("bump");void b.offsetWidth;b.classList.add("bump")}).observe($("cnt"),{childList:true});
