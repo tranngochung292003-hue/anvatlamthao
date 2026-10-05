@@ -1,4 +1,4 @@
-const C="alt-v3";
+const C="alt-v4";
 self.addEventListener("install",e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll(["./","logo.webp","manifest.webmanifest"])).catch(()=>{}))});
 self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!=C).map(x=>caches.delete(x)))).then(()=>clients.claim())));
 self.addEventListener("fetch",e=>{const u=new URL(e.request.url);

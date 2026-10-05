@@ -17,7 +17,7 @@ const css=`
 .hero img{animation-duration:4.2s;filter:drop-shadow(0 6px 10px #0005)}
 .top img:hover,.hero img:hover{animation:spin .8s}
 button,.cta,.cb a{transition:transform .15s,filter .2s,box-shadow .2s}
-.add:hover,.cta:hover,.mini:hover,.big:hover,.ap:hover,.cb a:hover,.vcard button:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.add:hover,.cta:hover,.mini:hover,.big:hover,.ap:hover,.cb a:hover{transform:translateY(-2px);filter:brightness(1.06)}
 button:active,.cta:active,.cb a:active{transform:scale(.94)}
 .cartbtn.bump{animation:bump .5s}
 .bar button{animation:glow 2.4s infinite}
@@ -48,7 +48,7 @@ const st=document.createElement("style");st.textContent=css;document.head.append
 /* ---------- Thanh chữ chạy ---------- */
 const mq=document.createElement("div");mq.className="mq";
 function mqText(){let free="";try{free=fmt(CFG.free)}catch(_){free="100.000đ"}
- const t=[`🎉 Chào mừng bạn đến Ăn Vặt Lâm Thao`,`🚚 Miễn phí giao hàng từ ${free}`,`🎟️ Voucher mới mỗi ngày – bấm “Dùng mã”`,`⭐ Đăng ký tài khoản để tích điểm thưởng`,`⚡ Đặt Nhanh - Giao Nhanh`].map(x=>`<span>${x}</span>`).join("");
+ const t=[`🎉 Chào mừng bạn đến Ăn Vặt Lâm Thao`,`🚚 Miễn phí giao hàng từ ${free}`,`🎟️ Voucher mới mỗi ngày – bấm “Dùng mã”`,`⭐ Tích điểm: 1.000 điểm trừ ngay 10.000đ`,`⚡ Đặt Nhanh - Giao Nhanh`].map(x=>`<span>${x}</span>`).join("");
  mq.innerHTML=`<div>${t}${t}</div>`}
 mqText();document.querySelector("header.top").after(mq);
 if($("area"))new MutationObserver(mqText).observe($("area"),{childList:true,characterData:true,subtree:true});
@@ -58,7 +58,7 @@ const S=[
  ["linear-gradient(120deg,#e0301f,#ff8a00)","🔥 Đặt Nhanh - Giao Nhanh","Món nóng giòn, giao tận nơi trong khu vực","#menu"],
  ["linear-gradient(120deg,#2e8b4a,#8fd3b0)","🎟️ Voucher mỗi ngày","Bấm để xem mã giảm giá hôm nay","#vs"],
  ["linear-gradient(120deg,#3a150e,#8a3b1f)","🍱 Combo tiết kiệm","Ăn no – giá mềm, xem ngay các combo","combo"],
- ["linear-gradient(120deg,#0068ff,#6aa8ff)","⭐ Tích điểm đổi hạng","Đăng ký tài khoản, 1.000đ = 1 điểm","acc"]];
+ ["linear-gradient(120deg,#0068ff,#6aa8ff)","⭐ Tích điểm đổi hạng","Cứ 1.000 điểm trừ ngay 10.000đ","acc"]];
 const sl=document.createElement("section");sl.className="sl";
 sl.innerHTML=`<div class="tr">${S.map((s,i)=>`<div class="s" data-i="${i}" style="background:${s[0]}"><b>${s[1]}</b><small>${s[2]}</small></div>`).join("")}</div><div class="d">${S.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("")}</div>`;
 document.querySelector(".hero").after(sl);
@@ -111,7 +111,7 @@ const st2=document.createElement("style");st2.textContent=`
 .top .lgw{padding:3px}.hero .lgw{padding:7px}.hero .lgw img{width:80px}#wl .lgw{padding:9px;margin-bottom:4px}
 .rv{opacity:0;transform:translateY(22px);transition:opacity .6s,transform .6s}.rv.in{opacity:1;transform:none}
 .sec h2{position:relative;display:inline-block}.sec h2::after{content:"";display:block;height:4px;width:0;border-radius:4px;background:linear-gradient(90deg,var(--red),var(--sun));margin-top:2px;transition:width .8s .3s}.sec.in h2::after{width:100%}
-.vs h3,.contact h2{display:inline-block;animation:lf 3.5s ease-in-out infinite}
+.contact h2{display:inline-block;animation:lf 3.5s ease-in-out infinite}
 .tag{background:linear-gradient(90deg,var(--sun) 30%,#fff 50%,var(--sun) 70%) 0 0/200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shine 2.6s linear infinite}
 @keyframes shine{to{background-position:-200% 0}}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
@@ -123,7 +123,7 @@ const st2=document.createElement("style");st2.textContent=`
 .card h3{transition:color .2s}.card:hover h3{color:var(--red)}
 .price{display:inline-block;transform-origin:left;animation:pulse 3s infinite}
 .tabs button{transition:transform .2s,background .2s,color .2s}.tabs button:hover{transform:translateY(-2px)}.tabs button.on{animation:pulse .4s}
-.vcard{animation:up .5s both,lf 4s ease-in-out infinite;transition:border-color .2s}.vcard:hover{border-color:var(--red)}
+.vcard{transition:border-color .2s}.vcard:hover{border-color:var(--red)}
 .cb a{animation:wig 5s infinite;display:block}.cb a:nth-child(2){animation-delay:.4s}.cb a:nth-child(3){animation-delay:.8s}
 .fab .z{animation:ring 1.8s infinite}
 .od,.ln,.pol details{animation:up .4s both}
