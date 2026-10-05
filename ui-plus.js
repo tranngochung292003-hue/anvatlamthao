@@ -140,7 +140,6 @@ const st2=document.createElement("style");st2.textContent=`
 const wrapLogo=i=>{if(i.parentNode.classList.contains("lgw"))return;const w=document.createElement("span");w.className="lgw";i.replaceWith(w);w.appendChild(i)};
 document.querySelectorAll(".top>.wrap>img,.hero>img").forEach(wrapLogo);
 const wl0=$("wl");if(wl0)wl0.querySelectorAll(".lg").forEach(wrapLogo);
-/* hiện dần khi cuộn tới */
-if("IntersectionObserver"in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{threshold:.12});
- document.querySelectorAll(".hero,.sl,.vs,.sec,.contact,.ft2,.ft").forEach(x=>{x.classList.add("rv");io.observe(x)})}
+/* hiển thị ngay khi vào web (không còn ẩn nội dung chờ cuộn: trước đây mục Thực đơn rất dài nên phải cuộn mới hiện) */
+document.querySelectorAll(".hero,.sl,.vs,.sec,.contact,.ft2,.ft").forEach(x=>x.classList.add("in"));
 })();
