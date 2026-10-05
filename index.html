@@ -349,6 +349,7 @@ document.addEventListener("click",async e=>{
  const qr=e.target.closest("[data-qr]");if(qr){const o=OL[+qr.dataset.qr];close_("md");showQR(o.code,+o.total)}});
 
 /* ===== VỊ TRÍ + GỬI ĐƠN ===== */
+const phN=s=>String(s||"").trim().replace(/^\+84/,"0");
 function why(){const w=[];
  if(!isOpen())w.push("Quán đang đóng cửa");
  if($("nm").value.trim().length<2)w.push("họ tên");
@@ -369,17 +370,19 @@ $("loc").onclick=()=>{
 $("f").onsubmit=async e=>{e.preventDefault();if(busy)return;
  const w=why();if(w.length){toast("Còn thiếu: "+w.join(", "),5000);ready();return}
  if(!navigator.onLine){toast("Bạn đang offline, hãy kiểm tra mạng.");return}
- const T_=totals(),code="LT"+Date.now().toString(36).toUpperCase().slice(-6),pay=document.querySelector("[name=pm]:checked").value;
+ const T_=totals();
+ if(T_.pb>0&&(!ses||phN($("ph").value)!==phN(ses.phone))){toast("Muốn dùng điểm thưởng, hãy đặt bằng đúng số điện thoại tài khoản ("+(ses?ses.phone:"")+").",6000);return}
+ const code="LT"+Date.now().toString(36).toUpperCase().slice(-6),pay=document.querySelector("[name=pm]:checked").value;
  const L=Object.keys(cart).filter(k=>kp(k)).map(k=>({k,q:cart[k]})),items=L.map(l=>kp(l.k).name+" x"+l.q).join(" | ");
  const d={action:"order",code,time:new Date().toLocaleString("vi-VN"),items,lines:L,coupon:cpn?cpn.code:"",usePts:T_.pb>0,subtotal:T_.s,fee:T_.fee,total:T_.t,pay,
   name:$("nm").value.trim(),phone:$("ph").value.trim(),address:"Giao theo vị trí Google Maps",note:$("nt").value.trim(),map:`https://maps.google.com/?q=${pos.lat},${pos.lng}`,website:$("hp").value,lat:pos.lat,lng:pos.lng,token:ses?ses.token:""};
  busy=true;$("send").disabled=true;$("send").textContent="Đang gửi đơn...";
- let ok=false,er="",total=T_.t,jr={};
- for(let i=0;i<2&&!ok;i++){try{const j=await post(d);if(j.ok){ok=true;jr=j;if(j.total)total=j.total}else{er=j.error;break}}catch(_){}}
+ let ok=false,er="",total=T_.t,jr={},lastJ={};
+ for(let i=0;i<2&&!ok;i++){try{const j=await post(d);if(j.ok){ok=true;jr=j;if(j.total)total=j.total}else{er=j.error;lastJ=j;break}}catch(_){}}
  busy=false;$("send").textContent="Đặt hàng";
- if(!ok){ready();toast(er=="paused"?"Quán đang tạm nghỉ, vui lòng quay lại sau.":er=="too_far"?"Địa chỉ ngoài phạm vi giao hàng của quán.":er=="spam"?"Bạn đang có quá nhiều đơn chờ xử lý, vui lòng gọi hotline.":er=="min_order"?"Đơn tối thiểu "+fmt(CFG.min)+" (chưa tính phí giao).":er=="menu_changed"?"Thực đơn vừa thay đổi, hãy tải lại trang rồi đặt lại nhé.":"Chưa gửi được đơn, vui lòng thử lại hoặc gọi hotline 0978 472 704.",6000);return}
+ if(!ok){if(er=="total_mismatch"||er=="pts_invalid"||er=="pts_auth"||er=="menu_changed"){loadMenu();loadPts()}ready();toast(er=="paused"?"Quán đang tạm nghỉ, vui lòng quay lại sau.":er=="too_far"?"Địa chỉ ngoài phạm vi giao hàng của quán.":er=="spam"?"Bạn đang có quá nhiều đơn chờ xử lý, vui lòng gọi hotline.":er=="min_order"?"Đơn tối thiểu "+fmt(CFG.min)+" (chưa tính phí giao).":er=="menu_changed"?"Thực đơn vừa thay đổi, hãy tải lại trang rồi đặt lại nhé.":er=="total_mismatch"?"Giá hoặc ưu đãi vừa thay đổi, tổng mới là "+fmt(lastJ.total)+". Vui lòng kiểm tra lại giỏ hàng rồi đặt lại.":er=="pts_auth"?"Không xác thực được tài khoản để dùng điểm, vui lòng đăng nhập lại.":er=="pts_invalid"?"Điểm thưởng không đủ hoặc đơn chưa đủ điều kiện trừ điểm, vui lòng kiểm tra lại.":"Chưa gửi được đơn, vui lòng thử lại hoặc gọi hotline 0978 472 704.",6000);return}
  const h=ld("alt_orders",[]);h.unshift({code,time:d.time,items,total,pay,phone:d.phone,lines:L});sv("alt_orders",h.slice(0,20));
- const cm=jr.couponMsg,pu=jr.pts||0,po=jr.pOff||0;if(pu&&myPts!=null)myPts=Math.max(0,myPts-pu);usePts=false;cart={};cpn=null;sv("alt_cart",cart);pos=null;setKm();e.target.reset();$("loc").className="loc";$("loc").textContent=LOC0;cdMsg("");
+ const cm=jr.couponMsg,pu=jr.pts||0,po=jr.pOff||0;usePts=false;if(pu&&myPts!=null)myPts=Math.max(0,myPts-pu);setTimeout(loadPts,1500);cart={};cpn=null;sv("alt_cart",cart);pos=null;setKm();e.target.reset();$("loc").className="loc";$("loc").textContent=LOC0;cdMsg("");
  close_("co");menu();sync();
  showDone({code,total,pay,off:jr.off||0,po,pu,cm,name:d.name})};
 addEventListener("offline",()=>toast("Bạn đang offline, hãy kiểm tra mạng."));
@@ -408,11 +411,12 @@ $("okQ").onclick=()=>{close_("ok");showQR(okQR[0],okQR[1])};
 
 /* ===== KHỞI TẠO ===== */
 info();buildTabs();menu();sync();drawVc();ready();
-fetch(API+"?a=menu").then(r=>r.json()).then(j=>{
+function loadMenu(){return fetch(API+"?a=menu").then(r=>r.json()).then(j=>{
  if(j.cfg){Object.assign(CFG,{min:j.cfg.min==null?30000:+j.cfg.min,fee:+j.cfg.fee,free:+j.cfg.free,open:+j.cfg.open,close:+j.cfg.close,paused:!!j.cfg.paused,notice:j.cfg.notice||"",shopLat:+j.cfg.shopLat||0,shopLng:+j.cfg.shopLng||0,freeKm:+j.cfg.freeKm||0,perKm:+j.cfg.perKm||0,maxKm:+j.cfg.maxKm||0});info()}
  if(Array.isArray(j.vouchers)){VC=j.vouchers;sv("alt_vc",VC);drawVc()}
  if(j.products&&j.products.length){P=j.products;sv("alt_menu",P)}
- cleanCart();sv("alt_cart",cart);buildTabs();menu();sync();if($("co").classList.contains("show"))lines()}).catch(()=>toast("Không tải được thực đơn mới, đang dùng bản đã lưu.",3500));
+ cleanCart();sv("alt_cart",cart);buildTabs();menu();sync();if($("co").classList.contains("show"))lines()}).catch(()=>toast("Không tải được thực đơn mới, đang dùng bản đã lưu.",3500))}
+loadMenu();
 if("serviceWorker"in navigator&&location.protocol=="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 <script src="ui-plus.js"></script>
