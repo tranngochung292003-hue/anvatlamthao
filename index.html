@@ -126,6 +126,23 @@ body.has-cart .bar{transform:none}
 .ptl{background:#fff;border:2px solid var(--line);border-radius:14px;padding:11px 12px;margin-bottom:10px;align-items:center;color:var(--ink);font-weight:600}
 .ptl:has(input:checked){border-color:var(--org);background:#fff3dc}
 @media(prefers-reduced-motion:reduce){.ck circle,.ck path{stroke-dashoffset:0!important}.cfw{display:none}}
+/* ===== POPUP CHÀO MỪNG ===== */
+#wl{align-items:center;padding:16px}
+#wl .sheet{border-radius:28px;max-width:380px;padding:0;position:relative;overflow:hidden;text-align:center;animation:wlin .45s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes wlin{from{opacity:0;transform:translateY(24px) scale(.94)}}
+.wlh{background:var(--ink);padding:22px 16px 18px;position:relative}
+.wlh img{width:116px;height:auto;display:block;margin:0 auto 6px;animation:wlpop .7s .15s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes wlpop{from{opacity:0;transform:scale(.6) rotate(-6deg)}}
+.wlh small{color:var(--sun);font-weight:800;letter-spacing:.02em}
+#wl .x{position:absolute;top:10px;right:10px;width:34px;height:34px;background:#ffffff26;border:0;color:#fff}
+.wlb{padding:16px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+.wlb h2{font-size:1.3rem;font-weight:800;line-height:1.25}
+.wlb>p{color:var(--mute);margin:4px 0 12px}
+.wll{list-style:none;padding:0;text-align:left;display:grid;gap:8px;margin-bottom:14px}
+.wll li{background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 12px;font-size:.88rem;line-height:1.4}
+.wll li.cl{background:#fdeceb;border-color:#f4b9b3;color:var(--red);font-weight:600}
+#wl .big{background:linear-gradient(90deg,var(--red),var(--org))}
+@media(prefers-reduced-motion:reduce){#wl .sheet,.wlh img{animation:none}}
 </style>
 </head>
 <body>
@@ -189,6 +206,12 @@ body.has-cart .bar{transform:none}
 <div class="mask" id="op"><div class="sheet"><h2><span id="opT"></span><button class="x" data-close="op">✕</button></h2><div id="opB"></div><button class="big" id="opAdd"></button></div></div>
 <div class="mask" id="ac"><div class="sheet"><h2><span>Tài khoản</span><button class="x" data-close="ac">✕</button></h2><div id="acB"></div></div></div>
 <div class="mask" id="qr"><div class="sheet"><h2><span>Chuyển khoản</span><button class="x" data-close="qr">✕</button></h2><div id="qrB"></div></div></div>
+<div class="mask" id="wl"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="wlH">
+ <div class="wlh"><button class="x" data-close="wl" aria-label="Đóng">✕</button><img src="logo.webp" alt="Ăn Vặt Lâm Thao"><small>Món ngon mỗi ngày · Đặt Nhanh - Giao Nhanh</small></div>
+ <div class="wlb"><h2 id="wlH">Chào mừng bạn! 👋</h2><p>Hôm nay bạn muốn ăn gì nào?</p>
+  <ul class="wll" id="wlL"></ul>
+  <button class="big" id="wlGo">🍟 Xem thực đơn ngay</button></div>
+</div></div>
 <div class="mask" id="pol"><div class="sheet pol"><h2><span>Chính sách</span><button class="x" data-close="pol">✕</button></h2>
 <details id="pol-ship"><summary>Chính sách giao hàng</summary><p>Giao tận nơi trong khu vực phục vụ. Phí giao và phụ phí (nếu có) hiển thị trong giỏ hàng trước khi đặt. Vui lòng chia sẻ đúng vị trí giao hàng và giữ điện thoại để shipper liên hệ. Thời gian giao có thể lâu hơn vào giờ cao điểm.</p></details>
 <details id="pol-pay"><summary>Phương thức thanh toán</summary><p>Tiền mặt khi nhận hàng, hoặc chuyển khoản qua VietQR: MB Bank · TRAN NGOC HUNG · 0978472704, ghi đúng mã đơn. Quán xác nhận sau khi nhận được tiền.</p></details>
@@ -411,6 +434,23 @@ function showDone(o){const nm=String(o.name||"").trim().split(" ").pop(),C=["#ff
 $("okB").onclick=()=>close_("ok");
 $("okQ").onclick=()=>{close_("ok");showQR(okQR[0],okQR[1])};
 
+/* ===== POPUP CHÀO MỪNG (hiện 1 lần mỗi lần mở trang, sau khi tải xong cấu hình quán) ===== */
+let wlDone=false;
+function showWelcome(){if(wlDone)return;wlDone=true;
+ try{if(sessionStorage.getItem("alt_wl"))return;sessionStorage.setItem("alt_wl","1")}catch(_){}
+ if(document.querySelector(".mask.show"))return;
+ const nm=ses&&ses.name?String(ses.name).trim().split(" ").pop():"";
+ $("wlH").textContent=nm?`Chào mừng ${nm} quay lại! 👋`:"Chào mừng bạn đến với quán! 👋";
+ const L=[];
+ if(!isOpen())L.push(`<li class="cl">${CFG.paused?esc(CFG.notice||"Quán tạm nghỉ, vui lòng quay lại sau."):`Quán đang đóng cửa, nhận đơn từ ${CFG.open}h đến ${CFG.close}h hằng ngày.`}</li>`);
+ L.push(`<li>🚀 <b>Giao nhanh tận nơi</b> · phí giao từ ${fmt(CFG.fee)}, <b>miễn phí</b> từ ${fmt(CFG.free)}</li>`);
+ if(VC&&VC.length)L.push(`<li>🎟️ Voucher <b style="color:var(--red)">${esc(VC[0].code)}</b>: ${esc(VC[0].s||VC[0].desc||"")}</li>`);
+ L.push("<li>⭐ <b>Tích điểm hoàn 10%</b> khi đăng ký tài khoản</li>");
+ if(isOpen())L.push(`<li>🕒 Nhận đơn ${CFG.open}h–${CFG.close}h hằng ngày</li>`);
+ $("wlL").innerHTML=L.join("");open_("wl")}
+$("wlGo").onclick=()=>{close_("wl");const m=$("menu");if(m)m.scrollIntoView({behavior:"smooth"})};
+addEventListener("keydown",e=>{if(e.key=="Escape"&&$("wl").classList.contains("show"))close_("wl")});
+
 /* ===== KHỞI TẠO ===== */
 info();buildTabs();menu();sync();drawVc();ready();
 function loadMenu(){return fetch(API+"?a=menu").then(r=>r.json()).then(j=>{
@@ -418,7 +458,7 @@ function loadMenu(){return fetch(API+"?a=menu").then(r=>r.json()).then(j=>{
  if(Array.isArray(j.vouchers)){VC=j.vouchers;sv("alt_vc",VC);drawVc()}
  if(Array.isArray(j.products)){P=j.products;sv("alt_menu",P)}
  menuDone=true;cleanCart();sv("alt_cart",cart);buildTabs();menu();sync();if($("co").classList.contains("show"))lines()}).catch(()=>{menuDone=true;menu();toast("Không tải được thực đơn mới, đang dùng bản đã lưu.",3500)})}
-loadMenu();
+loadMenu().then(showWelcome,showWelcome);setTimeout(showWelcome,3500); // tối đa chờ 3,5 giây nếu mạng chậm
 if("serviceWorker"in navigator&&location.protocol=="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 <script src="ui-plus.js"></script>
