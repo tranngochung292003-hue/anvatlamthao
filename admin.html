@@ -53,7 +53,7 @@ label.ck{display:flex;align-items:center;gap:8px;margin-bottom:10px}label.ck inp
    <div class="c"><b id="ft">Thêm sản phẩm</b><br><br>
     <input id="n" placeholder="Tên món" maxlength="60"><input id="d" placeholder="Mô tả ngắn" maxlength="100">
     <div class="row"><input id="pr" type="number" inputmode="numeric" placeholder="Giá bán"><input id="ol2" type="number" inputmode="numeric" placeholder="Giá cũ (nếu có)"></div>
-    <div class="row"><select id="cat"><option value="nhanh">Đồ ăn nhanh</option><option value="vat">Đồ ăn vặt</option><option value="uong">Đồ uống</option><option value="combo">Combo</option></select><input id="em" placeholder="Emoji 🍟"><input id="tg" placeholder="Nhãn (Bán chạy...)"></div>
+    <div class="row"><select id="cat"><option value="combo">Combo</option><option value="nhanh">Đồ ăn nhanh</option><option value="vat">Đồ ăn vặt</option><option value="uong">Đồ uống</option></select><input id="em" placeholder="Emoji 🍟"><input id="tg" placeholder="Nhãn (Bán chạy...)"></div>
     <input id="cat2" placeholder="Hoặc nhóm mới (viết không dấu, VD: banh). Để trống = dùng nhóm ở trên" maxlength="20">
     <textarea id="op" rows="2" placeholder="Tùy chọn (không bắt buộc). VD: Size:M|L+5000;Đường:100%|70%|50%;Topping:Không|Trân châu+5000"></textarea>
     <p class="l" style="margin:-4px 0 8px">Mỗi nhóm cách nhau dấu ; · các lựa chọn cách nhau dấu | · cộng tiền thêm bằng +số. Không dùng dấu , : ~ trong tên.</p>
@@ -132,6 +132,10 @@ function amtTbl(o){const v=vOffOf(o),p=pOffOf(o);
  <tr class="${p?"m":"z"}"><td>− Tích điểm${o.pts?` (${o.pts} điểm)`:""}</td><td>${p?"−"+fmt(p):"0đ"}</td></tr>
  <tr><td>+ Phí giao</td><td>${o.fee?fmt(o.fee):"Miễn phí"}</td></tr>
  <tr class="t"><td>TỔNG THU</td><td>${fmt(o.total)}</td></tr></table>`}
+const ADM_ORD=["combo","nhanh","vat","uong"],ADM_LBL={combo:"Combo",nhanh:"Đồ ăn nhanh",vat:"Đồ ăn vặt",uong:"Đồ uống"};
+function admSort(list){const seen=[];list.forEach(x=>{if(x.c&&!seen.includes(x.c))seen.push(x.c)});const r0=c=>{const i=ADM_ORD.indexOf(c);return i<0?99:i};seen.sort((x,y)=>r0(x)-r0(y));
+ const r=c=>{const i=seen.indexOf(c);return i<0?99:i};return list.map((x,i)=>[x,i]).sort((x,y)=>r(x[0].c)-r(y[0].c)||x[1]-y[1]).map(x=>x[0])}
+const admHead=(c,a)=>`<h3 style="margin:16px 2px 6px;font-size:1.02rem;background:var(--sun);border-radius:10px;padding:6px 12px">${esc(ADM_LBL[c]||c||"Chưa phân nhóm")} <small>(${a.filter(x=>x.c==c).length} món)</small></h3>`;
 function draw(){
  $("s1").textContent=D.stats.count;$("s2").textContent=fmt(D.stats.revenue);$("s3").textContent=D.stats.pending;
  const F=[["all","Tất cả"],["Mới","Mới"],["doing","Đang xử lý"],["Đã giao","Đã giao"],["Đã hủy","Đã hủy"]];
@@ -141,7 +145,7 @@ function draw(){
  <p><b>${esc(o.name)}</b> · <a href="tel:${esc(o.phone)}">${esc(o.phone)}</a></p><p>${esc(o.address)}</p>${itemsTbl(o)}${o.note?`<p><i>📝 ${esc(o.note)}</i></p>`:""}
  ${amtTbl(o)}<p><a href="${esc(o.map)}" target="_blank" rel="noopener">📍 Xem bản đồ</a></p>
  <div class="row">${n?`<button class="k" data-code="${esc(o.code)}" data-st="${n[1]}">${n[0]}</button>`:""}${tf&&!o.paid&&o.status!="Đã hủy"?`<button data-code="${esc(o.code)}" data-paid="1">💰 Đã nhận tiền</button>`:""}<button class="g" data-print="${esc(o.code)}">🖨️ In phiếu</button>${n?`<button class="r" data-code="${esc(o.code)}" data-st="Đã hủy">Hủy đơn</button>`:""}</div></div>`}).join("")||"<p>Không có đơn.</p>";
- $("pl").innerHTML=D.products.map(p=>`<div class="c row" style="flex-wrap:nowrap"><img class="pv" src="${esc(p.img||"")}" alt="" onerror="this.style.visibility='hidden'"><div style="flex:1"><b>${esc(p.e)} ${esc(p.n)}</b> ${p.on?"":'<span class="b">Ẩn</span>'} ${p.so?'<span class="b so">Hết món</span>':""}<br><small>${fmt(p.p)} · ${esc(p.c)}${p.op?" · có tùy chọn":""}</small></div><button class="g" data-e="${esc(p.id)}">Sửa</button><button class="r" data-x="${esc(p.id)}">Xóa</button></div>`).join("")||"<p>Chưa có sản phẩm. Web sẽ hiện thông báo đang cập nhật thực đơn cho đến khi bạn thêm món.</p>";
+ $("pl").innerHTML=admSort(D.products).map((p,i,arr)=>(i&&arr[i-1].c==p.c?"":admHead(p.c,arr))+`<div class="c row" style="flex-wrap:nowrap"><img class="pv" src="${esc(p.img||"")}" alt="" onerror="this.style.visibility='hidden'"><div style="flex:1"><b>${esc(p.e)} ${esc(p.n)}</b> ${p.on?"":'<span class="b">Ẩn</span>'} ${p.so?'<span class="b so">Hết món</span>':""}<br><small>${fmt(p.p)} · ${esc(p.c)}${p.op?" · có tùy chọn":""}</small></div><button class="g" data-e="${esc(p.id)}">Sửa</button><button class="r" data-x="${esc(p.id)}">Xóa</button></div>`).join("")||"<p>Chưa có sản phẩm. Web sẽ hiện thông báo đang cập nhật thực đơn cho đến khi bạn thêm món.</p>";
  $("cl").innerHTML=D.coupons.map(k=>`<div class="c row" style="flex-wrap:nowrap"><div style="flex:1"><b>${esc(k.code)}</b> ${k.on?"":'<span class="b so">Tắt</span>'} ${k.pub?'<span class="b paid">Hiện trên web</span>':""}<br><small>${k.exp?"HSD "+esc(k.exp)+" · ":""}${k.type=="percent"?"Giảm "+k.value+"%":"Giảm "+fmt(k.value)} · tối thiểu ${fmt(k.min)}${k.cap?" · tối đa "+fmt(k.cap):""} · dùng ${k.used||0}${+k.max?"/"+k.max:""} · ${+k.per?k.per+" lần/SĐT":"không giới hạn/SĐT"}</small></div><button class="g" data-ke="${esc(k.code)}">Sửa</button><button class="r" data-kx="${esc(k.code)}">Xóa</button></div>`).join("")||"<p>Chưa có mã giảm giá.</p>";
  $("g").innerHTML=report();drawU();drawP();
  if(D.role=="staff")document.querySelectorAll(".tabs button").forEach(b=>{if(b.dataset.t!="o")b.style.display="none"});
@@ -267,7 +271,7 @@ $("bks").onclick=async()=>{const ok=BK.filter(x=>!x.err);if(!ok.length)return;if
  bkDraw()};
 /* ===== THÊM NHIỀU SẢN PHẨM BẰNG ẢNH ===== */
 let MI=[],miSeq=0,miBusy=0;
-const MI_MAX=30,GRP_STD={nhanh:"Đồ ăn nhanh",vat:"Đồ ăn vặt",uong:"Đồ uống",combo:"Combo"};
+const MI_MAX=30,GRP_STD={combo:"Combo",nhanh:"Đồ ăn nhanh",vat:"Đồ ăn vặt",uong:"Đồ uống"};
 const miGroups=()=>{const s=new Set(Object.keys(GRP_STD));(D.products||[]).forEach(p=>p.c&&s.add(p.c));return[...s]};
 const miOpts=(sel,blank)=>(blank?`<option value="">— Giữ nguyên nhóm —</option>`:"")+miGroups().map(g=>`<option value="${esc(g)}"${g==sel?" selected":""}>${esc(GRP_STD[g]||g)}</option>`).join("");
 const miGuess=fn=>{const b=fn.replace(/\.[^.]+$/,"").replace(/[_-]+/g," ").trim();return(b.length<2||/^(img|dsc|pxl|photo|image|screenshot|zalo|fb|received|mvimg|\d)/i.test(b))?"":b.slice(0,60)};
