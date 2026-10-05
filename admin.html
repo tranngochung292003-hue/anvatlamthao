@@ -23,6 +23,8 @@ input,select,textarea{width:100%;border:2px solid var(--line);border-radius:10px
 .fl{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto}.fl button{background:#fff;border:1px solid var(--line);padding:6px 12px;white-space:nowrap}.fl button.on{background:var(--sun)}
 .bar{height:14px;background:var(--sun);border-radius:7px;min-width:2px}
 .hide{display:none}#msg{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:99px;display:none;z-index:9;max-width:92vw;text-align:center}
+.bt{width:100%;border-collapse:collapse;margin:8px 0;font-size:.95rem}.bt th{text-align:left;font-size:.8rem;color:var(--mute);padding:4px 8px;border-bottom:2px solid var(--line)}.bt td{padding:5px 8px;border-bottom:1px solid var(--line)}.bt td:last-child{text-align:right;white-space:nowrap}.bt .z td{color:#aaa}.bt .m td:last-child{color:var(--red)}.bt .t td{background:var(--sun);font-weight:800;font-size:1.08rem;border-bottom:0}.bt.it td:nth-child(2),.bt.it th:nth-child(2){text-align:center;width:44px}.bt.pv2 td:last-child,.bt.pv2 th:last-child{text-align:left;white-space:normal}.bt .er td{background:#fde7e4}
+details.bk summary{font-weight:700;cursor:pointer}
 label.ck{display:flex;align-items:center;gap:8px;margin-bottom:10px}label.ck input{width:auto;margin:0}
 </style></head><body>
 <header><b>🛠️ Admin Ăn Vặt Lâm Thao</b><span><button class="g" id="rf">↻</button> <button class="g" id="out">Thoát</button></span></header>
@@ -46,6 +48,13 @@ label.ck{display:flex;align-items:center;gap:8px;margin-bottom:10px}label.ck inp
     <label class="ck"><input id="on" type="checkbox" checked>Hiển thị trên web</label>
     <label class="ck"><input id="so" type="checkbox">Hết món (vẫn hiện nhưng không đặt được)</label>
     <button id="save">Lưu sản phẩm</button> <button class="g" id="reset">Làm mới form</button></div>
+   <details class="c bk" id="bk"><summary>📦 Thêm / cập nhật sản phẩm hàng loạt</summary><br>
+    <p class="l" style="margin-bottom:8px">Cách 1: mở Excel/Google Sheets, copy các ô (có dòng tiêu đề) rồi dán vào ô bên dưới. Cách 2: tải file mẫu, điền, rồi chọn lại file (.csv, lưu dạng <b>CSV UTF-8</b>).<br>Cột: Tên · Mô tả · Giá · Giá cũ · Nhóm · Emoji · Nhãn · Ảnh (link) · Tùy chọn · Hiển thị (1/0) · Hết món (1/0). Chỉ <b>Tên</b> và <b>Giá</b> là bắt buộc.</p>
+    <div class="row"><button class="g" id="bkd" type="button">⬇ Tải file mẫu (CSV)</button><input id="bkf" type="file" accept=".csv,.tsv,.txt" style="margin:0"></div><br>
+    <textarea id="bkt" rows="6" placeholder="Dán dữ liệu từ Excel / Google Sheets vào đây..." style="font-size:14px"></textarea>
+    <select id="bkm"><option value="update">Trùng tên món → cập nhật món đó</option><option value="add">Luôn thêm mới (kể cả trùng tên)</option></select>
+    <div id="bkp"></div>
+    <button id="bks" disabled>💾 Lưu hàng loạt</button> <button class="g" id="bkc" type="button">Xóa dữ liệu dán</button></details>
    <div id="pl"></div>
   </div>
 
@@ -101,14 +110,23 @@ function report(){const ok=D.orders.filter(o=>o.status!="Đã hủy"),days={},to
  return `<div class="c"><b>Doanh thu 7 ngày gần nhất</b> <span class="l">(từ ${D.orders.length} đơn gần nhất)</span><br><br>${ks.map(k=>`<div class="row" style="flex-wrap:nowrap;margin-bottom:6px"><span class="l" style="flex:none;min-width:84px">${k.slice(0,-5)}</span><div style="flex:1"><div class="bar" style="width:${(days[k]||0)/mx*100}%"></div></div><b style="flex:none;min-width:90px;text-align:right">${fmt(days[k]||0)}</b></div>`).join("")}</div>
  <div class="c"><b>Món bán chạy</b><br><br>${tp.map(x=>`<div class="row" style="flex-wrap:nowrap;margin-bottom:6px"><span style="flex:1.4">${esc(x[0])}</span><div style="flex:1"><div class="bar" style="width:${x[1]/tm*100}%"></div></div><b style="flex:none;min-width:34px;text-align:right">${x[1]}</b></div>`).join("")||"Chưa có dữ liệu."}</div>
  <div class="c">👥 Khách đã đăng ký tài khoản: <b>${D.customers||0}</b></div>`}
+const pOffOf=o=>o.poff!=null?+o.poff:(+o.pts||0)*10,vOffOf=o=>o.voff!=null?+o.voff:Math.max(0,(+o.off||0)-pOffOf(o));
+function itemsTbl(o){const r=String(o.items||"").split(" | ").map(t=>{const m=t.match(/^(.*) x(\d+)$/);return m?[m[1],m[2]]:[t,1]});
+ return `<table class="bt it"><tr><th>Món</th><th>SL</th></tr>${r.map(x=>`<tr><td>${esc(x[0])}</td><td>${esc(x[1])}</td></tr>`).join("")}</table>`}
+function amtTbl(o){const v=vOffOf(o),p=pOffOf(o);
+ return `<table class="bt"><tr><td>Tổng tiền hàng</td><td>${fmt(o.sub)}</td></tr>
+ <tr class="${v?"m":"z"}"><td>− Voucher${o.vcode?` <b>${esc(o.vcode)}</b>`:""}</td><td>${v?"−"+fmt(v):"0đ"}</td></tr>
+ <tr class="${p?"m":"z"}"><td>− Tích điểm${o.pts?` (${o.pts} điểm)`:""}</td><td>${p?"−"+fmt(p):"0đ"}</td></tr>
+ <tr><td>+ Phí giao</td><td>${o.fee?fmt(o.fee):"Miễn phí"}</td></tr>
+ <tr class="t"><td>TỔNG THU</td><td>${fmt(o.total)}</td></tr></table>`}
 function draw(){
  $("s1").textContent=D.stats.count;$("s2").textContent=fmt(D.stats.revenue);$("s3").textContent=D.stats.pending;
  const F=[["all","Tất cả"],["Mới","Mới"],["doing","Đang xử lý"],["Đã giao","Đã giao"],["Đã hủy","Đã hủy"]];
  $("fl").innerHTML=F.map(f=>`<button data-f="${f[0]}" class="${flt==f[0]?"on":""}">${f[1]}</button>`).join("");
  const L=D.orders.filter(o=>flt=="all"||(flt=="doing"?o.status=="Đã xác nhận"||o.status=="Đang giao":o.status==flt));
  $("ol").innerHTML=L.map(o=>{const n=NX[o.status],tf=o.pay=="Chuyển khoản";return `<div class="c"><div class="row"><b>${esc(o.code)}</b><span class="b ${o.status=="Đã hủy"?"hu":esc(o.status.split(" ")[0])}">${esc(o.status)}</span></div><small>${esc(o.time)} · ${esc(o.pay)} ${tf?(o.paid?'<span class="b paid">Đã nhận tiền</span>':'<span class="b">Chờ chuyển khoản</span>'):""}</small>
- <p><b>${esc(o.name)}</b> · <a href="tel:${esc(o.phone)}">${esc(o.phone)}</a></p><p>${esc(o.address)}</p><p>${esc(o.items).replace(/ \| /g,"<br>")}</p>${o.note?`<p><i>📝 ${esc(o.note)}</i></p>`:""}
- <p><b>${fmt(o.total)}</b>${o.off?` <small>(đã giảm ${fmt(o.off)})</small>`:""}${o.pts?` <small>⭐ dùng ${o.pts} điểm</small>`:""} · <a href="${esc(o.map)}" target="_blank" rel="noopener">📍 Xem bản đồ</a></p>
+ <p><b>${esc(o.name)}</b> · <a href="tel:${esc(o.phone)}">${esc(o.phone)}</a></p><p>${esc(o.address)}</p>${itemsTbl(o)}${o.note?`<p><i>📝 ${esc(o.note)}</i></p>`:""}
+ ${amtTbl(o)}<p><a href="${esc(o.map)}" target="_blank" rel="noopener">📍 Xem bản đồ</a></p>
  <div class="row">${n?`<button class="k" data-code="${esc(o.code)}" data-st="${n[1]}">${n[0]}</button>`:""}${tf&&!o.paid&&o.status!="Đã hủy"?`<button data-code="${esc(o.code)}" data-paid="1">💰 Đã nhận tiền</button>`:""}<button class="g" data-print="${esc(o.code)}">🖨️ In phiếu</button>${n?`<button class="r" data-code="${esc(o.code)}" data-st="Đã hủy">Hủy đơn</button>`:""}</div></div>`}).join("")||"<p>Không có đơn.</p>";
  $("pl").innerHTML=D.products.map(p=>`<div class="c row" style="flex-wrap:nowrap"><img class="pv" src="${esc(p.img||"")}" alt="" onerror="this.style.visibility='hidden'"><div style="flex:1"><b>${esc(p.e)} ${esc(p.n)}</b> ${p.on?"":'<span class="b">Ẩn</span>'} ${p.so?'<span class="b so">Hết món</span>':""}<br><small>${fmt(p.p)} · ${esc(p.c)}${p.op?" · có tùy chọn":""}</small></div><button class="g" data-e="${esc(p.id)}">Sửa</button><button class="r" data-x="${esc(p.id)}">Xóa</button></div>`).join("")||"<p>Chưa có sản phẩm. Web sẽ hiện thông báo đang cập nhật thực đơn cho đến khi bạn thêm món.</p>";
  $("cl").innerHTML=D.coupons.map(k=>`<div class="c row" style="flex-wrap:nowrap"><div style="flex:1"><b>${esc(k.code)}</b> ${k.on?"":'<span class="b so">Tắt</span>'} ${k.pub?'<span class="b paid">Hiện trên web</span>':""}<br><small>${k.exp?"HSD "+esc(k.exp)+" · ":""}${k.type=="percent"?"Giảm "+k.value+"%":"Giảm "+fmt(k.value)} · tối thiểu ${fmt(k.min)}${k.cap?" · tối đa "+fmt(k.cap):""} · dùng ${k.used||0}${+k.max?"/"+k.max:""} · ${+k.per?k.per+" lần/SĐT":"không giới hạn/SĐT"}</small></div><button class="g" data-ke="${esc(k.code)}">Sửa</button><button class="r" data-kx="${esc(k.code)}">Xóa</button></div>`).join("")||"<p>Chưa có mã giảm giá.</p>";
@@ -117,7 +135,7 @@ function draw(){
  $("r").innerHTML=D.reviews.map(r=>`<div class="c"><b>${esc(r.item)}</b> ${"★".repeat(r.stars)}<br>${esc(r.text)}<br><small>${esc(r.code)} · ${esc(r.time)}</small></div>`).join("")||"<p>Chưa có đánh giá.</p>";
  const c=D.cfg;if(c&&!$("s").dataset.f){$("s").dataset.f=1;$("cp").checked=c.paused;$("cn").value=c.notice;$("cmin").value=c.min==null?30000:c.min;$("cf").value=c.fee;$("cr").value=c.free;$("co").value=c.open;$("cc").value=c.close;$("sla").value=c.shopLat||"";$("sln").value=c.shopLng||"";$("fk").value=c.freeKm;$("pk").value=c.perKm;$("mk").value=c.maxKm}}
 function slip(o){const w=window.open("","_blank");if(!w)return msg("Trình duyệt chặn cửa sổ in");
- w.document.write(`<html><head><meta charset="utf-8"><title>${esc(o.code)}</title><style>body{font:14px monospace;width:300px;margin:8px}h3{text-align:center}hr{border:0;border-top:1px dashed #000}</style></head><body><h3>ĂN VẶT LÂM THAO</h3><div>Mã: <b>${esc(o.code)}</b><br>${esc(o.time)}</div><hr><div><b>${esc(o.name)}</b><br>ĐT: ${esc(o.phone)}<br>${esc(o.address)}</div><hr><div>${esc(o.items).replace(/ \| /g,"<br>")}</div><hr><div>Tạm tính: ${fmt(o.sub)}<br>${o.off?"Giảm: -"+fmt(o.off)+"<br>":""}Phí giao: ${fmt(o.fee)}<br><b>TỔNG: ${fmt(o.total)}</b><br>${esc(o.pay)}${o.pay=="Chuyển khoản"?(o.paid?" (đã thu)":" (CHƯA thu)"):""}</div>${o.note?"<hr><div>Ghi chú: "+esc(o.note)+"</div>":""}<script>onload=()=>print()<\/script></body></html>`);w.document.close()}
+ w.document.write(`<html><head><meta charset="utf-8"><title>${esc(o.code)}</title><style>body{font:14px monospace;width:300px;margin:8px}h3{text-align:center}hr{border:0;border-top:1px dashed #000}</style></head><body><h3>ĂN VẶT LÂM THAO</h3><div>Mã: <b>${esc(o.code)}</b><br>${esc(o.time)}</div><hr><div><b>${esc(o.name)}</b><br>ĐT: ${esc(o.phone)}<br>${esc(o.address)}</div><hr><div>${esc(o.items).replace(/ \| /g,"<br>")}</div><hr><div>Tổng tiền hàng: ${fmt(o.sub)}<br>${vOffOf(o)?"- Voucher: -"+fmt(vOffOf(o))+"<br>":""}${pOffOf(o)?"- Tích điểm: -"+fmt(pOffOf(o))+"<br>":""}Phí giao: ${o.fee?fmt(o.fee):"Miễn phí"}<br><b>TỔNG THU: ${fmt(o.total)}</b><br>${esc(o.pay)}${o.pay=="Chuyển khoản"?(o.paid?" (đã thu)":" (CHƯA thu)"):""}</div>${o.note?"<hr><div>Ghi chú: "+esc(o.note)+"</div>":""}<script>onload=()=>print()<\/script></body></html>`);w.document.close()}
 $("go").onclick=()=>{KEY=$("key").value.trim();lastCode=null;load()};$("key").onkeydown=e=>{if(e.key=="Enter")$("go").click()};
 $("out").onclick=()=>{sessionStorage.removeItem("ak");location.reload()};$("rf").onclick=()=>load();
 document.addEventListener("visibilitychange",()=>{if(!document.hidden){document.title="Admin – Ăn Vặt Lâm Thao";if(KEY)load(true)}});
@@ -185,5 +203,54 @@ $("pd").onclick=async e=>{const t=e.target;
    if(j.ok){msg("Đã cập nhật điểm ✔");await load(true);openP(PH);return}
    msg(j.error=="exceed"?"Không trừ quá số điểm khách đang có ("+nf(j.bal)+")":j.error=="notfound"?"Không tìm thấy khách":"Không lưu được: "+(j.error||"không rõ"),4000)}catch(_){msg("Lỗi kết nối")}
   t.disabled=false}};
+
+/* ===== THÊM SẢN PHẨM HÀNG LOẠT ===== */
+const nz=s=>String(s==null?"":s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D").toLowerCase().trim();
+const FLD={"ten":"n","ten mon":"n","ten san pham":"n","name":"n","mo ta":"d","description":"d","gia":"p","gia ban":"p","price":"p","gia cu":"o","gia goc":"o","nhom":"c","danh muc":"c","category":"c","emoji":"e","bieu tuong":"e","nhan":"t","tag":"t","anh":"img","hinh":"img","hinh anh":"img","link anh":"img","image":"img","tuy chon":"op","options":"op","hien thi":"on","het mon":"so","het hang":"so"};
+const ORD=["n","d","p","o","c","e","t","img","op","on","so"];
+const grpOf=c=>{const s=nz(c),m={"do an nhanh":"nhanh","an nhanh":"nhanh","do an vat":"vat","an vat":"vat","do uong":"uong","nuoc uong":"uong","combo":"combo"};return m[s]||s.replace(/[^a-z0-9_-]/g,"")||"vat"};
+const money=v=>{const s=String(v==null?"":v).trim().toLowerCase();if(!s)return 0;const k=s.match(/^(\d+(?:[.,]\d+)?)\s*k$/);if(k)return Math.round(parseFloat(k[1].replace(",","."))*1000);return Number(s.replace(/[^\d]/g,""))||0};
+const bl=(v,def)=>{const s=nz(v);if(s==="")return def;return !/^(0|khong|false|no|n|an|off|-)$/.test(s)};
+function table(txt,del){const rows=[];let r=[],f="",q=false;
+ for(let i=0;i<txt.length;i++){const c=txt[i];
+  if(q){if(c=='"'){if(txt[i+1]=='"'){f+='"';i++}else q=false}else f+=c}
+  else if(c=='"'&&f==="")q=true;
+  else if(c==del){r.push(f);f=""}
+  else if(c=="\n"||c=="\r"){if(c=="\r"&&txt[i+1]=="\n")i++;r.push(f);f="";rows.push(r);r=[]}
+  else f+=c}
+ if(f!==""||r.length){r.push(f);rows.push(r)}
+ return rows.filter(r=>r.some(x=>String(x).trim()!==""))}
+let BK=[];
+function bkParse(){let txt=$("bkt").value.replace(/^\uFEFF/,"");txt=txt.replace(/^sep=.\r?\n/i,"");
+ if(!txt.trim()){BK=[];bkDraw();return}
+ const first=txt.split(/\r?\n/)[0],cnt=c=>first.split(c).length-1,del=cnt("\t")?"\t":cnt(";")>cnt(",")?";":",";
+ let rows=table(txt,del),map=ORD.slice();
+ const h=rows[0].map(nz);
+ if(h.filter(x=>FLD[x]).length>=2&&h.some(x=>FLD[x]=="n")){map=h.map(x=>FLD[x]||null);rows=rows.slice(1)}
+ BK=rows.slice(0,500).map(r=>{const o={};map.forEach((k,j)=>{if(k)o[k]=r[j]==null?"":String(r[j]).trim()});
+  const it={n:(o.n||"").slice(0,60),d:(o.d||"").slice(0,100),p:money(o.p),o:money(o.o),c:grpOf(o.c),e:(o.e||"").slice(0,8),t:(o.t||"").slice(0,20),img:/^https?:\/\//i.test(o.img||"")?o.img:"",op:(o.op||"").slice(0,400),on:bl(o.on,true),so:bl(o.so,false)};
+  it.err=!it.n?"Thiếu tên":!(it.p>0)?"Giá không hợp lệ":"";return it});
+ bkDraw()}
+function bkDraw(){const ok=BK.filter(x=>!x.err),bad=BK.length-ok.length,upd=$("bkm").value=="update",ex=new Set((D.products||[]).map(p=>String(p.n).trim().toLowerCase()));
+ $("bkp").innerHTML=BK.length?`<p class="l">Đọc được <b>${BK.length}</b> dòng: <b style="color:var(--ok)">${ok.length} hợp lệ</b>${bad?`, <b style="color:var(--red)">${bad} lỗi (sẽ bị bỏ qua)</b>`:""}.</p><div style="overflow-x:auto"><table class="bt pv2"><tr><th>#</th><th>Món</th><th>Giá</th><th>Nhóm</th><th>Trạng thái</th></tr>${BK.map((x,i)=>`<tr class="${x.err?"er":""}"><td>${i+1}</td><td>${esc(x.e)} ${esc(x.n)}${x.op?" <small>(có tùy chọn)</small>":""}${x.on?"":" <span class=\"b\">Ẩn</span>"}${x.so?" <span class=\"b so\">Hết món</span>":""}</td><td>${fmt(x.p)}${x.o?` <small><s>${fmt(x.o)}</s></small>`:""}</td><td>${esc(x.c)}</td><td>${x.err?`<b style="color:var(--red)">${esc(x.err)}</b>`:upd&&ex.has(x.n.toLowerCase())?"Cập nhật":"Thêm mới"}</td></tr>`).join("")}</table></div>`:"";
+ $("bks").disabled=!ok.length;$("bks").textContent=ok.length?`💾 Lưu hàng loạt (${ok.length} sản phẩm)`:"💾 Lưu hàng loạt"}
+$("bkt").oninput=bkParse;$("bkm").onchange=bkDraw;
+$("bkc").onclick=()=>{$("bkt").value="";$("bkf").value="";BK=[];bkDraw()};
+$("bkf").onchange=async e=>{const f=e.target.files[0];if(!f)return;
+ if(/\.xlsx?$/i.test(f.name)){e.target.value="";return alert("Chưa đọc trực tiếp file Excel. Hãy copy các ô trong Excel rồi dán vào ô bên dưới, hoặc lưu file dạng CSV UTF-8.")}
+ try{$("bkt").value=await f.text();bkParse()}catch(_){msg("Không đọc được file")}};
+$("bkd").onclick=()=>{const q=v=>/[",;\n\t]/.test(String(v))?'"'+String(v).replace(/"/g,'""')+'"':String(v);
+ const R=[["Tên","Mô tả","Giá","Giá cũ","Nhóm","Emoji","Nhãn","Ảnh (link)","Tùy chọn","Hiển thị","Hết món"],
+  ["Khoai tây chiên","Giòn rụm, lắc phô mai",25000,30000,"Đồ ăn nhanh","🍟","Bán chạy","","",1,0],
+  ["Trà sữa trân châu","Đậm vị, trân châu dai",25000,"","Đồ uống","🧋","","","Size:M|L+5000;Đường:100%|70%|50%",1,0],
+  ["Bánh tráng trộn","Chua cay mặn ngọt",20000,"","Đồ ăn vặt","🥗","","","",1,0]];
+ const csv="\uFEFFsep=,\r\n"+R.map(r=>r.map(q).join(",")).join("\r\n"),a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="mau-san-pham.csv";document.body.appendChild(a);a.click();a.remove()};
+$("bks").onclick=async()=>{const ok=BK.filter(x=>!x.err);if(!ok.length)return;if(!confirm("Lưu "+ok.length+" sản phẩm lên web?"))return;
+ $("bks").disabled=true;let A=0,U=0,S=0,fin=true;
+ try{for(let i=0;i<ok.length;i+=100){const j=await post({action:"saveProducts",mode:$("bkm").value,items:ok.slice(i,i+100).map(({err,...q})=>q)});
+   if(!j.ok){fin=false;msg("Lỗi lưu: "+(j.error||"không rõ"),5000);break}A+=j.added;U+=j.updated;S+=j.skipped}}catch(_){fin=false;msg("Lỗi kết nối")}
+ if(A||U){msg(`Đã lưu ✔ thêm ${A}, cập nhật ${U}${S?`, bỏ qua ${S}`:""}`,5000);if(fin){$("bkt").value="";$("bkf").value="";BK=[]}await load(true)}
+ bkDraw()};
 if(KEY)load();
 </script></body></html>
