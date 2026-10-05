@@ -26,6 +26,10 @@ input,select,textarea{width:100%;border:2px solid var(--line);border-radius:10px
 .bt{width:100%;border-collapse:collapse;margin:8px 0;font-size:.95rem}.bt th{text-align:left;font-size:.8rem;color:var(--mute);padding:4px 8px;border-bottom:2px solid var(--line)}.bt td{padding:5px 8px;border-bottom:1px solid var(--line)}.bt td:last-child{text-align:right;white-space:nowrap}.bt .z td{color:#aaa}.bt .m td:last-child{color:var(--red)}.bt .t td{background:var(--sun);font-weight:800;font-size:1.08rem;border-bottom:0}.bt.it td:nth-child(2),.bt.it th:nth-child(2){text-align:center;width:44px}.bt.pv2 td:last-child,.bt.pv2 th:last-child{text-align:left;white-space:normal}.bt .er td{background:#fde7e4}
 details.bk summary{font-weight:700;cursor:pointer}
 label.ck{display:flex;align-items:center;gap:8px;margin-bottom:10px}label.ck input{width:auto;margin:0}
+.mi{border-left:5px solid var(--sun)}.mi.bad{border-color:var(--red);background:#fff5f3}.mi summary{cursor:pointer;margin-bottom:6px}
+.mi textarea{margin-bottom:8px}.mic{background:var(--cream);border:1px dashed var(--line);border-radius:12px;padding:10px;margin:12px 0}
+.mia{position:sticky;bottom:0;background:var(--cream);padding:10px 0 4px;border-top:1px solid var(--line);margin-top:6px;z-index:3}
+.b.up{background:#ffd9a0}.b.ok{background:#cfe9d6}.b.er{background:var(--red);color:#fff}
 </style></head><body>
 <header><b>🛠️ Admin Ăn Vặt Lâm Thao</b><span><button class="g" id="rf">↻</button> <button class="g" id="out">Thoát</button></span></header>
 <div class="w">
@@ -37,6 +41,15 @@ label.ck{display:flex;align-items:center;gap:8px;margin-bottom:10px}label.ck inp
   <div id="o"><div class="fl" id="fl"></div><div id="ol"></div></div>
 
   <div id="p" class="hide">
+   <div class="c" id="mi0"><b>📷 Thêm nhiều sản phẩm bằng ảnh</b>
+    <p class="l" style="margin:4px 0 10px">Chọn 10–15 ảnh một lúc (tối đa 30). Mỗi ảnh sẽ hiện thành 1 form để điền tên, giá… Ảnh được tự tải lên Drive trong lúc bạn điền.</p>
+    <input id="mif" type="file" accept="image/*" multiple hidden><button id="mib" type="button">📷 Chọn ảnh sản phẩm</button>
+    <div id="mic" class="mic hide"><span class="l">Điền chung cho tất cả món bên dưới (ô nào để trống thì bỏ qua):</span>
+     <div class="row" style="margin-top:6px"><select id="micg"></select><input id="mice" placeholder="Emoji 🍟" maxlength="8"><input id="micp" type="number" inputmode="numeric" placeholder="Giá bán"><input id="mict" placeholder="Nhãn" maxlength="20"></div>
+     <button class="g" id="mica" type="button">Áp dụng cho tất cả</button></div>
+    <div id="mil" style="margin-top:12px"></div>
+    <div id="mia" class="mia hide"><div class="l" id="mism" style="margin-bottom:6px"></div><button id="mis" class="k" disabled>💾 Lưu sản phẩm</button> <button class="g" id="mix" type="button">Xóa tất cả</button></div>
+   </div>
    <div class="c"><b id="ft">Thêm sản phẩm</b><br><br>
     <input id="n" placeholder="Tên món" maxlength="60"><input id="d" placeholder="Mô tả ngắn" maxlength="100">
     <div class="row"><input id="pr" type="number" inputmode="numeric" placeholder="Giá bán"><input id="ol2" type="number" inputmode="numeric" placeholder="Giá cũ (nếu có)"></div>
@@ -98,7 +111,7 @@ document.addEventListener("click",()=>{try{ac=ac||new (window.AudioContext||wind
 async function post(o){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({...o,key:KEY})});return r.json()}
 async function load(silent){try{const j=await post({action:"admin"});
   if(!j.ok){sessionStorage.removeItem("ak");$("login").classList.remove("hide");$("app").classList.add("hide");clearInterval(timer);if(!silent)msg(j.error=="locked"?"Nhập sai quá nhiều, thử lại sau 15 phút":j.error=="auth"?"Sai mật khẩu":"Lỗi máy chủ: "+(j.error||"không rõ"),5000);return}
-  D=j;sessionStorage.setItem("ak",KEY);$("login").classList.add("hide");$("app").classList.remove("hide");
+  D=j;sessionStorage.setItem("ak",KEY);if(window.miRefresh)miRefresh();$("login").classList.add("hide");$("app").classList.remove("hide");
   const lc=j.stats.latest||"";
   if(lastCode!==null&&lc&&lc!==lastCode){beep();msg("🛎️ Có đơn mới!",5000);document.title="(!) Đơn mới – Admin"}
   lastCode=lc;draw();clearInterval(timer);timer=setInterval(()=>load(true),30000)}catch(e){if(!silent)msg("Không kết nối được máy chủ")}}
@@ -252,5 +265,75 @@ $("bks").onclick=async()=>{const ok=BK.filter(x=>!x.err);if(!ok.length)return;if
    if(!j.ok){fin=false;msg("Lỗi lưu: "+(j.error||"không rõ"),5000);break}A+=j.added;U+=j.updated;S+=j.skipped}}catch(_){fin=false;msg("Lỗi kết nối")}
  if(A||U){msg(`Đã lưu ✔ thêm ${A}, cập nhật ${U}${S?`, bỏ qua ${S}`:""}`,5000);if(fin){$("bkt").value="";$("bkf").value="";BK=[]}await load(true)}
  bkDraw()};
+/* ===== THÊM NHIỀU SẢN PHẨM BẰNG ẢNH ===== */
+let MI=[],miSeq=0,miBusy=0;
+const MI_MAX=30,GRP_STD={nhanh:"Đồ ăn nhanh",vat:"Đồ ăn vặt",uong:"Đồ uống",combo:"Combo"};
+const miGroups=()=>{const s=new Set(Object.keys(GRP_STD));(D.products||[]).forEach(p=>p.c&&s.add(p.c));return[...s]};
+const miOpts=(sel,blank)=>(blank?`<option value="">— Giữ nguyên nhóm —</option>`:"")+miGroups().map(g=>`<option value="${esc(g)}"${g==sel?" selected":""}>${esc(GRP_STD[g]||g)}</option>`).join("");
+const miGuess=fn=>{const b=fn.replace(/\.[^.]+$/,"").replace(/[_-]+/g," ").trim();return(b.length<2||/^(img|dsc|pxl|photo|image|screenshot|zalo|fb|received|mvimg|\d)/i.test(b))?"":b.slice(0,60)};
+function miRead(f){return new Promise(res=>{const u=URL.createObjectURL(f),im=new Image();
+ im.onload=()=>{const k=Math.min(1,800/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL("image/jpeg",.82))};
+ im.onerror=()=>{URL.revokeObjectURL(u);res(null)};im.src=u})}
+function miCard(it,n){return `<div class="c mi" id="mi_${it.id}" data-id="${it.id}">
+ <div class="row" style="flex-wrap:nowrap;align-items:flex-start"><img class="pv" style="width:84px;height:84px" src="${it.prev}" alt="">
+  <div style="flex:1;min-width:0"><div class="row" style="flex-wrap:nowrap;margin-bottom:6px"><b style="flex:none;min-width:0">#<span class="mn">${n}</span></b><span id="mis_${it.id}" class="b" style="flex:none;min-width:0"></span><span style="flex:1;min-width:0"></span><button class="g" data-del="1" type="button" style="flex:none;min-width:0;padding:5px 10px">✕ Bỏ</button></div>
+  <input data-k="n" placeholder="Tên món *" maxlength="60" value="${esc(it.n)}">
+  <div class="row"><input data-k="p" type="number" inputmode="numeric" placeholder="Giá bán *"><input data-k="o" type="number" inputmode="numeric" placeholder="Giá cũ (nếu có)"></div></div></div>
+ <div class="row"><select data-k="c">${miOpts(it.c)}</select><input data-k="e" placeholder="Emoji 🍟" maxlength="8"><input data-k="t" placeholder="Nhãn (Bán chạy...)" maxlength="20"></div>
+ <input data-k="d" placeholder="Mô tả ngắn" maxlength="100">
+ <details><summary class="l">Tùy chọn thêm (size, topping...)</summary><textarea data-k="op" rows="2" placeholder="VD: Size:M|L+5000;Đường:100%|70%|50%"></textarea></details>
+ <label class="ck"><input data-k="on" type="checkbox" checked>Hiển thị trên web</label><label class="ck"><input data-k="so" type="checkbox">Hết món</label></div>`}
+function miSt(it){const el=$("mis_"+it.id);if(!el)return;
+ const m={wait:["⏳ Chờ tải ảnh",""],up:["⬆ Đang tải ảnh...","up"],ok:["✔ Ảnh đã tải","ok"],err:["❌ Lỗi ảnh","er"]}[it.st];
+ el.className="b "+m[1];el.textContent=m[0];
+ const old=el.parentNode.querySelector("[data-retry]");if(old)old.remove();
+ if(it.st=="err"){const b=document.createElement("button");b.className="g";b.type="button";b.dataset.retry="1";b.textContent="↻ Thử lại";b.style.cssText="flex:none;min-width:0;padding:5px 10px";el.after(b)}}
+function miSum(){const n=MI.length,up=MI.filter(x=>x.st=="wait"||x.st=="up").length,er=MI.filter(x=>x.st=="err").length;
+ $("mic").classList.toggle("hide",!n);$("mia").classList.toggle("hide",!n);
+ document.querySelectorAll("#mil .mn").forEach((s,i)=>s.textContent=i+1);
+ $("mism").textContent=!n?"":up?`⬆ Đang tải ảnh lên Drive: còn ${up}/${n} ảnh…`:er?`❌ ${er} ảnh tải lỗi – bấm "Thử lại" hoặc "Bỏ" món đó`:`✔ ${n} ảnh đã sẵn sàng. Điền đủ tên + giá rồi bấm Lưu.`;
+ $("mis").disabled=!n||up>0||er>0;$("mis").textContent=n?`💾 Lưu ${n} sản phẩm`:"💾 Lưu sản phẩm"}
+function miPump(){while(miBusy<2){const it=MI.find(x=>x.st=="wait");if(!it)break;miUp(it)}}
+async function miUp(it){it.st="up";miBusy++;miSt(it);miSum();
+ try{const j=await post({action:"upload",data:it.data.split(",")[1],mime:"image/jpeg"});
+  if(j.ok){it.img=j.url;it.st="ok";it.data=null}else{it.st="err";it.er=j.error==="auth"?"Hết phiên đăng nhập":(j.error||"không rõ")}}
+ catch(_){it.st="err";it.er="Lỗi kết nối"}
+ miBusy--;miSt(it);miSum();miPump()}
+$("mib").onclick=()=>$("mif").click();
+$("mif").onchange=async e=>{const fs=[...e.target.files].filter(f=>/^image\//.test(f.type)||/\.(jpe?g|png|webp|gif|heic)$/i.test(f.name));e.target.value="";
+ if(!fs.length)return;const room=MI_MAX-MI.length;if(room<=0)return msg("Tối đa "+MI_MAX+" ảnh mỗi lần, hãy lưu rồi thêm tiếp",4000);
+ if(fs.length>room)msg("Chỉ nhận thêm "+room+" ảnh (tối đa "+MI_MAX+" mỗi lần)",4000);
+ $("mib").disabled=true;let bad=0;const sel=fs.slice(0,room);
+ for(let i=0;i<sel.length;i++){msg(`Đang xử lý ảnh ${i+1}/${sel.length}...`,15000);
+  const u=await miRead(sel[i]);if(!u){bad++;continue}
+  const it={id:++miSeq,n:miGuess(sel[i].name),p:"",o:"",c:$("micg").value||"vat",e:"",t:"",d:"",op:"",on:true,so:false,img:"",prev:u,data:u,st:"wait"};
+  MI.push(it);$("mil").insertAdjacentHTML("beforeend",miCard(it,MI.length));miSt(it);miSum();miPump()}
+ $("mib").disabled=false;msg(bad?`Đã thêm ${sel.length-bad} ảnh, ${bad} ảnh không đọc được (HEIC?)`:`Đã thêm ${sel.length} ảnh ✔ – điền thông tin từng món`,4000);
+ const first=$("mil").querySelector(".mi:not(.chk) input[data-k=n]");if(first&&sel.length>bad&&MI.length==sel.length-bad)first.scrollIntoView({behavior:"smooth",block:"center"})};
+function miBind(e){const t=e.target,k=t.dataset.k,c=t.closest(".mi");if(!k||!c)return;
+ const it=MI.find(x=>x.id==c.dataset.id);if(!it)return;it[k]=t.type=="checkbox"?t.checked:t.value;c.classList.remove("bad")}
+$("mil").addEventListener("input",miBind);$("mil").addEventListener("change",miBind);
+$("mil").onclick=e=>{const t=e.target,c=t.closest(".mi");if(!c)return;const it=MI.find(x=>x.id==c.dataset.id);if(!it)return;
+ if(t.dataset.del){if((it.n||it.p)&&!confirm("Bỏ món này khỏi danh sách?"))return;MI=MI.filter(x=>x!==it);c.remove();miSum()}
+ if(t.dataset.retry){it.st="wait";miSt(it);miSum();miPump()}};
+$("mica").onclick=()=>{const g=$("micg").value,em=$("mice").value.trim(),pr=$("micp").value,tg=$("mict").value.trim();
+ if(!g&&!em&&!pr&&!tg)return msg("Nhập ít nhất 1 ô để áp dụng chung");
+ MI.forEach(it=>{const c=$("mi_"+it.id);if(!c)return;
+  [["c",g],["e",em],["p",pr],["t",tg]].forEach(([k,v])=>{if(v){it[k]=v;c.querySelector(`[data-k=${k}]`).value=v;if(k=="p")c.classList.remove("bad")}})});
+ msg("Đã áp dụng cho "+MI.length+" món ✔")};
+$("mix").onclick=()=>{if(MI.length&&!confirm("Xóa toàn bộ "+MI.length+" ảnh/form đang điền?"))return;MI=[];$("mil").innerHTML="";miSum()};
+$("mis").onclick=async()=>{if(miBusy||MI.some(x=>x.st!="ok"))return msg("Chờ ảnh tải xong đã");
+ let first=null;MI.forEach(it=>{const bad=!String(it.n).trim()||!(+it.p>0),c=$("mi_"+it.id);c.classList.toggle("bad",bad);if(bad&&!first)first=c});
+ if(first){first.scrollIntoView({behavior:"smooth",block:"center"});return msg("Còn món thiếu tên hoặc giá (viền đỏ)",4000)}
+ const ex=new Set((D.products||[]).map(p=>String(p.n).trim().toLowerCase())),dup=MI.filter(x=>ex.has(String(x.n).trim().toLowerCase())).map(x=>x.n.trim());
+ if(dup.length&&!confirm("Có "+dup.length+" món trùng tên với thực đơn hiện tại ("+dup.slice(0,3).join(", ")+(dup.length>3?"...":"")+").\nVẫn thêm mới?"))return;
+ if(!confirm("Lưu "+MI.length+" sản phẩm lên web?"))return;
+ $("mis").disabled=true;
+ try{const j=await post({action:"saveProducts",mode:"add",items:MI.map(x=>({n:x.n.trim(),d:x.d.trim(),p:+x.p,o:+x.o||0,c:x.c,e:x.e.trim(),t:x.t.trim(),img:x.img,op:x.op.trim(),on:x.on,so:x.so}))});
+  if(j.ok){msg(`Đã lưu ✔ thêm ${j.added} sản phẩm${j.skipped?`, bỏ qua ${j.skipped}`:""}`,5000);MI=[];$("mil").innerHTML="";miSum();await load(true);return}
+  msg("Lỗi lưu: "+(j.error||"không rõ"),5000)}catch(_){msg("Lỗi kết nối – dữ liệu vẫn còn, bấm Lưu lại")}
+ miSum()};
+window.addEventListener("beforeunload",e=>{if(MI.length){e.preventDefault();e.returnValue=""}});
+window.miRefresh=()=>{const v=$("micg").value;$("micg").innerHTML=miOpts("",true);$("micg").value=v};miRefresh();
 if(KEY)load();
 </script></body></html>
